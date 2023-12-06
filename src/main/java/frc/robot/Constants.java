@@ -13,13 +13,15 @@ import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-    public static final double stickDeadband = 0.1;
-
+    public static final double stickDeadband = 0.05;
     private static final double WHEEL_DIAMETER = Units.inchesToMeters(4); //in inches
     private static final double MAX_MOTOR_UNITS_PER_SECOND = 225300;
     private static final double kMotorUnitsToRotations = 2048;
     private static final double kRotationToRadians = 2*Math.PI;
     private static final double kAngularVelocityToWheelSpeed = WHEEL_DIAMETER*Math.PI;
+    public static final double rotationModifier = 0.04; //reduce the speed of rotation on teleop
+    public static final double translationModifier = 0.65; //reduce the speed of translation on teleop
+
 
 
     public static final class Swerve {
@@ -141,7 +143,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(78.31);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(73.71);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
