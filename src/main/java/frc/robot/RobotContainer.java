@@ -37,7 +37,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        s_Swerve.setDefaultCommand(
+        /*s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
                 () -> -translationJoystick.getRawAxis(1)*0.8,
@@ -48,7 +48,9 @@ public class RobotContainer {
         );
 
         // Configure the button bindings
-        configureButtonBindings();
+        configureButtonBindings();*/
+
+        s_Swerve.setDefaultCommand(new exampleAuto(s_Swerve));
     
     }
 

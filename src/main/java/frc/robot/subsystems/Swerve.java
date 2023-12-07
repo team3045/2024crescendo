@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
 
@@ -138,10 +139,11 @@ public class Swerve extends SubsystemBase {
             mod.setDesiredState(autoSwerveStates[mod.moduleNumber], false);
         }
     }
-
+    Field2d robotField2d = new Field2d();
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getModulePositions());  
+        swerveOdometry.update(getYaw(), getModulePositions());
+        robotField2d.setRobotPose(getPose());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -151,5 +153,6 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Robot Headin: ", getYaw().getDegrees());
         SmartDashboard.putString("Robot Position", getPose().getTranslation().toString());
+        SmartDashboard.putData("Robot Position Graph", robotField2d);
     }
 }
