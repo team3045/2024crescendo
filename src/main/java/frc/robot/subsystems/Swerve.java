@@ -73,7 +73,15 @@ public class Swerve extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
-    }    
+    }
+
+    public void setAutoModuleStates(SwerveModuleState[] desiredStates){
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+
+        for(SwerveModule mod : mSwerveMods){
+            mod.setAutoDesiredState(desiredStates[mod.moduleNumber], false);
+        }
+    }
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
@@ -144,6 +152,7 @@ public class Swerve extends SubsystemBase {
     public void periodic(){
         swerveOdometry.update(getYaw(), getModulePositions());
         robotField2d.setRobotPose(getPose());
+
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());

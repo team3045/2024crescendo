@@ -51,6 +51,10 @@ public class SwerveModule {
         setSpeed(desiredState, isOpenLoop);
     }
 
+    public void setAutoDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
+        setAngle(desiredState);
+        setSpeed(desiredState,isOpenLoop);
+    }
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;

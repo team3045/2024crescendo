@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.xPosition;
 import frc.robot.subsystems.Swerve;
 
@@ -36,9 +37,13 @@ public class pathPlannerAuto extends SequentialCommandGroup {
     ReplanningConfig replanConfig = new ReplanningConfig();
 
     Pose2d firstPose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
-    Pose2d secondPose = new Pose2d(new Translation2d(1,0), new Rotation2d(0));
+    Pose2d middlePose = new Pose2d(new Translation2d(1,0), new Rotation2d(0));
+    Pose2d secondPose = new Pose2d(new Translation2d(2,0), new Rotation2d(0));
+    Pose2d thirdPose = new Pose2d(new Translation2d(2,2), new Rotation2d(0));
+    Pose2d fourthPose = new Pose2d(new Translation2d(0,2), new Rotation2d(0));
 
-    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(List.of(firstPose, secondPose));
+
+    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(List.of(firstPose, middlePose,secondPose,thirdPose,fourthPose));
 
     PathPoint pointOne = new PathPoint(new Translation2d(0,0), new Rotation2d(0));
     PathPoint pointTwo = new PathPoint(new Translation2d(1,0), new Rotation2d(0));
@@ -49,19 +54,19 @@ public class pathPlannerAuto extends SequentialCommandGroup {
       Constants.AutoConstants.kMaxSpeedMetersPerSecond,
       Constants.Swerve.wheelBase/2,replanConfig);
 
-    PathPlannerPath firstPath = new PathPlannerPath(
+    /*PathPlannerPath firstPath = new PathPlannerPath(
       List.of(new Translation2d(0,0), new Translation2d(2,0)),
       Constants.AutoConstants.PATH_CONSTRAINTS,
-      Constants.AutoConstants.GOAL_END_STATE);
+      Constants.AutoConstants.GOAL_END_STATE);*/
 
     PathPlannerPath testPath = new PathPlannerPath(bezierPoints, 
       Constants.AutoConstants.PATH_CONSTRAINTS, 
       Constants.AutoConstants.GOAL_END_STATE, false);
 
 
-    FollowPathHolonomic followFirstPath = new FollowPathHolonomic(
+    /*FollowPathHolonomic followFirstPath = new FollowPathHolonomic(
       firstPath, 
-      s_Swerve::getPose, s_Swerve::getChassisSpeeds, s_Swerve::driveAuto, holonomicConfig, s_Swerve);
+      s_Swerve::getPose, s_Swerve::getChassisSpeeds, s_Swerve::driveAuto, holonomicConfig, s_Swerve);*/
 
     FollowPathHolonomic followTestPath = new FollowPathHolonomic(
       testPath, 

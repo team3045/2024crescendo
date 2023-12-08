@@ -38,11 +38,42 @@ public class exampleAuto extends SequentialCommandGroup {
                         new Translation2d(2, 2),
                         new Translation2d(0,2)),
                 // End 3 meters straight ahead of where we started, facing forward
-                //times by 10 for meters
                 new Pose2d(0, 0, new Rotation2d(0)),
                 //new Pose2d(0,0, new Rotation2d(0)),
                 //new Pose2d(0, 0, new Rotation2d(0)),
             config);
+
+        Trajectory spinSquare = TrajectoryGenerator.generateTrajectory(
+                List.of(
+                        new Pose2d(0,0,new Rotation2d(0)),
+                        new Pose2d(2,0,new Rotation2d(Units.degreesToRadians(90))),
+                        new Pose2d(2,2,new Rotation2d(Units.degreesToRadians(180))),
+                        new Pose2d(0,2,new Rotation2d(Units.degreesToRadians(270))),
+                        new Pose2d(0,0,new Rotation2d(Units.degreesToRadians(360)))
+                ),
+                config);
+
+        Trajectory spinSquareTwo = TrajectoryGenerator.generateTrajectory(
+                List.of(
+                        new Pose2d(2,0,new Rotation2d().fromDegrees(90)),
+                        new Pose2d(2,2,new Rotation2d(Units.degreesToRadians(180)))
+                ),
+                config);
+
+        Trajectory spinSquareThree = TrajectoryGenerator.generateTrajectory(
+                List.of(
+                        new Pose2d(2,2,new Rotation2d(Units.degreesToRadians(180))),
+                        new Pose2d(0,2,new Rotation2d(Units.degreesToRadians(-90)))
+                ),
+                config);
+
+        Trajectory spinSquareFour = TrajectoryGenerator.generateTrajectory(
+                List.of(
+                        new Pose2d(0,2,new Rotation2d(Units.degreesToRadians(-90))),
+                        new Pose2d(0,0,new Rotation2d(Units.degreesToRadians(0)))
+                ),
+                config);
+
 
         var thetaController =
             new ProfiledPIDController(
@@ -60,10 +91,62 @@ public class exampleAuto extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
+        SwerveControllerCommand spinSquareController =
+                new SwerveControllerCommand(
+                        spinSquare,
+                        s_Swerve::getPose,
+                        Constants.Swerve.swerveKinematics,
+                        new PIDController(Constants.AutoConstants.kPXController,0,0),
+                        new PIDController(Constants.AutoConstants.kPYController,0,0),
+                        thetaController,
+                        s_Swerve::setAutoModuleStates,
+                        s_Swerve
+                );
+
+        SwerveControllerCommand spinSquareControllerTwo =
+                new SwerveControllerCommand(
+                        spinSquareTwo,
+                        s_Swerve::getPose,
+                        Constants.Swerve.swerveKinematics,
+                        new PIDController(Constants.AutoConstants.kPXController,0,0),
+                        new PIDController(Constants.AutoConstants.kPYController,0,0),
+                        thetaController,
+                        s_Swerve::setAutoModuleStates,
+                        s_Swerve
+                );
+
+        SwerveControllerCommand spinSquareControllerThree =
+                new SwerveControllerCommand(
+                        spinSquareThree,
+                        s_Swerve::getPose,
+                        Constants.Swerve.swerveKinematics,
+                        new PIDController(Constants.AutoConstants.kPXController,0,0),
+                        new PIDController(Constants.AutoConstants.kPYController,0,0),
+                        thetaController,
+                        s_Swerve::setAutoModuleStates,
+                        s_Swerve
+                );
+
+        SwerveControllerCommand spinSquareControllerFour =
+                new SwerveControllerCommand(
+                        spinSquareFour,
+                        s_Swerve::getPose,
+                        Constants.Swerve.swerveKinematics,
+                        new PIDController(Constants.AutoConstants.kPXController,0,0),
+                        new PIDController(Constants.AutoConstants.kPYController,0,0),
+                        thetaController,
+                        s_Swerve::setAutoModuleStates,
+                        s_Swerve
+                );
+
 
         addCommands(
             new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())),
-            swerveControllerCommand
+            new InstantCommand(() -> s_Swerve.zeroGyro()),
+            spinSquareController
+            //spinSquareControllerThree,
+            //spinSquareControllerFour
+            //swerveControllerCommand
             //,new xPosition(s_Swerve)
 
         );
