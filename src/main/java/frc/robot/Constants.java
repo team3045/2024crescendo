@@ -1,8 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -143,7 +142,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.1);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(327);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -164,11 +163,8 @@ public final class Constants {
 
         public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(
             kMaxSpeedMetersPerSecond, 
-            kMaxAccelerationMetersPerSecondSquared, 
-            kMaxAngularSpeedRadiansPerSecond,
-            kMaxAngularSpeedRadiansPerSecondSquared);
-
-        public static final GoalEndState GOAL_END_STATE = new GoalEndState(0.0, new Rotation2d(0));
+            kMaxAccelerationMetersPerSecondSquared 
+           );
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
