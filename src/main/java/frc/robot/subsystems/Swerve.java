@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.lang.reflect.Field;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +25,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    Field2d robotField2d;
 
     public Swerve() {
         gyro = new Pigeon2(15,"3045 Canivore");
@@ -148,6 +151,10 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+
+    public void turnToAngle(ChassisSpeeds chassisSpeeds){
+        
+    }
 
     //used in turnToLimelight command
     public void turnToLimelight(double Output){
