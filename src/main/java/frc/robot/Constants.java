@@ -22,6 +22,7 @@ public final class Constants {
     private static final double kAngularVelocityToWheelSpeed = WHEEL_DIAMETER*Math.PI;
     public static final double rotationModifier = 0.04; //reduce the speed of rotation on teleop
     public static final double translationModifier = 0.65; //reduce the speed of translation on teleop
+    public static final double kPXAngleOffset = 0.5;
 
 
 

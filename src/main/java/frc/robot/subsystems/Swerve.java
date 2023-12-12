@@ -115,7 +115,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public SwerveModuleState[] getXStance(){
-        var xStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0), 
+        SwerveModuleState xStates[] = Constants.Swerve.swerveKinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0), 
         new Translation2d(0,0));
 
         xStates[0].angle = new Rotation2d(3*Math.PI / 2 -  Math.atan(Constants.Swerve.trackWidth / Constants.Swerve.wheelBase));
@@ -139,6 +139,12 @@ public class Swerve extends SubsystemBase {
         for (SwerveModule mod : mSwerveMods){
             mod.setDesiredState(autoSwerveStates[mod.moduleNumber], false);
         }
+    }
+
+
+    //used in turnToLimelight command
+    public void turnToLimelight(double Output){
+        drive(new Translation2d(0,0),Output,false,false);
     }
 
     @Override
