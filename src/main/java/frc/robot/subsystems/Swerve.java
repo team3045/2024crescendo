@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
 
@@ -15,7 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,7 +23,6 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
-    public Field2d robotField2d = new Field2d();
 
     public Swerve() {
         gyro = new Pigeon2(15,"3045 Canivore");
@@ -74,7 +73,15 @@ public class Swerve extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
-    }    
+    }
+
+    public void setAutoModuleStates(SwerveModuleState[] desiredStates){
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+
+        for(SwerveModule mod : mSwerveMods){
+            mod.setAutoDesiredState(desiredStates[mod.moduleNumber], false);
+        }
+    }
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
