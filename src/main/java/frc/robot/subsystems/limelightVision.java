@@ -15,6 +15,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class limelightVision extends SubsystemBase {
   private Swerve s_Swerve;
 
+
+/* tv = Whether the limelight has any valid targets (0 or 1)
+  tx = Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+  ty = Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
+  ta = Target Area (0% of image to 100% of image) */
+  
   private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); //Get specific Network Table
   private static double tX = table.getEntry("tx").getDouble(0); //targetOffsetAngle_Horizontal
   private static double tY = table.getEntry("ty").getDouble(0); //targetOffsetAngle_Vertical

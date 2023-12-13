@@ -5,39 +5,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.limelightVision;
 
+//NOTE: In hindsight might not need PID, just run normal drive fucntion with the error added to y aspect of 0,0 translation2d
+
+
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class turnToLimelight extends PIDCommand {
-  /** Creates a new turnToLimelight. */
-
-  //pass in original abs heading as robotAngleOffset
-  public turnToLimelight(Swerve s_Swerve, double robotAngleOffset) {
-    
-    
+public class driveToLimelightY extends PIDCommand {
+  /** Creates a new driveToLimelightY. */
+  public driveToLimelightY(Swerve s_Swerve) {
     super(
         // The controller that the command will use
-        new PIDController(Constants.kPAngleOffset, 0, 0),
+        new PIDController(Constants.kPYGain, 0, 0),
         // This should return the measurement
-        () -> s_Swerve.getYaw().getDegrees(),
+        () -> Constants.objectHeight / Math.tan(limelightVision.getTY()), //Trig to get the horizontal distance bwteen object
         // This should return the setpoint (can also be a constant)
-        () -> limelightVision.getTX() + robotAngleOffset,
+        () -> Constants.distanceDesired,
         // This uses the output
         output -> {
-          // Use the output here
-          s_Swerve.turnToAngle(output);
+          s_Swerve.driveAuto(new ChassisSpeeds(output, 0, 0)); //move forward
         });
-
-        
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-
     addRequirements(s_Swerve);
   }
 

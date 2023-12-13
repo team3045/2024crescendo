@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
+import frc.robot.autos.pathPlannerPath2023lib;
 
 public final class Constants {
     public static final double stickDeadband = 0.05;
@@ -20,7 +21,13 @@ public final class Constants {
     private static final double kAngularVelocityToWheelSpeed = WHEEL_DIAMETER*Math.PI;
     public static final double rotationModifier = 0.04; //reduce the speed of rotation on teleop
     public static final double translationModifier = 0.65; //reduce the speed of translation on teleop
-    public static final double kPXAngleOffset = 0.5;
+    
+    //Limelight
+    public static final double kPAngleOffset = 0.5;
+    public static final double kPYGain = 0.5;
+    public static final double objectHeight = 6; //in feet
+    public static final double distanceDesired = 1;
+    public static final double areaThreshold = 0.1;
 
 
 

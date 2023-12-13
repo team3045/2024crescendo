@@ -5,36 +5,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.limelightVision;
-
-
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class turnToLimelight extends PIDCommand {
-  /** Creates a new turnToLimelight. */
-
-  //pass in original abs heading as robotAngleOffset
-  public turnToLimelight(Swerve s_Swerve, double robotAngleOffset) {
-    
-    
+public class driveToLimelightX extends PIDCommand {
+  /** Creates a new driveToLimelightX. */
+  //pass in original robot heading as angleoffset to replicate robot centric turning
+  public driveToLimelightX(Swerve s_Swerve, double angleOffset) {
     super(
         // The controller that the command will use
-        new PIDController(Constants.kPAngleOffset, 0, 0),
+        new PIDController(Constants.kPAngleOffset,0, 0),
         // This should return the measurement
         () -> s_Swerve.getYaw().getDegrees(),
         // This should return the setpoint (can also be a constant)
-        () -> limelightVision.getTX() + robotAngleOffset,
+        () -> limelightVision.getTS() + angleOffset,
         // This uses the output
         output -> {
-          // Use the output here
-          s_Swerve.turnToAngle(output);
+          s_Swerve.driveAuto(new ChassisSpeeds(output, 0, 0));
         });
-
-        
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
 

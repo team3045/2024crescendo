@@ -25,7 +25,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
-    Field2d robotField2d;
+    Field2d robotField2d = new Field2d();
 
     public Swerve() {
         gyro = new Pigeon2(15,"3045 Canivore");
@@ -151,12 +151,22 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    
+    //This one should only apply a rotation to chassis speeds
+    public void turnToAngle(double omegaRadiansPerSecond){
 
-    public void turnToAngle(ChassisSpeeds chassisSpeeds){
-        
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, omegaRadiansPerSecond);
+        SwerveModuleState[] turnToAngleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(turnToAngleStates, Constants.Swerve.maxSpeed);
+
+        for (SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(turnToAngleStates[mod.moduleNumber], false);
+        }
     }
 
     //used in turnToLimelight command
+    //replaced with turnToAngle for more general use case and hopefully better results
     public void turnToLimelight(double Output){
         drive(new Translation2d(0,0),Output,false,false);
     }

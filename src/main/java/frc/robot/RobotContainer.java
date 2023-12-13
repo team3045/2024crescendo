@@ -80,7 +80,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        turnLimelight.whileTrue(new turnToLimelight(s_Swerve));
+        turnLimelight.whileTrue(new turnToLimelight(s_Swerve, s_Swerve.getYaw().getDegrees()));
     }
 
     /**
