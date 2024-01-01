@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 
@@ -56,12 +58,25 @@ public class limelightVision extends SubsystemBase {
     return tS;
   }
 
+  public static double getDistanceX(){
+    return Constants.objectHeight / Math.tan(Units.degreesToRadians(limelightVision.getTY())) /  10;
+  }
+
 
   @Override
   public void periodic() {
+    tX = table.getEntry("tx").getDouble(0); //targetOffsetAngle_Horizontal
+    tY = table.getEntry("ty").getDouble(0); //targetOffsetAngle_Vertical
+    tA= table.getEntry("ta").getDouble(0); //targetArea
+    tS = table.getEntry("ts").getDouble(0); //targetSkew
+    tV = table.getEntry("tV").getDouble(0); //if target is in view
+    double distanceX = getDistanceX();
+
+
     SmartDashboard.putNumber("targetOffsetAngle_Horizontal: ", tX);
     SmartDashboard.putNumber("targetOffsetAngle_Vertical: ", tY);
     SmartDashboard.putNumber("targetArea: ", tA);
     SmartDashboard.putNumber("targetSkew: ", tS);
+    SmartDashboard.putNumber("Distance X", distanceX);
   }
 }

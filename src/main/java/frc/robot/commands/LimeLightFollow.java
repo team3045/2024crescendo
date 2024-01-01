@@ -23,8 +23,10 @@ public class LimeLightFollow extends CommandBase {
   double angleOffset;
 
   /** Creates a new LimeLightFollow. */
-  public LimeLightFollow(Swerve s_Swerve, limelightVision lVision) {
+  public LimeLightFollow(Swerve s_Swerve) {
     double area = limelightVision.getTA();
+
+    //make sure there is acc a target in view
     if (limelightVision.getTV())
       targetSeen = area > Constants.areaThreshold ? true: false;
 
@@ -32,38 +34,34 @@ public class LimeLightFollow extends CommandBase {
     prevTX = tX;
 
     this.s_Swerve = s_Swerve;
+
     if(targetSeen && limelightVision.getTX() < 1)
       inPosition = true;
     else 
       inPosition = false;
   
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.s_Swerve, lVision);
+    addRequirements(this.s_Swerve);
   }
 
   public double distanceOutput(){
-    PIDController distController = new PIDController(Constants.kPYGain, 0, 0);
+    PIDController disController = new PIDController(Constants.kPXGain, 0, 0);
+    double error = limelightVision.getDistanceX() - Constants.distanceDesired;
 
-    return distController.calculate(
-      (Constants.objectHeight / Math.tan(limelightVision.getTY())),
-      Constants.distanceDesired
-    );
+    return disController.calculate(error) * -1;
   }
 
-  public double rotationOutput(double angleOffset){
-    PIDController rotController = new PIDController(Constants.kPAngleOffset, 0, 0);
-
-    prevTX = tX;    
-    tX = limelightVision.getTX() + angleOffset;
-    if (targetSeen && !inPosition)
-      return rotController.calculate(s_Swerve.getYaw().getDegrees(), tX);
-    else if (targetSeen && inPosition)
-      return 0;
-    else
-      return rotController.calculate(s_Swerve.getYaw().getDegrees(), prevTX);
-    
-    
+  public double rotationOutput(){
+    double error = limelightVision.getTX();
+    try (PIDController rController = new PIDController(Constants.kPAngleOffset, 0, 0)) {
+      if(Math.abs(error) > 3)
+        return rController.calculate(error);
+      else
+        return 0;
+    }
   }
+
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -74,7 +72,7 @@ public class LimeLightFollow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    s_Swerve.driveAuto(new ChassisSpeeds(0,distanceOutput(), rotationOutput(angleOffset)));
+    s_Swerve.driveAuto(new ChassisSpeeds(distanceOutput(),0, rotationOutput()));
   }
 
   // Called once the command ends or is interrupted.

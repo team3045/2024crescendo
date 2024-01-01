@@ -40,6 +40,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
     private final JoystickButton turnLimelight = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
     private final JoystickButton followLimelight = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
+    private final JoystickButton driveLimelightX = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
@@ -47,7 +48,7 @@ public class RobotContainer {
 
     /*Autonomous Chooser */
     private final Command exampleAutoChoice = new exampleAuto(s_Swerve);
-    private final Command pathPlannerAutoChoice = new pathPlannerauto2023lib(s_Swerve);
+    private final Command pathPlannerAutoChoice = new pathPlannerPath2023lib(s_Swerve);
     private final Command xStanceAuto = new xPosition(s_Swerve);
 
     SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -65,11 +66,14 @@ public class RobotContainer {
             )
         );
 
+        lvision.periodic();
+
         autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
         autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
         autoChooser.addOption("X Stance", xStanceAuto);
 
         SmartDashboard.putData(autoChooser);
+
 
         // Configure the button bindings
         configureButtonBindings();
@@ -85,9 +89,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        turnLimelight.whileTrue(new turnToLimelight(s_Swerve, s_Swerve.getYaw().getDegrees()));
-        followLimelight.whileTrue(new LimeLightFollow(s_Swerve, lvision));
-
+        turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
+        followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
+        driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
     }
 
     /**
