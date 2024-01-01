@@ -16,17 +16,17 @@ import frc.robot.subsystems.limelightVision;
 public class driveToLimelightX extends PIDCommand {
   /** Creates a new driveToLimelightX. */
   //pass in original robot heading as angleoffset to replicate robot centric turning
-  public driveToLimelightX(Swerve s_Swerve, double angleOffset) {
+  public driveToLimelightX(Swerve s_Swerve) {
     super(
         // The controller that the command will use
-        new PIDController(Constants.kPAngleOffset,0, 0),
+        new PIDController(Constants.kPXGain,0, 0),
         // This should return the measurement
-        () -> s_Swerve.getYaw().getDegrees(),
+        () -> limelightVision.getDistanceX(),
         // This should return the setpoint (can also be a constant)
-        () -> limelightVision.getTS() + angleOffset,
+        () -> Constants.distanceDesired,
         // This uses the output
         output -> {
-          s_Swerve.driveAuto(new ChassisSpeeds(output, 0, 0));
+          s_Swerve.driveAuto(new ChassisSpeeds(-output, 0, 0));
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.

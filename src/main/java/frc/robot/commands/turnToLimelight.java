@@ -4,42 +4,40 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.limelightVision;
 
-
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class turnToLimelight extends PIDCommand {
-  /** Creates a new turnToLimelight. */
-
-  //pass in original abs heading as robotAngleOffset
-  public turnToLimelight(Swerve s_Swerve, double robotAngleOffset) {
-    
-    
-    super(
-        // The controller that the command will use
-        new PIDController(Constants.kPAngleOffset, 0, 0),
-        // This should return the measurement
-        () -> s_Swerve.getYaw().getDegrees(),
-        // This should return the setpoint (can also be a constant)
-        () -> limelightVision.getTX() + robotAngleOffset,
-        // This uses the output
-        output -> {
-          // Use the output here
-          s_Swerve.turnToAngle(output);
-        });
-
-        
+public class TurnToLimelight extends CommandBase {
+  private Swerve swerve;
+  /** Creates a new TurnToLimelight. */
+  public TurnToLimelight(Swerve swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
-    // Configure additional PID options by calling `getController` here.
 
-    addRequirements(s_Swerve);
+    this.swerve = swerve;
+
+    addRequirements(this.swerve);
   }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    double error = limelightVision.getTX();
+    SmartDashboard.putNumber("error", error);
+    SmartDashboard.putNumber("OUTput", error*Constants.kPAngleOffset);
+
+    if(Math.abs(error) > 5)
+      swerve.turnToAngle(error*Constants.kPAngleOffset*-1);
+    else
+      swerve.driveAuto(new ChassisSpeeds(0, 0, 0));
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

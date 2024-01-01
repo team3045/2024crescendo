@@ -161,14 +161,16 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(turnToAngleStates, Constants.Swerve.maxSpeed);
 
         for (SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(turnToAngleStates[mod.moduleNumber], false);
+            mod.setDesiredState(turnToAngleStates[mod.moduleNumber], true);
         }
     }
 
     //used in turnToLimelight command
     //replaced with turnToAngle for more general use case and hopefully better results
-    public void turnToLimelight(double Output){
-        drive(new Translation2d(0,0),Output,false,false);
+    public void turnToLimelight(double output){
+        drive(new Translation2d(0,0),output,false,false);
+        SmartDashboard.putNumber("LimelightPID output", output);
+        
     }
 
     @Override
