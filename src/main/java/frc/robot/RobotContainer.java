@@ -66,7 +66,7 @@ public class RobotContainer {
             )
         );
 
-        lvision.periodic();
+        //lvision.periodic();
 
         autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
         autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
@@ -89,9 +89,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
-        followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
-        driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
+        //turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
+        //followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
+        //driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
     }
 
     /**
