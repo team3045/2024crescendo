@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.lang.reflect.Field;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +25,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    Field2d robotField2d = new Field2d();
 
     public Swerve() {
         gyro = new Pigeon2(15,"3045 Canivore");
@@ -122,7 +125,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public SwerveModuleState[] getXStance(){
-        var xStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0), 
+        SwerveModuleState xStates[] = Constants.Swerve.swerveKinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0), 
         new Translation2d(0,0));
 
         xStates[0].angle = new Rotation2d(3*Math.PI / 2 -  Math.atan(Constants.Swerve.trackWidth / Constants.Swerve.wheelBase));
@@ -147,12 +150,33 @@ public class Swerve extends SubsystemBase {
             mod.setDesiredState(autoSwerveStates[mod.moduleNumber], false);
         }
     }
-    Field2d robotField2d = new Field2d();
+
+    
+    //This one should only apply a rotation to chassis speeds
+    public void turnToAngle(double omegaRadiansPerSecond){
+
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, omegaRadiansPerSecond);
+        SwerveModuleState[] turnToAngleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(turnToAngleStates, Constants.Swerve.maxSpeed);
+
+        for (SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(turnToAngleStates[mod.moduleNumber], true);
+        }
+    }
+
+    //used in turnToLimelight command
+    //replaced with turnToAngle for more general use case and hopefully better results
+    public void turnToLimelight(double output){
+        drive(new Translation2d(0,0),output,false,false);
+        SmartDashboard.putNumber("LimelightPID output", output);
+        
+    }
+
     @Override
     public void periodic(){
         swerveOdometry.update(getYaw(), getModulePositions());
         robotField2d.setRobotPose(getPose());
-
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
