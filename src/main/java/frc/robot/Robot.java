@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
     ctreConfigs = new CTREConfigs();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    SmartDashboard.putNumber("back left offset", Constants.Swerve.Mod2.angleOffset.getDegrees());
+    //SmartDashboard.putNumber("back left offset", Constants.Swerve.Mod2.angleOffset.getDegrees());
     m_robotContainer = new RobotContainer();
   }
 

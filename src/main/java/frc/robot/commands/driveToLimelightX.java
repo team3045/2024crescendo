@@ -26,6 +26,7 @@ public class driveToLimelightX extends PIDCommand {
         () -> Constants.distanceDesired,
         // This uses the output
         output -> {
+          output = Math.abs(output) < 0.1 ? 0 : output;
           s_Swerve.driveAuto(new ChassisSpeeds(-output, 0, 0));
         });
     // Use addRequirements() here to declare subsystem dependencies.
