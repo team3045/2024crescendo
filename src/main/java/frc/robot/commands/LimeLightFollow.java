@@ -8,10 +8,7 @@ import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-<<<<<<< HEAD
-=======
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
->>>>>>> testingBranch1-1-24
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -20,16 +17,9 @@ import frc.robot.subsystems.limelightVision;
 public class LimeLightFollow extends CommandBase {
   private boolean targetSeen;
   private double tX;
-<<<<<<< HEAD
-  private double prevTX;
-  private double tY;
-  private Swerve s_Swerve;
-  private boolean inPosition;
-=======
   private Swerve s_Swerve;
   private boolean inPosition;
   double error;
->>>>>>> testingBranch1-1-24
   double angleOffset;
 
   /** Creates a new LimeLightFollow. */
@@ -41,10 +31,6 @@ public class LimeLightFollow extends CommandBase {
       targetSeen = area > Constants.areaThreshold ? true: false;
 
     tX = limelightVision.getTX();
-<<<<<<< HEAD
-    prevTX = tX;
-=======
->>>>>>> testingBranch1-1-24
 
     this.s_Swerve = s_Swerve;
 
@@ -58,19 +44,6 @@ public class LimeLightFollow extends CommandBase {
   }
 
   public double distanceOutput(){
-<<<<<<< HEAD
-    PIDController disController = new PIDController(Constants.kPXGain, 0, 0);
-    double error = limelightVision.getDistanceX() - Constants.distanceDesired;
-
-    return disController.calculate(error) * -1;
-  }
-
-  public double rotationOutput(){
-    double error = limelightVision.getTX();
-    try (PIDController rController = new PIDController(Constants.kPAngleOffset, 0, 0)) {
-      if(Math.abs(error) > 3)
-        return rController.calculate(error);
-=======
     try (PIDController disController = new PIDController(Constants.kPXGain, 0, 0)) {
       double error = limelightVision.getDistanceX() - Constants.distanceDesired;
       error = Math.abs(error) < 0.1 ? 0 : error;
@@ -86,7 +59,6 @@ public class LimeLightFollow extends CommandBase {
       if(Math.abs(error) > 1){
         return rController.calculate(error);
       }
->>>>>>> testingBranch1-1-24
       else
         return 0;
     }
