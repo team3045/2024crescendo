@@ -17,8 +17,6 @@ import frc.robot.subsystems.limelightVision;
 public class LimeLightFollow extends CommandBase {
   private boolean targetSeen;
   private double tX;
-  private double prevTX;
-  private double tY;
   private Swerve s_Swerve;
   private boolean inPosition;
   double error;
@@ -33,7 +31,6 @@ public class LimeLightFollow extends CommandBase {
       targetSeen = area > Constants.areaThreshold ? true: false;
 
     tX = limelightVision.getTX();
-    prevTX = tX;
 
     this.s_Swerve = s_Swerve;
 

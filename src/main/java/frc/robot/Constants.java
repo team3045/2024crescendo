@@ -28,6 +28,8 @@ public final class Constants {
     public static final double kPXGain = 1;
     public static final double distanceDesired = 3;
     public static final double areaThreshold = 0.1;
+    public static final double objAngle = 0; //what angle it is at in relation to our robot zero heading
+    public static final double kPYGain = 0.15;
 
 
     public static final class Swerve {
