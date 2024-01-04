@@ -21,8 +21,10 @@ public final class Constants {
     public static final double rotationModifier = 0.04; //reduce the speed of rotation on teleop
     public static final double translationModifier = 0.65; //reduce the speed of translation on teleop
 
-    public static final double objectHeight = 3; //in feet
-    public static final double kPAngleOffset = 0.5;
+    public static final double objectHeight = 28; //in inches
+    public static final double limelightHeight = 20; //in inches
+    public static final double objDiff = (objectHeight - limelightHeight) / 12; //in feet
+    public static final double kPAngleOffset = 0.15;
     public static final double kPXGain = 1;
     public static final double distanceDesired = 3;
     public static final double areaThreshold = 0.1;
@@ -147,7 +149,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(91);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(53);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }

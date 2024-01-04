@@ -68,9 +68,9 @@ public class RobotContainer {
 
         lvision.periodic(); 
 
-        //autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
-        //autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
-        //autoChooser.addOption("X Stance", xStanceAuto);
+        autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
+        autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
+        autoChooser.addOption("X Stance", xStanceAuto);
 
         SmartDashboard.putData(autoChooser);
 

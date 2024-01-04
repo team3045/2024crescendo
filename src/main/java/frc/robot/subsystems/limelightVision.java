@@ -32,7 +32,6 @@ public class limelightVision extends SubsystemBase {
 
   /** Creates a new limelightVision. */
   public limelightVision() {
-    
 
   }
 
@@ -59,7 +58,7 @@ public class limelightVision extends SubsystemBase {
   }
 
   public static double getDistanceX(){
-    return Constants.objectHeight / Math.tan(Units.degreesToRadians(limelightVision.getTY())) /  10;
+    return Constants.objDiff / Math.tan(Units.degreesToRadians(limelightVision.getTY()));
   }
 
 

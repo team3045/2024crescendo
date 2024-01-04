@@ -8,6 +8,7 @@ import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -20,6 +21,7 @@ public class LimeLightFollow extends CommandBase {
   private double tY;
   private Swerve s_Swerve;
   private boolean inPosition;
+  double error;
   double angleOffset;
 
   /** Creates a new LimeLightFollow. */
@@ -45,17 +47,21 @@ public class LimeLightFollow extends CommandBase {
   }
 
   public double distanceOutput(){
-    PIDController disController = new PIDController(Constants.kPXGain, 0, 0);
-    double error = limelightVision.getDistanceX() - Constants.distanceDesired;
+    try (PIDController disController = new PIDController(Constants.kPXGain, 0, 0)) {
+      double error = limelightVision.getDistanceX() - Constants.distanceDesired;
+      error = Math.abs(error) < 0.1 ? 0 : error;
 
-    return disController.calculate(error) * -1;
+      return (Math.abs(disController.calculate(error)*-1)) < 0.1 ? 0 : error;
+    }
+    
   }
 
   public double rotationOutput(){
-    double error = limelightVision.getTX();
+    error = limelightVision.getTX();
     try (PIDController rController = new PIDController(Constants.kPAngleOffset, 0, 0)) {
-      if(Math.abs(error) > 3)
+      if(Math.abs(error) > 1){
         return rController.calculate(error);
+      }
       else
         return 0;
     }
