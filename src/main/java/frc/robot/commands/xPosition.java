@@ -9,19 +9,12 @@ import frc.robot.SwerveModule;
 
 public class xPosition extends CommandBase {
     private Swerve s_Swerve;
-    private SwerveModule[] mSwerveMods;
+   
 
 
     public xPosition(Swerve s_Swerve){
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
-
-        mSwerveMods = new SwerveModule[] {
-            new SwerveModule(0, Constants.Swerve.Mod0.constants),
-            new SwerveModule(1, Constants.Swerve.Mod1.constants),
-            new SwerveModule(2, Constants.Swerve.Mod2.constants),
-            new SwerveModule(3, Constants.Swerve.Mod3.constants)
-        };
     }
 
     public void setXPosition(){
@@ -30,10 +23,10 @@ public class xPosition extends CommandBase {
         SwerveModuleState botLeft = new SwerveModuleState(0, Constants.Swerve.Mod2.angleOffset.getDegrees() < 315 ? new Rotation2d(Constants.Swerve.Mod1.angleOffset.getDegrees()+45) : new Rotation2d(Constants.Swerve.Mod1.angleOffset.getDegrees()+45-360));
         SwerveModuleState botRight = new SwerveModuleState(0, Constants.Swerve.Mod3.angleOffset.getDegrees() < 315 ? new Rotation2d(Constants.Swerve.Mod1.angleOffset.getDegrees()+45) : new Rotation2d(Constants.Swerve.Mod1.angleOffset.getDegrees()+45-360));
 
-        mSwerveMods[0].setDesiredState(topLeft, false);
-        mSwerveMods[1].setDesiredState(topRight, false);
-        mSwerveMods[2].setDesiredState(botLeft, false);
-        mSwerveMods[3].setDesiredState(botRight, false);
+        s_Swerve.mSwerveMods[0].setDesiredState(topLeft, false);
+        s_Swerve.mSwerveMods[1].setDesiredState(topRight, false);
+        s_Swerve.mSwerveMods[2].setDesiredState(botLeft, false);
+        s_Swerve.mSwerveMods[3].setDesiredState(botRight, false);
     }
     
     @Override
