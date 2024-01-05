@@ -45,7 +45,7 @@ public class LimeLightFollow extends CommandBase {
 
   public double distanceOutput(){
     try (PIDController disController = new PIDController(Constants.kPXGain, 0, 0)) {
-      double error = limelightVision.getDistanceX() - Constants.distanceDesired;
+      double error = limelightVision.getDistanceX() - Constants.distanceDesired / 12; //inches to feet
       error = Math.abs(error) < 0.1 ? 0 : error;
 
       return (Math.abs(disController.calculate(error)*-1)) < 0.1 ? 0 : error;

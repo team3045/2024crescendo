@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
@@ -35,7 +36,7 @@ public class AlineAlongCircle extends CommandBase {
     try (PIDController xController = new PIDController(Constants.kPXGain, 0, 0)) {
       double xError = FindCirclePoint.findPose2d(s_Swerve).getY() - s_Swerve.getPose().getY();
 
-      xError = Math.abs(xError) < 0.1 ? 0 : xError;
+      //xError = Math.abs(xError) < 0.1 ? 0 : xError;
 
       return Math.abs(xController.calculate(xError)) < 0.1 ? 0 : xController.calculate(xError) * -1;
 
@@ -47,7 +48,7 @@ public class AlineAlongCircle extends CommandBase {
       double angError = FindCirclePoint.findPose2d(s_Swerve).getRotation().getDegrees() - s_Swerve.getYaw().getDegrees();
 
       if(Math.abs(angError) > 1){
-        return angController.calculate(angError);
+        return angController.calculate(angError) *-1;
       }
       else
         return 0;
@@ -61,10 +62,39 @@ public class AlineAlongCircle extends CommandBase {
 
     double time = 2; //How many seconds, in this case it will complete the motion in two seconds
 
-    return new ChassisSpeeds(xError / time, yError / time, angError / time);
 
-
+    return ChassisSpeeds.fromFieldRelativeSpeeds(-1 * xError / time, -1 * yError / time, -angError / time, s_Swerve.getYaw());
+    //return new ChassisSpeeds(-1 * xError / time, -1 * yError / time, -angError / time);
   }
+
+  public ChassisSpeeds splitIntoPoint(){
+    ChassisSpeeds pointSpeeds = new ChassisSpeeds(calcWithSecs().vxMetersPerSecond, calcWithSecs().vyMetersPerSecond, 0);
+    return pointSpeeds;
+  }
+
+  public ChassisSpeeds splitIntoAng(){
+    ChassisSpeeds pointSpeeds = new ChassisSpeeds(0, 0, calcWithSecs().omegaRadiansPerSecond);
+    return pointSpeeds;
+  }
+
+  public ChassisSpeeds difChassisSpeeds(){
+    double xOutput = 0;
+    double yOutput = 0;
+    double angOutput = 0;
+
+    try (PIDController xController = new PIDController(Constants.kPXGain, 0, 0)) {
+      xOutput = xController.calculate(FindCirclePoint.distX(s_Swerve));
+    }
+    try (PIDController yController = new PIDController(Constants.kPYGain, 0, 0)) {
+      yOutput = yController.calculate(FindCirclePoint.distY(s_Swerve));
+    }
+    try (PIDController angController = new PIDController(Constants.kPAngleOffset, 0, 0)) {
+      angOutput = angController.calculate(FindCirclePoint.distAng(s_Swerve));
+    }
+
+    return new ChassisSpeeds(xOutput, yOutput, angOutput);
+  }
+
 
   //Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -72,8 +102,13 @@ public class AlineAlongCircle extends CommandBase {
     //TRYBOTH
     
     //s_Swerve.driveAuto(calcWithSecs()); 
+    //SmartDashboard.putNumber("VXpersec", -1 * xCalc());
+    //SmartDashboard.putNumber("VYpersec", -1 * yCalc());
+    //SmartDashboard.putNumber("AngPerSec", -angCalc());
+    SmartDashboard.putString("CirclePoint", FindCirclePoint.findPose2d(s_Swerve).getTranslation().toString());
 
-    s_Swerve.driveAuto(new ChassisSpeeds(xCalc(), yCalc(), angCalc()));
+    //s_Swerve.driveAuto(new ChassisSpeeds(xCalc(), yCalc(), angCalc()));
+   // s_Swerve.driveAuto(difChassisSpeeds());
   }
 
   // Called once the command ends or is interrupted.

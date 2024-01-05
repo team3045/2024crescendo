@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.lib.math.FindCirclePoint;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -72,6 +72,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
         autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
         autoChooser.addOption("X Stance", xStanceAuto);
+        
 
         SmartDashboard.putData(autoChooser);
 

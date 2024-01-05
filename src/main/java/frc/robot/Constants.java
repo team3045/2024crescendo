@@ -28,7 +28,7 @@ public final class Constants {
     public static final double objDiff = (objectHeight - limelightHeight) / 12; //in feet
     public static final double kPAngleOffset = 0.15;
     public static final double kPXGain = 1;
-    public static final double distanceDesired = 3;
+    public static final double distanceDesired = 36;
     public static final double areaThreshold = 0.1;
     public static final double objAngle = 0; //what angle it is at in relation to our robot zero heading
     public static final double kPYGain = 0.15;
@@ -153,7 +153,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(53);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(91);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
