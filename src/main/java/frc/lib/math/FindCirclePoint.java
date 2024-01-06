@@ -23,7 +23,7 @@ public class FindCirclePoint {
 
     public static Pose2d findPose2d(Swerve s_Swerve){
 
-        radius = limelightVision.getDistanceX() * 12;
+        radius = limelightVision.getDistanceX() * 12; //convert from inches to feet
 
         //radians b/c rot2d uses radians, 
         //adds the objangle to account for wherever obj is positioned on field
@@ -35,9 +35,9 @@ public class FindCirclePoint {
         double yOffset = s_Swerve.getPose().getY(); //have to do some logic for + or - later depending on whether the obj is to left or right
         double xOffset = s_Swerve.getPose().getX();
 
-        double centerX = Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * robHeading.getCos();
+        double centerX = Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.cos(90 - robHeading.getDegrees());
 
-        double centerY =  Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * robHeading.getSin();
+        double centerY =  Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.sin(90 - robHeading.getDegrees());
 
 
 
