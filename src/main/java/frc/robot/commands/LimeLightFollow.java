@@ -76,6 +76,7 @@ public class LimeLightFollow extends CommandBase {
   @Override
   public void execute() {
     s_Swerve.driveAuto(new ChassisSpeeds(distanceOutput(),0, rotationOutput()));
+    SmartDashboard.putNumber("LimeLight_out_distance", distanceOutput());
   }
 
   // Called once the command ends or is interrupted.

@@ -23,7 +23,7 @@ public class FindCirclePoint {
 
     public static Pose2d findPose2d(Swerve s_Swerve){
 
-        radius = limelightVision.getDistanceX() * 12; //convert from inches to feet
+        radius = limelightVision.getDistanceX() * 12; //convert from feet to inches
 
         //radians b/c rot2d uses radians, 
         //adds the objangle to account for wherever obj is positioned on field
@@ -35,12 +35,17 @@ public class FindCirclePoint {
         double yOffset = s_Swerve.getPose().getY(); //have to do some logic for + or - later depending on whether the obj is to left or right
         double xOffset = s_Swerve.getPose().getX();
 
-        double centerX = Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.cos(90 - robHeading.getDegrees());
+        double centerX = s_Swerve.getPose().getX() + Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2) * robHeading.getCos();
+        double centerY = s_Swerve.getPose().getY() + Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2) * robHeading.getSin();
+        SmartDashboard.putNumber("X", centerX);
+        SmartDashboard.putNumber("Y", centerY);
 
-        double centerY =  Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.sin(90 - robHeading.getDegrees());
-
-
-
+        
+        double lateralDistance = (radius * Math.sin(Math.toRadians(90-robHeading.getDegrees())))/ Math.sin(Math.toRadians(robHeading.getDegrees()));
+        // double cantthinkofnamerightnow = (Math.sin(Math.toRadians(robHeading.getDegrees)))/(radius);
+        //double rPostLateralMovement = Math.sqrt(radius * radius - lateralDistance * lateralDistance);
+        //double moveDistance = Math.sqrt(Math.pow(rPostLateralMovement, 2) + Math.pow(lateralDistance, 2));
+        //double moveAng = Math.toDegrees(Math.asin((3-rPostLateralMovement)/moveDistance)) + 90;
         //subtract radius to find point on circle directly belox it
         return new Pose2d(new Translation2d(centerX, centerY), new Rotation2d(Math.toRadians(Constants.objAngle)));
     }
