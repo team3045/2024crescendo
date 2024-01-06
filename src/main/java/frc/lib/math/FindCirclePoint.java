@@ -40,14 +40,16 @@ public class FindCirclePoint {
         SmartDashboard.putNumber("X", centerX);
         SmartDashboard.putNumber("Y", centerY);
 
-        
-        double lateralDistance = (radius * Math.sin(Math.toRadians(90-robHeading.getDegrees())))/ Math.sin(Math.toRadians(robHeading.getDegrees()));
-        // double cantthinkofnamerightnow = (Math.sin(Math.toRadians(robHeading.getDegrees)))/(radius);
-        //double rPostLateralMovement = Math.sqrt(radius * radius - lateralDistance * lateralDistance);
-        //double moveDistance = Math.sqrt(Math.pow(rPostLateralMovement, 2) + Math.pow(lateralDistance, 2));
-        //double moveAng = Math.toDegrees(Math.asin((3-rPostLateralMovement)/moveDistance)) + 90;
+        double cantthinkofnamerightnow = (Math.sin(Math.toRadians(robHeading.getDegrees)))/(radius);
+        double lateralDistance = (Math.sin(Math.toRadians(robHeading.getDegrees())))/radius;
+
+        double rPostLateralMovement = Math.sqrt(radius * radius - lateralDistance * lateralDistance);
+        double moveDistance = Math.sqrt(Math.pow(radius-rPostLateralMovement, 2) + Math.pow(lateralDistance, 2));
+        double moveAng = Math.toDegrees(Math.asin((3-rPostLateralMovement)/moveDistance)) + 90;
+        return new Pose2d(new Translation2d(xOffset-lateralDistance,yOffset-radius+lateralDistance),new Rotation2d(Math.toRadians(moveAng)));
+
         //subtract radius to find point on circle directly belox it
-        return new Pose2d(new Translation2d(centerX, centerY), new Rotation2d(Math.toRadians(Constants.objAngle)));
+        //return new Pose2d(new Translation2d(centerX, centerY), new Rotation2d(Math.toRadians(Constants.objAngle)));
     }
 
     public static double distY(Swerve s_Swerve){
