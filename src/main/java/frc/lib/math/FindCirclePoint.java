@@ -35,9 +35,11 @@ public class FindCirclePoint {
         double yOffset = s_Swerve.getPose().getY(); //have to do some logic for + or - later depending on whether the obj is to left or right
         double xOffset = s_Swerve.getPose().getX();
 
-        double centerX = Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.cos(90 - robHeading.getDegrees());
+        double centerX = xOffset + Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.cos(90 - robHeading.getDegrees());
 
         double centerY =  Units.inchesToMeters(radius+Constants.Swerve.wheelBase/2+2) * Math.sin(90 - robHeading.getDegrees());
+
+        centerY += robHeading.getDegrees() > 0 ? yOffset : -1 * yOffset;
 
 
 
