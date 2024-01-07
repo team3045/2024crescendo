@@ -56,7 +56,7 @@ public final class Constants {
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Module Gear Ratios */
-        public static final double driveGearRatio = 6.75; //set to drive gear ratio
+        public static final double driveGearRatio = 10.20; //set to drive gear ratio
         public static final double angleGearRatio = 15.43; //set to angle gear ratio
 
         /* Motor Inverts */
@@ -153,7 +153,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(91);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(198);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
