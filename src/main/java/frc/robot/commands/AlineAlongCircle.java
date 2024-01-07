@@ -10,11 +10,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightTarget_Retro;
 import frc.robot.subsystems.Swerve;
 
 public class AlineAlongCircle extends CommandBase {
   private Swerve s_Swerve;
 
+
+  LimelightHelpers.LimelightResults lResults = LimelightHelpers.getLatestResults("");
+  
   /** Creates a new AlineAlongCircle. */
   public AlineAlongCircle(Swerve s_Swerve) {
     this.s_Swerve = s_Swerve;
@@ -22,7 +27,7 @@ public class AlineAlongCircle extends CommandBase {
   }
 
   public double yCalc(){
-    try (PIDController yController = new PIDController(Constants.kPYGain, 0, 0)) {
+    try (PIDController yController = new PIDController(Constants.kPYGain, 0.1, 0)) {
       double yError = FindCirclePoint.findPose2d(s_Swerve).getY() - s_Swerve.getPose().getY();
 
       yError = Math.abs(yError) < 0.1 ? 0 : yError;
@@ -33,8 +38,8 @@ public class AlineAlongCircle extends CommandBase {
   }
 
   public double xCalc(){
-    try (PIDController xController = new PIDController(Constants.kPXGain, 0, 0)) {
-      double xError = FindCirclePoint.findPose2d(s_Swerve).getY() - s_Swerve.getPose().getY();
+    try (PIDController xController = new PIDController(Constants.kPXGain, 0.1, 0)) {
+      double xError = FindCirclePoint.findPose2d(s_Swerve).getX() - s_Swerve.getPose().getX();
 
       //xError = Math.abs(xError) < 0.1 ? 0 : xError;
 
@@ -44,7 +49,7 @@ public class AlineAlongCircle extends CommandBase {
   }
 
   public double angCalc(){
-    try(PIDController angController = new PIDController(Constants.kPAngleOffset, 0, 0)){
+    try(PIDController angController = new PIDController(Constants.kPAngleOffset, 0.1, 0)){
       double angError = FindCirclePoint.findPose2d(s_Swerve).getRotation().getDegrees() - s_Swerve.getYaw().getDegrees();
 
       if(Math.abs(angError) > 1){
@@ -99,16 +104,19 @@ public class AlineAlongCircle extends CommandBase {
   //Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
+    lResults = LimelightHelpers.getLatestResults("");
+
     //TRYBOTH
-    
     //s_Swerve.driveAuto(calcWithSecs()); 
     //SmartDashboard.putNumber("VXpersec", -1 * xCalc());
     //SmartDashboard.putNumber("VYpersec", -1 * yCalc());
     //SmartDashboard.putNumber("AngPerSec", -angCalc());
     SmartDashboard.putString("CirclePoint", FindCirclePoint.findPose2d(s_Swerve).getTranslation().toString());
-
+    SmartDashboard.putNumberArray("LimelightHelpers Pose", LimelightHelpers.getTargetPose_RobotSpace(""));
+    SmartDashboard.putNumberArray("lResults", lResults.targetingResults.camerapose_robotspace);
+    
     //s_Swerve.driveAuto(new ChassisSpeeds(xCalc(), yCalc(), angCalc()));
-   // s_Swerve.driveAuto(difChassisSpeeds());
+    //s_Swerve.driveAuto(difChassisSpeeds());
   }
 
   // Called once the command ends or is interrupted.
