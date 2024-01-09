@@ -1,12 +1,19 @@
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -38,10 +45,20 @@ public final class Constants {
     public static final class PoseEstimations {
         public static final Pose2d originPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
 
-        //where on ther field does the robot start compared to origin
+        //where on ther field does the robot start compared to origin SET LATER
         public static final Transform2d originToRobotStart = new Transform2d(new Translation2d(0, 0), new Rotation2d(0));
         
         public static final Pose2d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
+
+        //Cameras position in relation to robot SET LATER
+        public static final Transform3d robotToCam = new Transform3d(new Translation3d(0, Constants.Swerve.wheelBase / 2, Units.feetToMeters(2)), 
+            new Rotation3d(0,0,0));
+
+        //Map of Apriltags IDs and their 3d positions on the field SET LATER
+        public static final Map<Integer, Pose3d> idPoses = Map.of(
+            0, new Pose3d(0, 0, 0, new Rotation3d(0,0,0)),
+            1, new Pose3d(1, 0, 0, new Rotation3d(0,0,0)));
+        
     }
 
 

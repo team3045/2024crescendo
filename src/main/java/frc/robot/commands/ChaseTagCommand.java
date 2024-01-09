@@ -5,11 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Swerve;
 
 public class ChaseTagCommand extends CommandBase {
+  private Swerve s_Swerve;
   /** Creates a new ChaseTagCommand. */
-  public ChaseTagCommand() {
+  public ChaseTagCommand(Swerve swerve) {
+    this.s_Swerve = swerve;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
