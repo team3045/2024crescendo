@@ -46,6 +46,7 @@ public class Swerve extends SubsystemBase {
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+        swerveOdometry.resetPosition(new Rotation2d(0), getModulePositions(), Constants.PoseEstimations.robotStartPose);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -89,6 +90,7 @@ public class Swerve extends SubsystemBase {
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
+
 
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
@@ -187,5 +189,6 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Robot Headin: ", getYaw().getDegrees());
         SmartDashboard.putString("Robot Position", getPose().getTranslation().toString());
         SmartDashboard.putData("Robot Position Graph", robotField2d);
+        
     }
 }

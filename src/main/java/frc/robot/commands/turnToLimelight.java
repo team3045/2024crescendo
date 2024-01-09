@@ -26,10 +26,8 @@ public class TurnToLimelight extends CommandBase {
   @Override
   public void execute() {
     double error = limelightVision.getTX();
-    SmartDashboard.putNumber("error", error);
-    SmartDashboard.putNumber("OUTput", error*Constants.kPAngleOffset);
-
-    if(Math.abs(error) > 5)
+    
+    if(Math.abs(error) > 1)
       swerve.turnToAngle(error*Constants.kPAngleOffset*-1);
     else
       swerve.driveAuto(new ChassisSpeeds(0, 0, 0));

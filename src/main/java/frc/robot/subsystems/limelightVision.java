@@ -10,12 +10,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
 
 
 
 public class limelightVision extends SubsystemBase {
-  private Swerve s_Swerve;
+  
 
 
 /* tv = Whether the limelight has any valid targets (0 or 1)
@@ -31,8 +32,7 @@ public class limelightVision extends SubsystemBase {
   private static double tV = table.getEntry("tV").getDouble(0); //if target is in view
 
   /** Creates a new limelightVision. */
-  public limelightVision(Swerve s_Swerve) {
-    this.s_Swerve = s_Swerve;
+  public limelightVision() {
 
   }
 
@@ -59,7 +59,7 @@ public class limelightVision extends SubsystemBase {
   }
 
   public static double getDistanceX(){
-    return Constants.objectHeight / Math.tan(Units.degreesToRadians(limelightVision.getTY())) /  10;
+    return Constants.objDiff / Math.tan(Units.degreesToRadians(limelightVision.getTY()));
   }
 
 

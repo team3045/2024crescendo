@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.lib.math.FindCirclePoint;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -40,11 +40,12 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
     private final JoystickButton turnLimelight = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
     private final JoystickButton followLimelight = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
-    private final JoystickButton driveLimelightX = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
+    //private final JoystickButton driveLimelightX = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
+    private final JoystickButton alineAlongCircle = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final limelightVision lvision = new limelightVision(s_Swerve);
+    private final limelightVision lvision = new limelightVision();
 
     /*Autonomous Chooser */
     private final Command exampleAutoChoice = new exampleAuto(s_Swerve);
@@ -66,11 +67,12 @@ public class RobotContainer {
             )
         );
 
-        lvision.periodic();
+        lvision.periodic(); 
 
         autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
         autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
         autoChooser.addOption("X Stance", xStanceAuto);
+        
 
         SmartDashboard.putData(autoChooser);
 
@@ -91,7 +93,8 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
         followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
-        driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
+        //driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
+        alineAlongCircle.whileTrue(new AlineAlongCircle(s_Swerve));
     }
 
     /**

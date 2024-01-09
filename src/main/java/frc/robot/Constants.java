@@ -3,7 +3,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -22,14 +24,25 @@ public final class Constants {
     private static final double kAngularVelocityToWheelSpeed = WHEEL_DIAMETER*Math.PI;
     public static final double rotationModifier = 0.04; //reduce the speed of rotation on teleop
     public static final double translationModifier = 0.65; //reduce the speed of translation on teleop
-    
-    //Limelight
-    public static final double kPAngleOffset = 0.1;
-    public static final double kPXGain = 0.3;
-    public static final double objectHeight = 3; //in feet
-    public static final double distanceDesired = 3;
-    public static final double areaThreshold = 0.1;
 
+    public static final double objectHeight = 23.5; // in inches
+    public static final double limelightHeight = 18.5; // in inches
+    public static final double objDiff = (objectHeight - limelightHeight) / 12; // in feet
+    public static final double kPAngleOffset = 0.15;
+    public static final double kPXGain = 1.0;
+    public static final double distanceDesired = 36;
+    public static final double areaThreshold = 0.1;
+    public static final double objAngle = 0; // what angle it is at in relation to our robot zero heading
+    public static final double kPYGain = 0.15;
+
+    public static final class PoseEstimations {
+        public static final Pose2d originPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
+
+        //where on ther field does the robot start compared to origin
+        public static final Transform2d originToRobotStart = new Transform2d(new Translation2d(0, 0), new Rotation2d(0));
+        
+        public static final Pose2d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
+    }
 
 
     public static final class Swerve {
@@ -121,7 +134,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(314);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(313.15);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -131,7 +144,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(143.71);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(144.22);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -141,7 +154,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(285);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(286.9);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -151,7 +164,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(62);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(91);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
