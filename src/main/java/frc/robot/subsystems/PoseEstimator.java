@@ -59,7 +59,7 @@ public class PoseEstimator extends SubsystemBase {
     sPoseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
       s_Swerve.getYaw(),
       s_Swerve.getModulePositions(),
-      PoseEstimations.robotStartPose);
+      PoseEstimations.robotStartPose.toPose2d());
 
 
     limelightCam = camera; 

@@ -52,12 +52,12 @@ public final class Constants {
 
 
     public static final class PoseEstimations {
-        public static final Pose2d originPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
+        public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform2d originToRobotStart = new Transform2d(new Translation2d(0, 0), new Rotation2d(0));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(132), Units.inchesToMeters(76.75),Units.inchesToMeters(3)), new Rotation3d(0,0,180));
         
-        public static final Pose2d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
+        public static final Pose3d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(0, Constants.Swerve.wheelBase / 2, Units.feetToMeters(2)), 
@@ -79,8 +79,9 @@ public final class Constants {
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Integer, Pose3d> idPoses = Map.of(
-            0, new Pose3d(0, 0, 0, new Rotation3d(0,0,0)),
-            1, new Pose3d(1, 0, 0, new Rotation3d(0,0,0)));
+            3, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180)),
+            5, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
+            11, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
         
     }
 
