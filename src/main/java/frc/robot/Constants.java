@@ -6,6 +6,9 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.COTSFalconSwerveConstants;
@@ -42,6 +46,11 @@ public final class Constants {
     public static final double objAngle = 0; // what angle it is at in relation to our robot zero heading
     public static final double kPYGain = 0.15;
 
+
+
+
+
+
     public static final class PoseEstimations {
         public static final Pose2d originPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
 
@@ -54,12 +63,30 @@ public final class Constants {
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(0, Constants.Swerve.wheelBase / 2, Units.feetToMeters(2)), 
             new Rotation3d(0,0,0));
 
+        public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 
+             new Rotation3d(0,0,Units.degreesToRadians(180)));
+
+        //Max velocity and Max accel
+        public static final TrapezoidProfile.Constraints X_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        public static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        //Max angular velo and accel
+        public static final TrapezoidProfile.Constraints A_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared);
+
+        //PID CONSTANTS TUNE LATER
+        public static final double kPXGain = 0.5;
+        public static final double kPYGain = 0.5;
+        public static final double kPAGain = 1.0;
+
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Integer, Pose3d> idPoses = Map.of(
             0, new Pose3d(0, 0, 0, new Rotation3d(0,0,0)),
             1, new Pose3d(1, 0, 0, new Rotation3d(0,0,0)));
         
     }
+
+
+
+
 
 
     public static final class Swerve {

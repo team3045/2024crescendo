@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -27,6 +29,9 @@ public class RobotContainer {
     private final Joystick driveController = new Joystick(0);
     //private final Joystick rotationJoystick = new Joystick(1);
 
+    /*Camera */
+    private final PhotonCamera limelight = new PhotonCamera("limelight");
+
     
 
     /* Drive Controls */
@@ -37,15 +42,19 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driveController, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
     private final JoystickButton turnLimelight = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
     private final JoystickButton followLimelight = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
-    //private final JoystickButton driveLimelightX = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
     private final JoystickButton alineAlongCircle = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
+
+    private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
+
+    
+
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final limelightVision lvision = new limelightVision();
+    private final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, limelight);
 
     /*Autonomous Chooser */
     private final Command exampleAutoChoice = new exampleAuto(s_Swerve);
@@ -68,6 +77,7 @@ public class RobotContainer {
         );
 
         lvision.periodic(); 
+        poseEstimator.periodic();
 
         autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
         autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
@@ -93,8 +103,7 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
         followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
-        //driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
-        alineAlongCircle.whileTrue(new AlineAlongCircle(s_Swerve));
+        alineAlongCircle.whileTrue(new ChaseTagCommand(s_Swerve, limelight, rotationAxis));
     }
 
     /**
