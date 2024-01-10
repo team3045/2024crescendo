@@ -4,15 +4,9 @@
 
 package frc.robot.subsystems;
 
-import java.security.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
-
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -25,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,21 +43,30 @@ public class PoseEstimator extends SubsystemBase {
   
 
   private Swerve s_Swerve;
+  private Rotation2d gyroAngle;
+  private SwerveModulePosition[] modulePositions;
   
 
   /** Creates a new PoseEstimator. */
   public PoseEstimator(Swerve s_Swerve, PhotonCamera camera) {
 
     this.s_Swerve = s_Swerve;
+    this.gyroAngle = s_Swerve.getYaw();
+    this.modulePositions = s_Swerve.getModulePositions();
 
     //initialize pose estimator
     sPoseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
-      s_Swerve.getYaw(),
-      s_Swerve.getModulePositions(),
+      gyroAngle,
+      modulePositions,
       PoseEstimations.robotStartPose.toPose2d());
 
 
     limelightCam = camera; 
+
+    PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(PoseEstimations.APRIL_TAG_FIELD_LAYOUT, 
+      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+      limelightCam, 
+      PoseEstimations.robotToCam);
 
     //can set unique standard vision deviations CHECK LATER
     //sPoseEstimator.setVisionMeasurementStdDevs(null);
@@ -163,10 +167,14 @@ public class PoseEstimator extends SubsystemBase {
     return targetPose3d;
 
   }
-    
 
+  public void resetPosition(){
+    sPoseEstimator.resetPosition(gyroAngle, modulePositions, getCurrentPose());
+  }
 
-
+  public void resetPosition(Pose2d pose){
+    sPoseEstimator.resetPosition(gyroAngle, modulePositions, pose);
+  }
     
 }
 

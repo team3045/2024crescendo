@@ -6,10 +6,10 @@ import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-import java.lang.reflect.Field;
+
+import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -17,15 +17,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
-    public SwerveDriveOdometry swerveOdometry;
+    public PoseEstimator poseEstimator;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    public PhotonCamera limelight = new PhotonCamera("limelight");
     Field2d robotField2d = new Field2d();
 
     public Swerve() {
@@ -46,8 +46,8 @@ public class Swerve extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
-        swerveOdometry.resetPosition(getYaw(), getModulePositions(), Constants.PoseEstimations.robotStartPose.toPose2d());
+        poseEstimator = new PoseEstimator(this, limelight);
+        
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -89,12 +89,16 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return poseEstimator.getCurrentPose();
     }
 
 
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
+        poseEstimator.resetPosition(pose);
+    }
+
+    public void resetOdometry(){
+        poseEstimator.resetPosition();
     }
 
     public SwerveModuleState[] getModuleStates(){
@@ -178,7 +182,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getModulePositions());
+        poseEstimator.periodic();
         robotField2d.setRobotPose(getPose());
 
         for(SwerveModule mod : mSwerveMods){
@@ -187,7 +191,8 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
 
-        SmartDashboard.putNumber("Robot Headin: ", getYaw().getDegrees());
+        SmartDashboard.putNumber("gyro heading", getYaw().getDegrees());
+        SmartDashboard.putNumber("Robot Headin: ", getPose().getRotation().getDegrees());
         SmartDashboard.putString("Robot Position", getPose().getTranslation().toString());
         SmartDashboard.putData("Robot Position Graph", robotField2d);
         

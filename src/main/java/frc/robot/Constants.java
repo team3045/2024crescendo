@@ -1,11 +1,13 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -82,6 +84,15 @@ public final class Constants {
             3, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180)),
             5, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
             11, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
+
+        //List of AprilTag objects used to create an AprilTagFieldLayout
+        public static final List<AprilTag> aprilTagList = List.of(
+            new AprilTag(3, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180))),
+            new AprilTag(5, new Pose3d(Units.inchesToMeters(48), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45))),
+            new AprilTag(11, new Pose3d(Units.inchesToMeters(109),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)))
+        );
+
+        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(aprilTagList, Units.inchesToMeters(190), Units.inchesToMeters(144+50));
         
     }
 
