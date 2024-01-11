@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
@@ -42,7 +41,7 @@ public class TeleopSwerve extends Command {
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
             rotationVal * Constants.Swerve.maxAngularVelocity, 
             !robotCentricSup.getAsBoolean(), 
-            true
+            false
         );
     }
 }

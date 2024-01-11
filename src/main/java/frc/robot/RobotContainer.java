@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.lib.math.FindCirclePoint;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -53,15 +52,6 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final limelightVision lvision = new limelightVision();
-    private final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, limelight);
-
-    /*Autonomous Chooser */
-    private final Command exampleAutoChoice = new exampleAuto(s_Swerve);
-    //private final Command pathPlannerAutoChoice = new pathPlannerPath2023lib(s_Swerve);
-    private final Command xStanceAuto = new xPosition(s_Swerve);
-
-    SendableChooser<Command> autoChooser = new SendableChooser<>();
     
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -75,17 +65,6 @@ public class RobotContainer {
                 () -> robotCentric.getAsBoolean()
             )
         );
-
-        lvision.periodic(); 
-        poseEstimator.periodic();
-
-        autoChooser.setDefaultOption("Example Auto", exampleAutoChoice);
-        //autoChooser.addOption("PathPlanner Auto", pathPlannerAutoChoice);
-        autoChooser.addOption("X Stance", xStanceAuto);
-        
-
-        SmartDashboard.putData(autoChooser);
-
 
         // Configure the button bindings
         configureButtonBindings();
@@ -101,9 +80,6 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        turnLimelight.whileTrue(new TurnToLimelight(s_Swerve));
-        followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
-        alineAlongCircle.whileTrue(new ChaseTagCommand(s_Swerve, limelight, rotationAxis));
     }
 
     /**
@@ -112,11 +88,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
-        //return new exampleAuto(s_Swerve);
-        //return new xPosition(s_Swerve);  
-        //return new pathPlannerauto2023lib(s_Swerve);  
-
-        return autoChooser.getSelected();
+        return new InstantCommand() {};
     }
 }
