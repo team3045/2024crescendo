@@ -76,6 +76,8 @@ public class RobotContainer {
             )
         );
 
+        new InstantCommand(() -> s_Swerve.addPhotonVision(poseEstimator));
+
         lvision.periodic(); 
         poseEstimator.periodic();
 

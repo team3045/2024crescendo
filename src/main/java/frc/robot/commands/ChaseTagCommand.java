@@ -54,6 +54,8 @@ public class ChaseTagCommand extends CommandBase {
 
     pEstimator = new PoseEstimator(s_Swerve, camera);
 
+    previousPose = s_Swerve.getPose();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,18 +74,17 @@ public class ChaseTagCommand extends CommandBase {
     aController.setTolerance(Units.degreesToRadians(3));
 
 
-    aController.calculate(pEstimator.getCurrentPose().getRotation().getRadians());
-
     s_Swerve.driveAuto(new ChassisSpeeds(
-      xController.calculate(pEstimator.getCurrentPose().getX()),
-      yController.calculate(pEstimator.getCurrentPose().getY()),
-      aController.calculate(pEstimator.getCurrentPose().getRotation().getRadians())));
+      xController.calculate(pEstimator.getEstimatedPosition(previousPose).get().estimatedPose.getX()),
+      yController.calculate(pEstimator.getEstimatedPosition(previousPose).get().estimatedPose.getY()),
+      aController.calculate(aController.calculate(pEstimator.getEstimatedPosition(previousPose).get().estimatedPose.toPose2d().getRotation().getRadians()))));
 
     Shuffleboard.getTab("Pose Estimations").add("GoalPose2d", goalPose2d);
     Shuffleboard.getTab("Pose Estimations").add("xOutput", xController.calculate(pEstimator.getCurrentPose().getX()));
     Shuffleboard.getTab("Pose Estimations").add("yOutput", yController.calculate(pEstimator.getCurrentPose().getY()));
     Shuffleboard.getTab("Pose Estimations").add("aOutput", aController.calculate(pEstimator.getCurrentPose().getRotation().getRadians()));
 
+    previousPose = pEstimator.getEstimatedPosition(previousPose).get().estimatedPose.toPose2d();
   }
 
   // Called once the command ends or is interrupted.
