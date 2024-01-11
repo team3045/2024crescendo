@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -45,6 +48,10 @@ public class PoseEstimator extends SubsystemBase {
   private Swerve s_Swerve;
   private Rotation2d gyroAngle;
   private SwerveModulePosition[] modulePositions;
+
+  private PhotonPoseEstimator photonPoseEstimator;
+
+  public PhotonPipelineResult lResult;
   
 
   /** Creates a new PoseEstimator. */
@@ -63,7 +70,7 @@ public class PoseEstimator extends SubsystemBase {
 
     limelightCam = camera; 
 
-    PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(PoseEstimations.APRIL_TAG_FIELD_LAYOUT, 
+    photonPoseEstimator = new PhotonPoseEstimator(PoseEstimations.APRIL_TAG_FIELD_LAYOUT, 
       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
       limelightCam, 
       PoseEstimations.robotToCam);
@@ -76,7 +83,7 @@ public class PoseEstimator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    PhotonPipelineResult lResult = limelightCam.getLatestResult();
+    lResult = limelightCam.getLatestResult();
 
     double resulTimestamp = lResult.getTimestampSeconds(); 
 
@@ -101,16 +108,18 @@ public class PoseEstimator extends SubsystemBase {
         Pose3d robotPose = camPose.transformBy(PoseEstimations.robotToCam.inverse());
         sPoseEstimator.addVisionMeasurement(robotPose.toPose2d(), resulTimestamp);
       }
+      
     }
 
     
 
-    sPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), s_Swerve.getYaw(), s_Swerve.getModulePositions());
+    sPoseEstimator.update( s_Swerve.getYaw(), s_Swerve.getModulePositions());
       
     Shuffleboard.getTab("Pose Estimations").add("Pose Estimator Pose", getCurrentPose().toString());
     Shuffleboard.getTab("Pose Estimations").add("Target Visible", lResult.hasTargets());
     Shuffleboard.getTab("Pose Estimations").add("Latest TimeStamp", resulTimestamp);
     Shuffleboard.getTab("Pose Estimations").add("Photon Rsults", lResult.toString());
+
   }
 
   public Pose2d getCurrentPose(){
@@ -175,6 +184,11 @@ public class PoseEstimator extends SubsystemBase {
   public void resetPosition(Pose2d pose){
     sPoseEstimator.resetPosition(gyroAngle, modulePositions, pose);
   }
-    
+
+  public Optional<EstimatedRobotPose> getEstimatedPosition(Pose2d prevEstimatedRobotPose){
+    photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+    return photonPoseEstimator.update();
+  }
+
 }
 
