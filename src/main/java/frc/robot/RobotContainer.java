@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -31,8 +33,12 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL2.value);
 
+    /*PhotonCamera */
+    private final PhotonCamera limelight = new PhotonCamera("limelight");
+
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final PoseEstimation poseEstimation = new PoseEstimation(limelight, s_Swerve);
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */

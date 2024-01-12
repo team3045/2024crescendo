@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.util.stream.IntStream;
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -26,6 +28,8 @@ public class Swerve extends SubsystemBase {
     public SwerveDrivePoseEstimator poseEstimator;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    
+    private ChassisSpeeds dChassisSpeeds;
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -116,6 +120,29 @@ public class Swerve extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
         }
+    }
+
+    public void driveTest(ChassisSpeeds chassisSpeeds){
+        
+        dChassisSpeeds = chassisSpeeds;
+        if(dChassisSpeeds != null){
+            SwerveModuleState[] dStates= Constants.Swerve.swerveKinematics.toSwerveModuleStates(dChassisSpeeds);
+
+            if(dChassisSpeeds.vxMetersPerSecond == 0.0 && dChassisSpeeds.vyMetersPerSecond == 0.0 && dChassisSpeeds.omegaRadiansPerSecond == 0.0) {
+                var currentStates = getModuleStates();
+                // Keep the wheels at their current angle when stopped, don't snap back to straight
+                IntStream.range(0, currentStates.length).forEach(i -> dStates[i].angle = currentStates[i].angle);
+            }
+
+            SwerveDriveKinematics.desaturateWheelSpeeds(dStates, Constants.Swerve.maxSpeed);
+            setModuleStates(dStates);
+        }
+
+        dChassisSpeeds = null;
+    }
+
+    public ChassisSpeeds getChassisSpeeds(){
+        return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
     }
 
     @Override
