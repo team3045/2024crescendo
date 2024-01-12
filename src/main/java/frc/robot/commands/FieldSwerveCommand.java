@@ -46,11 +46,11 @@ public class FieldSwerveCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    var robotAngle = robotAngleSupplier.get();
+    Rotation2d robotAngle = robotAngleSupplier.get();
 
     // Calculate field relative speeds
-    var chassisSpeeds = s_Swerve.getChassisSpeeds();
-    var robotSpeeds = new ChassisSpeeds(
+    ChassisSpeeds chassisSpeeds = s_Swerve.getChassisSpeeds();
+    ChassisSpeeds robotSpeeds = new ChassisSpeeds(
         chassisSpeeds.vxMetersPerSecond * robotAngle.getCos() - chassisSpeeds.vyMetersPerSecond * robotAngle.getSin(),
         chassisSpeeds.vyMetersPerSecond * robotAngle.getCos() + chassisSpeeds.vxMetersPerSecond * robotAngle.getSin(),
         chassisSpeeds.omegaRadiansPerSecond);
