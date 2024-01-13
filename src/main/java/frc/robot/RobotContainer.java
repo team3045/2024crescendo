@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -32,24 +34,30 @@ public class RobotContainer {
 
     private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
 
+    private final JoystickButton fieldSwerveCommand = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
+
     
 
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final PoseEstimation poseEstimation = new PoseEstimation(new PhotonCamera("limelight"), s_Swerve);
     
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
-                s_Swerve, 
+                s_Swerve,
                 () -> -1 * driveController.getRawAxis(translationAxis)*0.8,
                 () -> -1 * driveController.getRawAxis(strafeAxis)*0.8, 
-                () -> -driveController.getRawAxis(rotationAxis)*0.4, 
+                () -> -driveController.getRawAxis(rotationAxis)*0.4 ,
                 () -> robotCentric.getAsBoolean()
             )
         );
+
+        poseEstimation.periodic();
+        
 
         // Configure the button bindings
         configureButtonBindings();

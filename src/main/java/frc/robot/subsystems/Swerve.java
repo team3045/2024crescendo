@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.lang.reflect.Field;
+import java.util.stream.IntStream;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -26,6 +27,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDrivePoseEstimator mPoseEstimator;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    private ChassisSpeeds dChassisSpeeds;
     Field2d robotField2d = new Field2d();
 
     public Swerve() {
@@ -54,7 +56,7 @@ public class Swerve extends SubsystemBase {
              getModulePositions(), 
              new Pose2d());
 
-        mPoseEstimator.resetPosition(getYaw(), getModulePositions(), Constants.PoseEstimations.robotStartPose.toPose2d());
+        mPoseEstimator.resetPosition(getYaw(), getModulePositions(), new Pose2d());
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -64,7 +66,7 @@ public class Swerve extends SubsystemBase {
                                     translation.getX(), 
                                     translation.getY(), 
                                     rotation, 
-                                    getYaw()
+                                    mPoseEstimator.getEstimatedPosition().getRotation()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -181,6 +183,25 @@ public class Swerve extends SubsystemBase {
         drive(new Translation2d(0,0),output,false,false);
         SmartDashboard.putNumber("LimelightPID output", output);
         
+    }
+
+    public void driveTest(ChassisSpeeds chassisSpeeds){
+        
+        dChassisSpeeds = chassisSpeeds;
+        if(dChassisSpeeds != null){
+            SwerveModuleState[] dStates= Constants.Swerve.swerveKinematics.toSwerveModuleStates(dChassisSpeeds);
+
+            if(dChassisSpeeds.vxMetersPerSecond == 0.0 && dChassisSpeeds.vyMetersPerSecond == 0.0 && dChassisSpeeds.omegaRadiansPerSecond == 0.0) {
+                var currentStates = getModuleStates();
+                // Keep the wheels at their current angle when stopped, don't snap back to straight
+                IntStream.range(0, currentStates.length).forEach(i -> dStates[i].angle = currentStates[i].angle);
+            }
+
+            SwerveDriveKinematics.desaturateWheelSpeeds(dStates, Constants.Swerve.maxSpeed);
+            setModuleStates(dStates);
+        }
+
+        dChassisSpeeds = null;
     }
 
     @Override

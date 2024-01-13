@@ -5,6 +5,8 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -228,5 +230,40 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    public static final class EstimationConstants{
+         public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
+
+        //where on ther field does the robot start compared to origin SET LATER
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(132), Units.inchesToMeters(76.75),Units.inchesToMeters(3)), new Rotation3d(0,0,180));
+        
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(EstimationConstants.originToRobotStart);
+
+        //Cameras position in relation to robot SET LATER
+        public static final Transform3d robotToCam = new Transform3d(new Translation3d(0, Constants.Swerve.wheelBase / 2, Units.feetToMeters(2)), 
+            new Rotation3d(0,0,0));
+
+        public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 
+             new Rotation3d(0,0,Units.degreesToRadians(180)));
+
+        //Max velocity and Max accel
+        public static final TrapezoidProfile.Constraints X_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        public static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        //Max angular velo and accel
+        public static final TrapezoidProfile.Constraints A_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared);
+
+        //PID CONSTANTS TUNE LATER
+        public static final double kPXGain = 0.5;
+        public static final double kPYGain = 0.5;
+        public static final double kPAGain = 1.0;
+
+        //Map of Apriltags IDs and their 3d positions on the field SET LATER
+        public static final Map<Integer, Pose3d> idPoses = Map.of(
+            3, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180)),
+            5, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
+            11, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
+        
+        public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
 }
