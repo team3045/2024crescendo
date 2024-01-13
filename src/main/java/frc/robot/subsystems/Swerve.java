@@ -11,8 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.lang.reflect.Field;
 
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,11 +31,7 @@ public class Swerve extends SubsystemBase {
     public Swerve() {
         gyro = new Pigeon2(15,"3045 Canivore");
         //apply default config
-        gyro.getConfigurator().apply(new Pigeon2Configuration());
-
-        //based off of ctre phoenix 6 example
-        gyro.getYaw().setUpdateFrequency(100);
-        gyro.getGravityVectorZ().setUpdateFrequency(100);
+        gyro.configFactoryDefault();
 
         zeroGyro();
 
@@ -57,7 +52,7 @@ public class Swerve extends SubsystemBase {
             Constants.Swerve.swerveKinematics,
              getYaw(), 
              getModulePositions(), 
-             getPose());
+             new Pose2d());
 
         mPoseEstimator.resetPosition(getYaw(), getModulePositions(), Constants.PoseEstimations.robotStartPose.toPose2d());
     }
@@ -130,7 +125,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble()) : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void resetModulesToAbsolute(){

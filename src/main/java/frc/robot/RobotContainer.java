@@ -24,7 +24,7 @@ public class RobotContainer {
     /* Drive Controls */
     private final int translationAxis = PS4Controller.Axis.kLeftY.value;
     private final int strafeAxis = PS4Controller.Axis.kLeftX.value;
-    private final int rotationAxis = PS4Controller.Axis.kRightX.value;
+    private final int rotationAxis = 4;
 
 
     /* Driver Buttons */
