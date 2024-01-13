@@ -169,7 +169,7 @@ public final class Constants {
             5, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
             11, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
         
-        public static AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
     
 
@@ -187,5 +187,12 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    public static final class ElevatorConstants{
+        public static final int rightArmID = 13;
+        public static final int leftArmID = 14;
+
+        public static final double kElevatorP = 1.0;
     }
 }
