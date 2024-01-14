@@ -29,11 +29,7 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driveController, PS4Controller.Button.kTriangle.value);
-
     private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
-
-    
-
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();

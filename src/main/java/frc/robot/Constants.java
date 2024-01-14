@@ -69,10 +69,10 @@ public final class Constants {
         public static final double kPAGain = 1.0;
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
-        public static final Map<Integer, Pose3d> idPoses = Map.of(
-            3, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180)),
-            5, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
-            11, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
+        public static final Map<Double, Pose3d> idPoses = Map.of(
+            3.0, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(96), Units.inchesToMeters(57), new Rotation3d(0,0,180)),
+            5.0, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(16), Units.inchesToMeters(53.5), new Rotation3d(0,0,45)),
+            11.0, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(144+42),Units.inchesToMeters(51.5),new Rotation3d(0,0,270)));
         
     }
 
