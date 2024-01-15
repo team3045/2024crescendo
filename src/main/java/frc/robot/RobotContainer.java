@@ -41,7 +41,8 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final PoseEstimation poseEstimation = new PoseEstimation(new PhotonCamera("limelight"), s_Swerve);
+    private final LimeLightSub vision = new LimeLightSub();
+    //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -56,7 +57,9 @@ public class RobotContainer {
             )
         );
 
-        poseEstimation.periodic();
+        //poseEstimation.periodic();
+        vision.periodic();
+
         
 
         // Configure the button bindings

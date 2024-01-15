@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class PoseEstimation extends SubsystemBase {
+public class PoseEstimationPhoton extends SubsystemBase {
 
   private final PhotonCamera photonCamera;
   private final Swerve swerve;
@@ -54,7 +54,7 @@ public class PoseEstimation extends SubsystemBase {
 
   private double previousPipelineTimestamp = 0;
 
-  public PoseEstimation(PhotonCamera photonCamera, Swerve swerve) {
+  public PoseEstimationPhoton(PhotonCamera photonCamera, Swerve swerve) {
     this.photonCamera = photonCamera;
     this.swerve = swerve;
     AprilTagFieldLayout layout;
