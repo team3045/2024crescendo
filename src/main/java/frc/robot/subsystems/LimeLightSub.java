@@ -135,7 +135,7 @@ public class LimeLightSub extends SubsystemBase {
   }
 
   //custom transform
-  public Pose3d transform(Pose3d pose, Transform3d transform){
+  public static Pose3d transform(Pose3d pose, Transform3d transform){
 
     try {
       double newX = pose.getX() + transform.getX();
