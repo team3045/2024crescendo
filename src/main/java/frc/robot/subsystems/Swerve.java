@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.SwerveModule;
+import frc.robot.Constants.PoseEstimations;
 import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,23 +15,42 @@ import java.util.stream.IntStream;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
     public SwerveDrivePoseEstimator mPoseEstimator;
+    public LimeLightSub limeLightSub;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
     private ChassisSpeeds dChassisSpeeds;
     Field2d robotField2d = new Field2d();
 
-    public Swerve() {
+    /**
+    * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
+    * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
+    */
+    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+
+    /**
+    * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
+    * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
+    */
+     private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.5, 1.5, Units.degreesToRadians(30));
+
+
+    public Swerve(LimeLightSub limeLightSub) {
+        this.limeLightSub = new LimeLightSub();
         gyro = new Pigeon2(15,"3045 Canivore");
         //apply default config
         gyro.configFactoryDefault();
@@ -54,9 +74,13 @@ public class Swerve extends SubsystemBase {
             Constants.Swerve.swerveKinematics,
              getYaw(), 
              getModulePositions(), 
-             new Pose2d());
+             PoseEstimations.robotStartPose.toPose2d(),
+             stateStdDevs,
+             visionMeasurementStdDevs);
 
-        mPoseEstimator.resetPosition(getYaw(), getModulePositions(), new Pose2d());
+        mPoseEstimator.resetPosition(getYaw(), getModulePositions(), getPose());
+
+    
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -204,9 +228,29 @@ public class Swerve extends SubsystemBase {
         dChassisSpeeds = null;
     }
 
+    public void addVision(){
+        if (limeLightSub.getTargetSeen()&&PoseEstimations.idPoses.containsKey(limeLightSub.getID())){
+            mPoseEstimator.addVisionMeasurement(
+                limeLightSub.getVisionMeasurement(),
+                limeLightSub.getTimesStampSeconds());
+        }
+
+        double distance = limeLightSub.transform(
+            PoseEstimations.idPoses.get(limeLightSub.getID()), limeLightSub.getCamToTargetTransform()).
+                getTranslation().getDistance(PoseEstimations.idPoses.get(limeLightSub.getID()).getTranslation());
+        
+        double kDistanceMod = 0.5;
+        
+
+        visionMeasurementStdDevs = VecBuilder.fill(1.5*distance*kDistanceMod, 1.5*kDistanceMod*distance, Units.degreesToRadians(30));
+        mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
+    }
+
     @Override
     public void periodic(){
-        mPoseEstimator.update(getYaw(), getModulePositions());
+        
+        addVision();
+        mPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getYaw(), getModulePositions());
         robotField2d.setRobotPose(getPose());
 
         for(SwerveModule mod : mSwerveMods){

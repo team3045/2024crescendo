@@ -26,7 +26,7 @@ public class RobotContainer {
     /* Drive Controls */
     private final int translationAxis = PS4Controller.Axis.kLeftY.value;
     private final int strafeAxis = PS4Controller.Axis.kLeftX.value;
-    private final int rotationAxis = 4;
+    private final int rotationAxis = PS4Controller.Axis.kRightX.value;
 
 
     /* Driver Buttons */
@@ -40,8 +40,8 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
     private final LimeLightSub vision = new LimeLightSub();
+    private final Swerve s_Swerve = new Swerve(vision);
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 

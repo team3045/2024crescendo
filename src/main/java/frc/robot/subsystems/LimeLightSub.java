@@ -6,9 +6,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.struct.Rotation3dStruct;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -16,6 +19,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -36,6 +40,8 @@ public class LimeLightSub extends SubsystemBase {
   private Pose3d robotPose;
 
   private double totalLatency;
+  private double cl;
+  private double tl;
   private double resultTimeStamp = 0;
 
   private double tx;
@@ -77,6 +83,11 @@ public class LimeLightSub extends SubsystemBase {
           camPose_TargetSpaceTransform3d)
         )).getEntry();
 
+
+    tl = table.getEntry("tl").getDouble(0);
+    cl = table.getEntry("cl").getDouble(0);
+    totalLatency = tl + cl;
+
   }
 
   //Getters
@@ -117,7 +128,7 @@ public class LimeLightSub extends SubsystemBase {
       "Position: " +
       pose.getTranslation().toString() + " " +
       "Heading: " + 
-      (180 + Units.radiansToDegrees(pose.getRotation().getZ())) % 360;
+      (Units.radiansToDegrees(pose.getRotation().getZ())%360);
   }
 
   //custom transform
@@ -127,7 +138,7 @@ public class LimeLightSub extends SubsystemBase {
     double newY = pose.getY() + transform.getY();
     double newZ = pose.getZ() + transform.getZ();
 
-    return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()+transform.getRotation().getZ()));
+    return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()+transform.getRotation().getZ()+Math.PI));
   }
 
   public String transform3dToString(Transform3d transform3d){
@@ -138,6 +149,25 @@ public class LimeLightSub extends SubsystemBase {
       "Z: " + transform3d.getZ() +
       "Heading: " + 
       Units.radiansToDegrees(transform3d.getRotation().getZ()); 
+  }
+
+  public double getTotalLatency(){
+    return totalLatency;
+  }
+
+  public double getTimesStampSeconds(){
+    return Timer.getFPGATimestamp() - Units.millisecondsToSeconds(totalLatency);
+  }
+
+  public Pose2d getVisionMeasurement(){
+    try {
+      Pose3d pose = transform(PoseEstimations.idPoses.get(getID()), getCamToTargetTransform());
+      return new Pose2d(new Translation2d(pose.getX(),pose.getZ()), new Rotation2d(pose.getRotation().getZ()));
+    } catch (Exception e) {
+      System.out.println("ID " + getID() + " not found");
+      return new Pose2d();
+    }
+
   }
 
   @Override
@@ -158,6 +188,10 @@ public class LimeLightSub extends SubsystemBase {
 
     tId = table.getEntry("tid").getDouble(-1);
 
+    tl = table.getEntry("tl").getDouble(0);
+    cl = table.getEntry("cl").getDouble(0);
+    totalLatency = tl + cl;
+
     seen.setBoolean(getTargetSeen());
     id.setDouble(getID());
     camPose.setString(pose3dToString(getCamPose()));
@@ -170,6 +204,7 @@ public class LimeLightSub extends SubsystemBase {
           getCamToTargetTransform())
         )
     );
+    SmartDashboard.putString("test2", getVisionMeasurement().toString());
     
   }
 }

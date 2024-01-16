@@ -260,7 +260,7 @@ public final class Constants {
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
-            3.0, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(57), Units.inchesToMeters(96), new Rotation3d(0,0,Units.degreesToRadians(180))),
+            /*3.0, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(57), Units.inchesToMeters(96), new Rotation3d(0,0,Units.degreesToRadians(180))),*/
             5.0, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(53.5), Units.inchesToMeters(16), new Rotation3d(0,0,Units.degreesToRadians(45))),
             11.0, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(51.5),Units.inchesToMeters(186),new Rotation3d(0,0,Units.degreesToRadians(270))));
         
