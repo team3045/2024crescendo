@@ -20,6 +20,8 @@ import edu.wpi.first.math.util.Units;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static final double startTime = System.currentTimeMillis();
+
     public static final double stickDeadband = 0.05;
     private static final double WHEEL_DIAMETER = Units.inchesToMeters(4); //in inches
     private static final double MAX_MOTOR_UNITS_PER_SECOND = 225300;

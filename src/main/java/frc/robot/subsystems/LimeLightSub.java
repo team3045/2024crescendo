@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.lang.constant.Constable;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.PoseEstimations;
 
 public class LimeLightSub extends SubsystemBase {
@@ -72,7 +75,7 @@ public class LimeLightSub extends SubsystemBase {
 
     tId = table.getEntry("tid").getDouble(-1);
 
-    seen = tab.add("Seen", getTargetSeen()).getEntry();
+    seen = tab.add("seen", getTargetSeen()).getEntry();
     id = tab.add("Tag ID", getID()).getEntry();
     camPose = tab.add("CamPose", pose3dToString(getCamPose())).getEntry();
     robPose = tab.add("RobPose", pose3dToString(getRobotPose())).getEntry();
@@ -134,11 +137,15 @@ public class LimeLightSub extends SubsystemBase {
   //custom transform
   public Pose3d transform(Pose3d pose, Transform3d transform){
 
-    double newX = pose.getX() + transform.getX();
-    double newY = pose.getY() + transform.getY();
-    double newZ = pose.getZ() + transform.getZ();
+    try {
+      double newX = pose.getX() + transform.getX();
+      double newY = pose.getY() + transform.getY();
+      double newZ = pose.getZ() + transform.getZ();
 
-    return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()+transform.getRotation().getZ()+Math.PI));
+      return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()+transform.getRotation().getZ()+Math.PI));
+    } catch (Exception e) {
+        return new Pose3d();
+    }
   }
 
   public String transform3dToString(Transform3d transform3d){
@@ -155,8 +162,8 @@ public class LimeLightSub extends SubsystemBase {
     return totalLatency;
   }
 
-  public double getTimesStampSeconds(){
-    return Timer.getFPGATimestamp() - Units.millisecondsToSeconds(totalLatency);
+  public double getTimesStampMillis(){
+    return System.currentTimeMillis() - Constants.startTime - totalLatency;
   }
 
   public Pose2d getVisionMeasurement(){
@@ -190,6 +197,7 @@ public class LimeLightSub extends SubsystemBase {
 
     tl = table.getEntry("tl").getDouble(0);
     cl = table.getEntry("cl").getDouble(0);
+
     totalLatency = tl + cl;
 
     seen.setBoolean(getTargetSeen());

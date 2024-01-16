@@ -50,7 +50,7 @@ public class Swerve extends SubsystemBase {
 
 
     public Swerve(LimeLightSub limeLightSub) {
-        this.limeLightSub = new LimeLightSub();
+        this.limeLightSub = limeLightSub;
         gyro = new Pigeon2(15,"3045 Canivore");
         //apply default config
         gyro.configFactoryDefault();
@@ -230,27 +230,27 @@ public class Swerve extends SubsystemBase {
 
     public void addVision(){
         if (limeLightSub.getTargetSeen()&&PoseEstimations.idPoses.containsKey(limeLightSub.getID())){
+            double distance = limeLightSub.transform(
+                PoseEstimations.idPoses.get(limeLightSub.getID()), limeLightSub.getCamToTargetTransform()).
+                    getTranslation().getDistance(PoseEstimations.idPoses.get(limeLightSub.getID()).getTranslation());
+        
+            double kDistanceMod = 0.5;
+        
+
+            visionMeasurementStdDevs = VecBuilder.fill(1.5*distance*kDistanceMod, 1.5*kDistanceMod*distance, Units.degreesToRadians(30));
+            mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
+
+        
             mPoseEstimator.addVisionMeasurement(
                 limeLightSub.getVisionMeasurement(),
-                limeLightSub.getTimesStampSeconds());
+                limeLightSub.getTimesStampMillis());
         }
-
-        double distance = limeLightSub.transform(
-            PoseEstimations.idPoses.get(limeLightSub.getID()), limeLightSub.getCamToTargetTransform()).
-                getTranslation().getDistance(PoseEstimations.idPoses.get(limeLightSub.getID()).getTranslation());
-        
-        double kDistanceMod = 0.5;
-        
-
-        visionMeasurementStdDevs = VecBuilder.fill(1.5*distance*kDistanceMod, 1.5*kDistanceMod*distance, Units.degreesToRadians(30));
-        mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
     }
 
     @Override
     public void periodic(){
-        
+        mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getYaw(), getModulePositions());
         addVision();
-        mPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getYaw(), getModulePositions());
         robotField2d.setRobotPose(getPose());
 
         for(SwerveModule mod : mSwerveMods){
