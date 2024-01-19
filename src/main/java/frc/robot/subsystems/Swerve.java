@@ -29,10 +29,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
+    public SwerveDriveOdometry odometry;
     public SwerveDrivePoseEstimator mPoseEstimator;
     public LimeLightSub limeLightSub;
     public SwerveModule[] mSwerveMods;
-    public Pigeon2 gyro;
+    public static Pigeon2 gyro;
     private ChassisSpeeds dChassisSpeeds;
     Field2d robotField2d = new Field2d();
 
@@ -78,6 +79,9 @@ public class Swerve extends SubsystemBase {
              stateStdDevs,
              visionMeasurementStdDevs);
 
+        odometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+
+        odometry.resetPosition(getYaw(), getModulePositions(), getOdomPose2d());
         mPoseEstimator.resetPosition(getYaw(), getModulePositions(), getPose());
 
     
@@ -123,6 +127,10 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d getPose() {
         return mPoseEstimator.getEstimatedPosition();
+    }
+
+    public Pose2d getOdomPose2d(){
+        return odometry.getPoseMeters();
     }
 
 
@@ -230,14 +238,13 @@ public class Swerve extends SubsystemBase {
 
     public void addVision(){
         if (limeLightSub.getTargetSeen()&&PoseEstimations.idPoses.containsKey(limeLightSub.getID())){
-            double distance = LimeLightSub.transform(
-                PoseEstimations.idPoses.get(limeLightSub.getID()), limeLightSub.getCamToTargetTransform()).
-                    getTranslation().getDistance(PoseEstimations.idPoses.get(limeLightSub.getID()).getTranslation());
+            double xDistance = limeLightSub.getCamToTargetTransform().getTranslation().getX();
+            double yDistance = limeLightSub.getCamToTargetTransform().getTranslation().getZ();
         
             double kDistanceMod = 0.5;
         
 
-            visionMeasurementStdDevs = VecBuilder.fill(1.5*distance*kDistanceMod, 1.5*kDistanceMod*distance, Units.degreesToRadians(30));
+            visionMeasurementStdDevs = VecBuilder.fill(1.5*xDistance*kDistanceMod, 1.5*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
 
         
@@ -253,6 +260,8 @@ public class Swerve extends SubsystemBase {
         addVision();
         robotField2d.setRobotPose(getPose());
 
+        odometry.update(getYaw(), getModulePositions());
+
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
@@ -262,6 +271,9 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Robot Headin: ", getYaw().getDegrees());
         SmartDashboard.putString("Robot Position", getPose().getTranslation().toString());
         SmartDashboard.putData("Robot Position Graph", robotField2d);
+
+        SmartDashboard.putString("Odometry", getOdomPose2d().toString());
+        
         
     }
 }

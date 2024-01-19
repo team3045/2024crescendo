@@ -50,7 +50,7 @@ public final class Constants {
         public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(132), Units.inchesToMeters(76.75),Units.inchesToMeters(3)), new Rotation3d(0,0,180));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.wheelBase / 2), Units.inchesToMeters(0),Units.inchesToMeters(0)), new Rotation3d(0,0,0));
         
         public static final Pose3d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
 
@@ -73,10 +73,11 @@ public final class Constants {
         public static final double kPAGain = 1.0;
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
+        //North Up West
         public static final Map<Double, Pose3d> idPoses = Map.of(
-            3.0, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(57), Units.inchesToMeters(96), new Rotation3d(0,0,Units.degreesToRadians(0))),
-            5.0, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(53.5), Units.inchesToMeters(16), new Rotation3d(0,0,Units.degreesToRadians(45))),
-            11.0, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(51.5),Units.inchesToMeters(144+42),new Rotation3d(0,0,Units.degreesToRadians(270))));
+            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(57.25), Units.inchesToMeters(97.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
+            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(53.5), Units.inchesToMeters(101.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
+            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(51.25),Units.inchesToMeters(192.5),new Rotation3d(0,0,Units.degreesToRadians(270))));
         
     }
 
@@ -204,7 +205,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(91);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.25);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -238,7 +239,7 @@ public final class Constants {
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(132), Units.inchesToMeters(76.75),Units.inchesToMeters(3)), new Rotation3d(0,0,180));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.trackWidth / 2), Units.inchesToMeters(0),Units.inchesToMeters(Swerve.wheelBase / 2)), new Rotation3d(0,0,0));
         
         public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(EstimationConstants.originToRobotStart);
 
@@ -262,9 +263,9 @@ public final class Constants {
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
-            /*3.0, new Pose3d(Units.inchesToMeters(-30), Units.inchesToMeters(57), Units.inchesToMeters(96), new Rotation3d(0,0,Units.degreesToRadians(180))),*/
-            5.0, new Pose3d(Units.inchesToMeters(18), Units.inchesToMeters(53.5), Units.inchesToMeters(16), new Rotation3d(0,0,Units.degreesToRadians(45))),
-            11.0, new Pose3d(Units.inchesToMeters(79),Units.inchesToMeters(51.5),Units.inchesToMeters(186),new Rotation3d(0,0,Units.degreesToRadians(270))));
+            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(57.25), Units.inchesToMeters(97.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
+            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(53.5), Units.inchesToMeters(101.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
+            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(51.25),Units.inchesToMeters(192.5),new Rotation3d(0,0,Units.degreesToRadians(270))));
         
         public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }

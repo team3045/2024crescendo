@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import java.lang.constant.Constable;
 
+import com.ctre.phoenix.sensors.Pigeon2;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -36,6 +38,8 @@ public class LimeLightSub extends SubsystemBase {
 
   private double pipelineNumber;
 
+  public Pigeon2 gyro;
+
   private double[] camPose_TargetSpace;
   private Transform3d camPose_TargetSpaceTransform3d;
 
@@ -55,6 +59,7 @@ public class LimeLightSub extends SubsystemBase {
   private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
   private GenericEntry seen, id, camPose, robPose, camTransform, test;
+
 
   /** Creates a new LimeLightSub. */
   public LimeLightSub() {
@@ -83,7 +88,7 @@ public class LimeLightSub extends SubsystemBase {
     test = tab.add("test", pose3dToString(
         transform(
           PoseEstimations.idPoses.get(11.0), 
-          camPose_TargetSpaceTransform3d)
+          camPose_TargetSpaceTransform3d, true, true)
         )).getEntry();
 
 
@@ -135,14 +140,13 @@ public class LimeLightSub extends SubsystemBase {
   }
 
   //custom transform
-  public static Pose3d transform(Pose3d pose, Transform3d transform){
-
+  public static Pose3d transform(Pose3d pose, Transform3d transform, boolean addX, boolean addZ){
     try {
-      double newX = pose.getX() + transform.getX();
+      double newX = !addX ? pose.getX() + transform.getX() : pose.getX() - transform.getX();
       double newY = pose.getY() + transform.getY();
-      double newZ = pose.getZ() + transform.getZ();
+      double newZ = !addZ ? pose.getZ() + transform.getZ() : pose.getZ() - transform.getZ();
 
-      return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()+transform.getRotation().getZ()+Math.PI));
+      return new Pose3d(newX,newY,newZ,new Rotation3d(0,0,pose.getRotation().getZ()-transform.getRotation().getZ()+Math.PI));
     } catch (Exception e) {
         return new Pose3d();
     }
@@ -167,9 +171,16 @@ public class LimeLightSub extends SubsystemBase {
   }
 
   public Pose2d getVisionMeasurement(){
+    gyro = Swerve.gyro;
     try {
-      Pose3d pose = transform(PoseEstimations.idPoses.get(getID()), getCamToTargetTransform());
-      return new Pose2d(new Translation2d(pose.getX(),pose.getZ()), new Rotation2d(pose.getRotation().getZ()));
+      double angle = gyro.getYaw() % 360;
+
+      boolean addX = (angle <= 90 || angle >= 270);
+      boolean addY = (angle >= 0 && angle <= 180);
+      
+        Pose3d pose = transform(PoseEstimations.idPoses.get(getID()), getCamToTargetTransform(), addX,addY);
+        return new Pose2d(new Translation2d(pose.getX(),pose.getZ()), new Rotation2d(pose.getRotation().getZ()));
+      
     } catch (Exception e) {
       System.out.println("ID " + getID() + " not found");
       return new Pose2d();
@@ -209,7 +220,7 @@ public class LimeLightSub extends SubsystemBase {
       pose3dToString(
         transform(
           PoseEstimations.idPoses.get(11.0), 
-          getCamToTargetTransform())
+          getCamToTargetTransform(),true,true)
         )
     );
     SmartDashboard.putString("test2", getVisionMeasurement().toString());
