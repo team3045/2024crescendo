@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PoseEstimations;
+import frc.robot.Constants.EstimationConstants;
 import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.Swerve;
 
@@ -43,7 +43,7 @@ public class DriveToTarget extends Command {
     this.vision = vision;
     this.swerve = swerve;
 
-    targetPose3d = PoseEstimations.idPoses.get(targetID);
+    targetPose3d = EstimationConstants.idPoses.get(targetID);
     targetPose2d = targetPose3d.toPose2d();
 
     goalPose2d = targetPose2d.transformBy(offsets.get(targetID));

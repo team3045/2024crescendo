@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.SwerveModule;
-import frc.robot.Constants.PoseEstimations;
+import frc.robot.Constants.EstimationConstants;
 import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,7 +41,7 @@ public class Swerve extends SubsystemBase {
     * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
     * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
     */
-    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.2, 0.2, 3);
 
     /**
     * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
@@ -75,13 +75,13 @@ public class Swerve extends SubsystemBase {
             Constants.Swerve.swerveKinematics,
              getYaw(), 
              getModulePositions(), 
-             PoseEstimations.robotStartPose.toPose2d(),
+             EstimationConstants.robotStartPose.toPose2d(),
              stateStdDevs,
              visionMeasurementStdDevs);
 
-        odometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+        odometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
 
-        odometry.resetPosition(getYaw(), getModulePositions(), getOdomPose2d());
+        odometry.resetPosition(getYaw(), getModulePositions(), getPose());
         mPoseEstimator.resetPosition(getYaw(), getModulePositions(), getPose());
 
     
@@ -237,14 +237,14 @@ public class Swerve extends SubsystemBase {
     }
 
     public void addVision(){
-        if (limeLightSub.getTargetSeen()&&PoseEstimations.idPoses.containsKey(limeLightSub.getID())){
+        if (limeLightSub.getTargetSeen()&&EstimationConstants.idPoses.containsKey(limeLightSub.getID())){
             double xDistance = limeLightSub.getCamToTargetTransform().getTranslation().getX();
             double yDistance = limeLightSub.getCamToTargetTransform().getTranslation().getZ();
         
-            double kDistanceMod = 0.5;
+            double kDistanceMod = 0.1;
         
 
-            visionMeasurementStdDevs = VecBuilder.fill(1.5*xDistance*kDistanceMod, 1.5*kDistanceMod*yDistance, Units.degreesToRadians(30));
+            visionMeasurementStdDevs = VecBuilder.fill(1*xDistance*kDistanceMod, 1*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
 
         

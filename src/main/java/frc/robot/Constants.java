@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -41,51 +42,6 @@ public final class Constants {
     public static final double objAngle = 0; // what angle it is at in relation to our robot zero heading
     public static final double kPYGain = 0.15;
 
-
-
-
-
-
-    public static final class PoseEstimations {
-        public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
-
-        //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.wheelBase / 2), Units.inchesToMeters(0),Units.inchesToMeters(0)), new Rotation3d(0,0,0));
-        
-        public static final Pose3d robotStartPose = PoseEstimations.originPose.transformBy(PoseEstimations.originToRobotStart);
-
-        //Cameras position in relation to robot SET LATER
-        public static final Transform3d robotToCam = new Transform3d(new Translation3d(0, Constants.Swerve.wheelBase / 2, Units.feetToMeters(2)), 
-            new Rotation3d(0,0,0));
-
-        public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 
-             new Rotation3d(0,0,Units.degreesToRadians(180)));
-
-        //Max velocity and Max accel
-        public static final TrapezoidProfile.Constraints X_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-        public static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-        //Max angular velo and accel
-        public static final TrapezoidProfile.Constraints A_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared);
-
-        //PID CONSTANTS TUNE LATER
-        public static final double kPXGain = 0.5;
-        public static final double kPYGain = 0.5;
-        public static final double kPAGain = 1.0;
-
-        //Map of Apriltags IDs and their 3d positions on the field SET LATER
-        //North Up West
-        public static final Map<Double, Pose3d> idPoses = Map.of(
-            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(57.25), Units.inchesToMeters(97.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
-            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(53.5), Units.inchesToMeters(101.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
-            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(51.25),Units.inchesToMeters(192.5),new Rotation3d(0,0,Units.degreesToRadians(270))));
-        
-    }
-
-
-
-
-
-
     public static final class Swerve {
 
         public static final int pigeonID = 15;
@@ -108,7 +64,7 @@ public final class Constants {
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Module Gear Ratios */
-        public static final double driveGearRatio = 6.75; //set to drive gear ratio
+        public static final double driveGearRatio = 10.20; //set to drive gear ratio
         public static final double angleGearRatio = 15.43; //set to angle gear ratio
 
         /* Motor Inverts */
@@ -205,7 +161,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(167.25);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(217);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -236,10 +192,17 @@ public final class Constants {
     }
 
     public static final class EstimationConstants{
+
+        public static final Map<Double,Pose3d> idOrigins = Map.of(
+            3.0, new Pose3d(new Translation3d(Units.inchesToMeters(-97.25), Units.inchesToMeters(-57.25), 0.0), new Rotation3d(0,0,Math.PI)),
+            5.0, new Pose3d(new Translation3d(Units.inchesToMeters(101.25),Units.inchesToMeters(-53.5),Units.inchesToMeters(-180.25)), new Rotation3d(0,0,0)),
+            11.0,new Pose3d(new Translation3d(Units.inchesToMeters(-116.75),Units.inchesToMeters(-51.25),Units.inchesToMeters(-192.5)),new Rotation3d(0,0,3*Math.PI/2))
+        );
+
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.trackWidth / 2), Units.inchesToMeters(0),Units.inchesToMeters(Swerve.wheelBase / 2)), new Rotation3d(0,0,0));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.trackWidth / 2), Units.inchesToMeters(Swerve.wheelBase/2),Units.inchesToMeters(Swerve.wheelBase / 2)), new Rotation3d(0,0,0));
         
         public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(EstimationConstants.originToRobotStart);
 
@@ -263,9 +226,9 @@ public final class Constants {
 
         //Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
-            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(57.25), Units.inchesToMeters(97.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
-            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(53.5), Units.inchesToMeters(101.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
-            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(51.25),Units.inchesToMeters(192.5),new Rotation3d(0,0,Units.degreesToRadians(270))));
+            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
+            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(101.25), Units.inchesToMeters(53.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
+            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(192.25),Units.inchesToMeters(51.25),new Rotation3d(0,0,Units.degreesToRadians(270))));
         
         public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
