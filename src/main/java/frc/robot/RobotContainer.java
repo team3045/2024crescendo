@@ -31,10 +31,12 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driveController, PS4Controller.Button.kTriangle.value);
-
     private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
 
     private final JoystickButton fieldSwerveCommand = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
+    private final JoystickButton driveToTarget = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
+
+    
 
     
 
@@ -76,6 +78,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
     }
 
     /**

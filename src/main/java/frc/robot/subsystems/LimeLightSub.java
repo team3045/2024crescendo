@@ -146,7 +146,8 @@ public class LimeLightSub extends SubsystemBase {
   //returns vision measurement to add to pose estimator
   public Pose2d getVisionMeasurement(){
     try {
-      Transform3d camToRobot = EstimationConstants.robotToCam.inverse();
+      //should be the inverse but for some reason this way works?
+      Transform3d camToRobot = EstimationConstants.robotToCam;
       Pose3d tagPose = EstimationConstants.idPoses.get(getID());
 
       Transform3d tagToCam = getCamToTargetTransform().inverse();
@@ -154,11 +155,9 @@ public class LimeLightSub extends SubsystemBase {
       Translation3d fieldSystemTranslation = CoordinateSystem.convert(tagToCam.getTranslation().rotateBy(tagToCam.inverse().getRotation()), CoordinateSystem.EDN(), CoordinateSystem.NWU());
       
       //add .transformBy(camToRovot)
-      Pose3d robotPose = tagPose.transformBy(new Transform3d(fieldSystemTranslation, new Rotation3d()));
+      Pose3d robotPose = tagPose.transformBy(new Transform3d(fieldSystemTranslation, new Rotation3d())).transformBy(camToRobot);
     
       Pose2d visionPose = new Pose2d(robotPose.getX(),robotPose.getY(),new Rotation2d());
-
-      System.out.println(visionPose.getY());
 
       return visionPose;
 

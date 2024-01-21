@@ -64,7 +64,7 @@ public final class Constants {
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Module Gear Ratios */
-        public static final double driveGearRatio = 10.20; //set to drive gear ratio
+        public static final double driveGearRatio = 10.083; //set to drive gear ratio
         public static final double angleGearRatio = 15.43; //set to angle gear ratio
 
         /* Motor Inverts */
@@ -202,12 +202,12 @@ public final class Constants {
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(Swerve.trackWidth / 2), Units.inchesToMeters(Swerve.wheelBase/2),Units.inchesToMeters(Swerve.wheelBase / 2)), new Rotation3d(0,0,0));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Swerve.trackWidth/ 2, Swerve.wheelBase/2,Swerve.wheelBase/2), new Rotation3d(0,0,0));
         
         public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(EstimationConstants.originToRobotStart);
 
         //Cameras position in relation to robot SET LATER
-        public static final Transform3d robotToCam = new Transform3d(new Translation3d(0,Units.feetToMeters(2), Units.feetToMeters(Constants.Swerve.wheelBase/2)), 
+        public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 
             new Rotation3d(0,0,0));
 
         public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 

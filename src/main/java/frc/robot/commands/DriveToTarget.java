@@ -30,11 +30,14 @@ public class DriveToTarget extends Command {
 
   private Pose2d goalPose2d;
 
-  private static final double kPXGain = 0.1;
+  private static final double kPXGain = 1.5;
+  private static final double kPYGain = 0.7;
   private static final double kPAGain = 0.1;
 
+  public static boolean atAngle = false;
+
   private static final Map<Double, Transform2d> offsets = Map.of(
-    11.0, new Transform2d(new Translation2d(0.0,2.0),Rotation2d.fromDegrees(180))
+    5.0, new Transform2d(new Translation2d(1.0,0),Rotation2d.fromDegrees(180))
     );
   
   /** Creates a new DriveToTarget. */
@@ -57,18 +60,37 @@ public class DriveToTarget extends Command {
     double aOutput = 0;
 
     PIDController xController = new PIDController(kPXGain, 0, 0);
-    PIDController yController = new PIDController(kPXGain, 0, 0);
+    PIDController yController = new PIDController(kPYGain, 0, 0);
     PIDController aController = new PIDController(kPAGain, 0, 0);
 
-    xController.setSetpoint(goalPose2d.getX());
-    yController.setSetpoint(goalPose2d.getY());
-    aController.setSetpoint(vision.getID() == targetID ? 0 : targetPose2d.getRotation().getDegrees()+180);
+    if(vision.getID() == targetID){
+      xController.setSetpoint(goalPose2d.getX());
+      yController.setSetpoint(goalPose2d.getY());
+      aController.setSetpoint(0);
+
+      xOutput = xController.calculate(vision.getVisionMeasurement().getX());
+      yOutput = yController.calculate(vision.getVisionMeasurement().getY());
+      aOutput = aController.calculate(vision.getTx());
+    }
+    else{
+      xController.setSetpoint(goalPose2d.getX());
+      yController.setSetpoint(goalPose2d.getY());
+      aController.setSetpoint(goalPose2d.getRotation().getDegrees());
+
+      xOutput = xController.calculate(swerve.getPose().getX());
+      yOutput = yController.calculate(swerve.getPose().getY());
+      aOutput = aController.calculate(swerve.getYaw().getDegrees());
+      
+    }
+
+    xController.setTolerance(0.2);
+    yController.setTolerance(0.2);
+    aController.setTolerance(5);
+
+    xOutput = xController.atSetpoint() ? 0 : xOutput;
+    yOutput = yController.atSetpoint() ? 0 : yOutput;
+    aOutput = aController.atSetpoint() ? 0 : aOutput;
     
-
-    xOutput = xController.calculate(swerve.getPose().getX());
-    yOutput = yController.calculate(swerve.getPose().getY());
-    aOutput = aController.calculate(vision.getID() == targetID ? vision.getTx() : swerve.getYaw().getDegrees());
-
     swerve.driveTest(new ChassisSpeeds(xOutput, yOutput, aOutput));
 
     xController.close();
