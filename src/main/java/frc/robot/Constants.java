@@ -47,12 +47,9 @@ public final class Constants {
         public static final int pigeonID = 15;
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
-        /*public static final COTSFalconSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-            COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);*/
-
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(27); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(32); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(27); 
+        public static final double wheelBase = Units.inchesToMeters(32); 
         public static final double wheelCircumference = Units.inchesToMeters(4*Math.PI); //set to wheel circumfrance
 
         /* Swerve Kinematics 
@@ -72,7 +69,7 @@ public final class Constants {
         public static final boolean driveMotorInvert = false; //set if drive motor inverted
 
         /* Angle Encoder Invert */
-        public static final boolean canCoderInvert = false; //set if canCOder inverted
+        public static final boolean canCoderInvert = false; //set if canCoder inverted
 
         /* Swerve Current Limiting */
         public static final int angleContinuousCurrentLimit = 25;
@@ -90,33 +87,30 @@ public final class Constants {
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
+
+        //TODO: Tune PID values for driveTrain
         /* Angle Motor PID Values */
-        /*public static final double angleKP = driveRatios.angleKP;//set later
-        public static final double angleKI = driveRatios.angleKI; //setr later
-        public static final double angleKD = driveRatios.angleKD;//set later
-        public static final double angleKF = driveRatios.angleKF;//set later*/
         public static final double angleKP = 0.1;//set later
         public static final double angleKI = 0; //setr later
         public static final double angleKD = 0;//set later
         public static final double angleKF = 0; 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.05; //TODO: This must be tuned to specific robot
+        public static final double driveKP = 0.05; 
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values 
          * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
-        /*public static final double driveKS = (0.041263 / 12); //TODO: This must be tuned to specific robot
-        public static final double driveKV = (2.3303/ 12);
-        public static final double driveKA = (0.073661 / 12)*/
-
+        //TODO: Not sure where this is used, check later
         public static final double driveKS = (0.32/ 12); //TODO: This must be tuned to specific robot
         public static final double driveKV = (1.51/ 12);
         public static final double driveKA = (0.27 / 12);
 
         /* Swerve Profiling Values */
         /** Radians per Second */
+        //TODO: CHANGE WITH TESTING
+
         public static final double maxAngularVelocity = MAX_MOTOR_UNITS_PER_SECOND / kMotorUnitsToRotations * kRotationToRadians; //TODO: This must be tuned to specific robot
         /** Meters per Second */
         public static final double maxSpeed = Units.inchesToMeters(maxAngularVelocity*kAngularVelocityToWheelSpeed); //TODO: This must be tuned to specific robot
@@ -127,7 +121,7 @@ public final class Constants {
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
-        public static final class Mod0 { //TODO: This must be tuned to specific robot
+        public static final class Mod0 { 
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 10;
@@ -137,7 +131,7 @@ public final class Constants {
         }
 
         /* Front Right Module - Module 1 */
-        public static final class Mod1 { //TODO: This must be tuned to specific robot
+        public static final class Mod1 { 
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 9;
@@ -147,7 +141,7 @@ public final class Constants {
         }
         
         /* Back Left Module - Module 2 */
-        public static final class Mod2 { //TODO: This must be tuned to specific robot
+        public static final class Mod2 { 
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 12;
@@ -157,7 +151,7 @@ public final class Constants {
         }
 
         /* Back Right Module - Module 3 */
-        public static final class Mod3 { //TODO: This must be tuned to specific robot
+        public static final class Mod3 { 
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
@@ -191,13 +185,8 @@ public final class Constants {
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
+    //Used in LimelightSub
     public static final class EstimationConstants{
-
-        public static final Map<Double,Pose3d> idOrigins = Map.of(
-            3.0, new Pose3d(new Translation3d(Units.inchesToMeters(-97.25), Units.inchesToMeters(-57.25), 0.0), new Rotation3d(0,0,Math.PI)),
-            5.0, new Pose3d(new Translation3d(Units.inchesToMeters(101.25),Units.inchesToMeters(-53.5),Units.inchesToMeters(-180.25)), new Rotation3d(0,0,0)),
-            11.0,new Pose3d(new Translation3d(Units.inchesToMeters(-116.75),Units.inchesToMeters(-51.25),Units.inchesToMeters(-192.5)),new Rotation3d(0,0,3*Math.PI/2))
-        );
 
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
@@ -210,6 +199,7 @@ public final class Constants {
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 
             new Rotation3d(0,0,0));
 
+        //Where we want to be in relation to the tag
         public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 
              new Rotation3d(0,0,Units.degreesToRadians(180)));
 
@@ -224,12 +214,13 @@ public final class Constants {
         public static final double kPYGain = 0.5;
         public static final double kPAGain = 1.0;
 
-        //Map of Apriltags IDs and their 3d positions on the field SET LATER
+        //SHOP: Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
             3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
             5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(101.25), Units.inchesToMeters(53.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
             11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(192.25),Units.inchesToMeters(51.25),new Rotation3d(0,0,Units.degreesToRadians(270))));
         
+        //SHOP: Map of Apriltags IDs and their 3d positions on the field
         public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
 }
