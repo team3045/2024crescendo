@@ -203,7 +203,7 @@ public class Swerve extends SubsystemBase {
             double kDistanceMod = 0.1;
         
 
-            visionMeasurementStdDevs = VecBuilder.fill(1*xDistance*kDistanceMod, 1*kDistanceMod*yDistance, Units.degreesToRadians(30));
+            visionMeasurementStdDevs = VecBuilder.fill(0.5*xDistance*kDistanceMod, 1*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
 
         

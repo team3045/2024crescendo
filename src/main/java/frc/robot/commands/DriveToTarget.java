@@ -83,9 +83,9 @@ public class DriveToTarget extends Command {
       
     }
 
-    xController.setTolerance(0.2);
-    yController.setTolerance(0.2);
-    aController.setTolerance(5);
+    xController.setTolerance(0.1);
+    yController.setTolerance(0.1);
+    aController.setTolerance(3);
 
     xOutput = xController.atSetpoint() ? 0 : xOutput;
     yOutput = yController.atSetpoint() ? 0 : yOutput;
