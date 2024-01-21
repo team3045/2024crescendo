@@ -62,13 +62,12 @@ public class DriveToTarget extends Command {
 
     xController.setSetpoint(goalPose2d.getX());
     yController.setSetpoint(goalPose2d.getY());
-    aController.setSetpoint(0);
+    aController.setSetpoint(vision.getID() == targetID ? 0 : targetPose2d.getRotation().getDegrees()+180);
+    
 
-    if(vision.getID() == targetID){
-      xOutput = xController.calculate(vision.getVisionMeasurement().getX());
-      yOutput = yController.calculate(vision.getVisionMeasurement().getY());
-      aOutput = aController.calculate(vision.getTx());
-    }
+    xOutput = xController.calculate(swerve.getPose().getX());
+    yOutput = yController.calculate(swerve.getPose().getY());
+    aOutput = aController.calculate(vision.getID() == targetID ? vision.getTx() : swerve.getYaw().getDegrees());
 
     swerve.driveTest(new ChassisSpeeds(xOutput, yOutput, aOutput));
 
