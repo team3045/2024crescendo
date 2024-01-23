@@ -33,6 +33,15 @@ public final class Constants {
     public static final double objAngle = 0; //what angle it is at in relation to our robot zero heading
     public static final double kPYGain = 0.15;
 
+    public static final double ROTATIONGEARDIAMETER = 2.7; // in inches
+    public static final double ROTATIONGEARCIRCUMFERENCE = ROTATIONGEARDIAMETER * Math.PI; // in inches
+    public static final double ROTATIONGEARCHAINCONNECTIONCIRCUMFERENCE = Math.PI;
+    public static final int SHOOTERDOWNBUTTON = 100; // ADD LATER
+    public static final int SHOOTERUPBUTTON = 100; // ADD LATER
+    public static final double SHOOTERMOTORSPEED = 100; // ADD LATER
+    public static final int SHOOTERSPINBUTTON = 100; // ADD LATER
+    public static final double SHOOTERSPEEDTOP = 0.5; //ADD LATER
+    public static final double SHOOTERSPEEDBOTTOM = 0.5; // ADD LATER
 
     public static final class Swerve {
 
@@ -76,6 +85,8 @@ public final class Constants {
         public static final int drivePeakCurrentLimit = 60;
         public static final double drivePeakCurrentDuration = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
+
+
 
         /* These values are used by the drive falcon to ramp in open loop and closed loop driving.
          * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc */
@@ -181,5 +192,7 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+
     }
 }
