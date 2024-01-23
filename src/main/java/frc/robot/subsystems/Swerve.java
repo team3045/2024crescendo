@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,14 +42,14 @@ public class Swerve extends SubsystemBase {
     * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
     */
     //ie how much it trusts its current estimate
-    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.2, 0.2, 3);
+    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
 
     /**
     * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
     * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
     */
     //how much it trusts the vision measurements
-     private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.5, 1.5, Units.degreesToRadians(30));
+     private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(30));
 
 
     public Swerve(LimeLightSub limeLightSub) {
@@ -200,16 +201,23 @@ public class Swerve extends SubsystemBase {
             double xDistance = limeLightSub.getCamToTargetTransform().getTranslation().getX();
             double yDistance = limeLightSub.getCamToTargetTransform().getTranslation().getZ();
         
-            double kDistanceMod = 0.1;
+            //if were farther than 3 meters away than we discard the measurment by making the std dev huge
+            double kDistanceMod = limeLightSub.getNorm() > 3.0 ? 10000 : 0.3; 
         
 
-            visionMeasurementStdDevs = VecBuilder.fill(0.5*xDistance*kDistanceMod, 1*kDistanceMod*yDistance, Units.degreesToRadians(30));
+            visionMeasurementStdDevs = VecBuilder.fill(0.3*xDistance*kDistanceMod, 0.3*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
+            //mPoseEstimator.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
 
         
             mPoseEstimator.addVisionMeasurement(
                 limeLightSub.getVisionMeasurement(),
-                limeLightSub.getTimesStampMillis());
+                limeLightSub.getTimeStampSeconds());
+        }
+        else{
+            mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3,0.3,Units.degreesToRadians(3)));
+            mPoseEstimator.addVisionMeasurement(getOdomPose2d(), System.currentTimeMillis()-Constants.startTime);
+
         }
     }
 
@@ -217,6 +225,7 @@ public class Swerve extends SubsystemBase {
     public void periodic(){
         mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getYaw(), getModulePositions());
         addVision();
+
         robotField2d.setRobotPose(getPose());
 
         odometry.update(getYaw(), getModulePositions());

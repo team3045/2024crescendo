@@ -116,6 +116,14 @@ public class LimeLightSub extends SubsystemBase {
     return System.currentTimeMillis() - Constants.startTime - totalLatency;
   }
 
+  public double getTimeStampSeconds(){
+    return getTimesStampMillis() * 100;
+  }
+
+  public double getNorm(){
+    return getCamToTargetTransform().getTranslation().getNorm();
+  }
+
   //END Getters
 
   //Formatting
