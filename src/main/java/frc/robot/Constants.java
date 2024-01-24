@@ -155,7 +155,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(188);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(180);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -214,6 +214,7 @@ public final class Constants {
         public static final double kPYGain = 0.5;
         public static final double kPAGain = 1.0;
 
+        //4.57, 2.57
         //SHOP: Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
             3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),

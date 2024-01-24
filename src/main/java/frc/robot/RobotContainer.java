@@ -55,7 +55,7 @@ public class RobotContainer {
                 () -> -1 * driveController.getRawAxis(translationAxis)*0.8,
                 () -> -1 * driveController.getRawAxis(strafeAxis)*0.8, 
                 () -> -driveController.getRawAxis(rotationAxis)*0.4 ,
-                () -> robotCentric.getAsBoolean()
+                () -> false //.getAsBoolean()
             )
         );
 

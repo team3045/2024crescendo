@@ -96,7 +96,7 @@ public class Swerve extends SubsystemBase {
                                     translation.getX(), 
                                     translation.getY(), 
                                     rotation, 
-                                    mPoseEstimator.getEstimatedPosition().getRotation()
+                                    getYaw()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -207,9 +207,10 @@ public class Swerve extends SubsystemBase {
 
             visionMeasurementStdDevs = VecBuilder.fill(0.3*xDistance*kDistanceMod, 0.3*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
-            //mPoseEstimator.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
+            mPoseEstimator.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
 
-        
+            odometry.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
+
             mPoseEstimator.addVisionMeasurement(
                 limeLightSub.getVisionMeasurement(),
                 limeLightSub.getTimeStampSeconds());
