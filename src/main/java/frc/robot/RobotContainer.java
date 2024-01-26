@@ -2,6 +2,11 @@ package frc.robot;
 
 import org.photonvision.PhotonCamera;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -20,7 +25,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driveController = new Joystick(0);
+    private final Joystick driveController = new Joystick(3);
     //private final Joystick rotationJoystick = new Joystick(1);    
 
     /* Drive Controls */
@@ -90,7 +95,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return null;
+        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
+        AutoBuilder.configureHolonomic(s_Swerve::getOdomPose2d, s_Swerve::resetPose, s_Swerve::getChassisSpeeds, s_Swerve::driveTest, config,() -> false, s_Swerve);
+        PathPlannerPath path = PathPlannerPath.fromPathFile("odomTest");
+
+        return AutoBuilder.followPath(path);
     }
 }
 

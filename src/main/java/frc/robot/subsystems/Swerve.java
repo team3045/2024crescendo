@@ -57,7 +57,8 @@ public class Swerve extends SubsystemBase {
         //apply default config
         gyro.configFactoryDefault();
 
-        zeroGyro();
+        //zeroGyro();
+        gyro.setYaw(Units.degreesToRadians(EstimationConstants.robotStartPose.getRotation().getZ()));
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -132,6 +133,7 @@ public class Swerve extends SubsystemBase {
     //pass in current position to reset where you are to be origin
     public void resetPose(Pose2d pose) {
         mPoseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
+        odometry.resetPosition(getYaw(), getModulePositions(), pose);
     }
 
     //Getters for swerve modules
@@ -224,7 +226,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getYaw(), getModulePositions());
-        addVision();
+        //addVision();
 
         robotField2d.setRobotPose(getPose());
 

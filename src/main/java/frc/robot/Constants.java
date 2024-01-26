@@ -51,7 +51,7 @@ public final class Constants {
         public static final double trackWidth = Units.inchesToMeters(27); 
         public static final double wheelBase = Units.inchesToMeters(32); 
         public static final double wheelCircumference = Units.inchesToMeters(4*Math.PI); //set to wheel circumfrance
-        public static final double driveBaseRadius = Math.sqrt(trackWidth*trackWidth + wheelBase*wheelBase); //distance from center to furthest module
+        public static final double driveBaseRadius = Math.sqrt((trackWidth/2)*(trackWidth/2)+(wheelBase/2)*(wheelBase/2));
 
         /* Swerve Kinematics 
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
@@ -136,7 +136,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(144.22);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(146.16);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -146,7 +146,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(291);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(287.31);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -156,7 +156,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(198);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -193,8 +193,9 @@ public final class Constants {
 
         //where on ther field does the robot start compared to origin SET LATER
         public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Swerve.trackWidth/ 2, Swerve.wheelBase/2,Swerve.wheelBase/2), new Rotation3d(0,0,0));
+        public static final Transform3d testStartPose = new Transform3d(new Translation3d(5.0,5.0,0), new Rotation3d(0,0,0));
         
-        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(EstimationConstants.originToRobotStart);
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(testStartPose);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 
