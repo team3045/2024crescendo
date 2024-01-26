@@ -51,6 +51,7 @@ public final class Constants {
         public static final double trackWidth = Units.inchesToMeters(27); 
         public static final double wheelBase = Units.inchesToMeters(32); 
         public static final double wheelCircumference = Units.inchesToMeters(4*Math.PI); //set to wheel circumfrance
+        public static final double driveBaseRadius = Math.sqrt(trackWidth*trackWidth + wheelBase*wheelBase); //distance from center to furthest module
 
         /* Swerve Kinematics 
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */

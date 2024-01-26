@@ -35,6 +35,7 @@ public class RobotContainer {
 
     private final JoystickButton fieldSwerveCommand = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
     private final JoystickButton driveToTarget = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
+    private final JoystickButton pathPlannerFindPose = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
 
     
 
@@ -44,6 +45,7 @@ public class RobotContainer {
     /* Subsystems */
     private final LimeLightSub vision = new LimeLightSub();
     private final Swerve s_Swerve = new Swerve(vision);
+    private final OnFlyPathPlanner onFly = new OnFlyPathPlanner(s_Swerve, vision, 5.0);
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
@@ -79,6 +81,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
+        pathPlannerFindPose.whileTrue(onFly.getPPCommand());
     }
 
     /**
@@ -87,6 +90,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new InstantCommand() {};
+        return null;
     }
 }
+
