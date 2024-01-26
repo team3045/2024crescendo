@@ -50,7 +50,7 @@ public class RobotContainer {
     /* Subsystems */
     private final LimeLightSub vision = new LimeLightSub();
     private final Swerve s_Swerve = new Swerve(vision);
-    private final OnFlyPathPlanner onFly = new OnFlyPathPlanner(s_Swerve, vision, 5.0);
+    private final AutoSub autoSub = new AutoSub(s_Swerve);
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
@@ -86,7 +86,8 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
-        pathPlannerFindPose.whileTrue(onFly.getPPCommand());
+        //goes to goalPose if target is in sight otherwise just stays in place
+        pathPlannerFindPose.whileTrue(autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())));
     }
 
     /**
@@ -95,11 +96,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
-        AutoBuilder.configureHolonomic(s_Swerve::getOdomPose2d, s_Swerve::resetPose, s_Swerve::getChassisSpeeds, s_Swerve::driveTest, config,() -> false, s_Swerve);
-        PathPlannerPath path = PathPlannerPath.fromPathFile("odomTest");
-
-        return AutoBuilder.followPath(path);
+        return autoSub.getAutoCommand("odomTest");
     }
 }
 
