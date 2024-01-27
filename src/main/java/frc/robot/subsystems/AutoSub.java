@@ -11,14 +11,18 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.EstimationConstants;
@@ -30,7 +34,7 @@ public class AutoSub extends SubsystemBase {
   /*For On Fly PathPlanning */
   //Map of where we want to be in relation to each AprilTag
   private static final Map<Double, Transform2d> offsets = Map.of(
-    5.0, new Transform2d(new Translation2d(1.5,0),Rotation2d.fromDegrees(180)));
+    5.0, new Transform2d(new Translation2d(2.5,0),Rotation2d.fromDegrees(180)));
   //Specific constraints for onFly pathplanning
   private final PathConstraints onFlyConstraints = new PathConstraints(4.0, 1.0, Math.PI*3, Math.PI * 4);
 
@@ -40,7 +44,9 @@ public class AutoSub extends SubsystemBase {
   public AutoSub(Swerve swerve) {
     this.swerve = swerve;
 
-    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
+    PIDConstants translationConstants = new PIDConstants(5.3,0,0);
+    PIDConstants rotationConstants = new PIDConstants(5.0,0,0);
+    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
     AutoBuilder.configureHolonomic(swerve::getOdomPose2d, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveTest, config,() -> false, swerve);
   }
 
@@ -73,6 +79,21 @@ public class AutoSub extends SubsystemBase {
   //returns command to go to that pose
   public Command getOnFlyCommand(Pose2d goalPose){
     return AutoBuilder.pathfindToPose(goalPose,onFlyConstraints,0.0,0.0);
+  }
+  
+
+  public void turnToTarget(LimeLightSub vision){
+    PIDController aController = new PIDController(0.1, 0, 0);
+    aController.setSetpoint(0);
+    double aOutput = aController.calculate(vision.getTx());
+
+    aController.setTolerance(1);
+
+    System.out.println("turning");
+
+    swerve.driveTest(new ChassisSpeeds(0, 0, aOutput*0.7));
+
+    aController.close();
   }
 
   @Override

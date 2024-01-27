@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
@@ -156,7 +157,7 @@ public final class Constants {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(198);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(327);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -192,10 +193,10 @@ public final class Constants {
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Swerve.trackWidth/ 2, Swerve.wheelBase/2,Swerve.wheelBase/2), new Rotation3d(0,0,0));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(73), Units.inchesToMeters(37),0), new Rotation3d(0,0,0));
         public static final Transform3d testStartPose = new Transform3d(new Translation3d(5.0,5.0,0), new Rotation3d(0,0,0));
         
-        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(testStartPose);
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(originToRobotStart);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 

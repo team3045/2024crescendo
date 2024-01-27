@@ -225,7 +225,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getYaw(), getModulePositions());
-        //addVision();
+        addVision();
 
         robotField2d.setRobotPose(getPose());
 
