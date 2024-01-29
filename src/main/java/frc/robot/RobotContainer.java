@@ -43,10 +43,6 @@ public class RobotContainer {
     private final JoystickButton driveToTarget = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
     private final JoystickButton pathPlannerFindPose = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
 
-    
-
-    
-
 
     /* Subsystems */
     private final LimeLightSub vision = new LimeLightSub();
@@ -70,7 +66,6 @@ public class RobotContainer {
         //poseEstimation.periodic();
         vision.periodic();
 
-        
 
         // Configure the button bindings
         configureButtonBindings();
