@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
@@ -89,9 +90,9 @@ public class RobotContainer {
         driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
         //goes to goalPose if target is in sight otherwise just stays in place
         pathPlannerFindPose.whileTrue( new SequentialCommandGroup(
-            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
-            new InstantCommand(() -> autoSub.turnToTarget(vision))
-            )
+            //autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
+            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).get()),
+            new TurnToTarget(vision, s_Swerve, autoSub))
         );
     }
 

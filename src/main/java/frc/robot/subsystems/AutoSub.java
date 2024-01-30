@@ -30,6 +30,7 @@ import frc.robot.Constants.EstimationConstants;
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
   private LimeLightSub vision;
+  private boolean instantiated = false;
 
   /*For On Fly PathPlanning */
   //Map of where we want to be in relation to each AprilTag
@@ -44,10 +45,12 @@ public class AutoSub extends SubsystemBase {
   public AutoSub(Swerve swerve) {
     this.swerve = swerve;
 
-    PIDConstants translationConstants = new PIDConstants(5.3,0,0);
-    PIDConstants rotationConstants = new PIDConstants(5.0,0,0);
+    instantiated = true;
+
+    PIDConstants translationConstants = new PIDConstants(6.5,0,0);
+    PIDConstants rotationConstants = new PIDConstants(6.5,0,0);
     HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
-    AutoBuilder.configureHolonomic(swerve::getOdomPose2d, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveTest, config,() -> false, swerve);
+    AutoBuilder.configureHolonomic(swerve::getPose, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveTest, config,() -> false, swerve);
   }
 
 
@@ -83,18 +86,22 @@ public class AutoSub extends SubsystemBase {
   
 
   public void turnToTarget(LimeLightSub vision){
-    PIDController aController = new PIDController(0.1, 0, 0);
-    aController.setSetpoint(0);
-    double aOutput = aController.calculate(vision.getTx());
+    if(vision.getTargetSeen()){
+      PIDController aController = new PIDController(0.1, 0, 0);
+      aController.setSetpoint(0);
+      double aOutput = aController.calculate(vision.getTx());
 
-    aController.setTolerance(1);
+      aController.setTolerance(1);
 
-    System.out.println("turning");
+      System.out.println("turning");
 
-    swerve.driveTest(new ChassisSpeeds(0, 0, aOutput*0.7));
+      swerve.driveTest(new ChassisSpeeds(0, 0, aOutput*0.7));
 
-    aController.close();
+      aController.close();
+    }
+
   }
+  
 
   @Override
   public void periodic() {
