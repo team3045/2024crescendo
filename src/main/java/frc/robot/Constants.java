@@ -2,16 +2,12 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.pathplanner.lib.PathConstraints;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
-import frc.robot.autos.pathPlannerPath2023lib;
 
 public final class Constants {
     public static final double stickDeadband = 0.05;
@@ -42,6 +38,11 @@ public final class Constants {
     public static final int SHOOTERSPINBUTTON = 100; // ADD LATER
     public static final double SHOOTERSPEEDTOP = 0.5; //ADD LATER
     public static final double SHOOTERSPEEDBOTTOM = 0.5; // ADD LATER
+    public static final double CLIMBINGARMSPEED = 0.5; // ADD LATER
+    public static final int ARMSUPBUTTON = 100; // ADD LATER
+    public static final int ARMSDOWNBUTTON = 100; // ADD LATER
+    public static final int RIGHTARMBUTTON = 100; // ADD LATER
+    public static final int LEFTARMBUTTON = 100; // ADD LATER
 
     public static final class Swerve {
 

@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
@@ -14,6 +15,8 @@ import java.util.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class shooterSpin extends SubsystemBase{
     public static CANSparkMax m1;
@@ -25,12 +28,14 @@ public class shooterSpin extends SubsystemBase{
         this.m2 = new CANSparkMax(m2, MotorType.kBrushless);
     }
 
-    public void spin(double speed) {
-        m1.set(speed);
-        m2.set(speed);
+    public Command spin() {
+        m1.set(Constants.SHOOTERSPEEDTOP);
+        m2.set(Constants.SHOOTERSPEEDBOTTOM);
+        return null;
     }
-    public void stop () {
+    public Command stop () {
         m1.stop(); m2.stop();
+        return null;
     }
 
     public static void setTopSpeed(double speed) {

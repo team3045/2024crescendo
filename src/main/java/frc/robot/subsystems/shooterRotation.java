@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.math.FindCirclePoint;
 import frc.robot.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -27,6 +28,15 @@ public class shooterRotation extends SubsystemBase {
     }
     public double smallToBig (double small) {
         return small * Constants.ROTATIONGEARCHAINCONNECTIONCIRCUMFERENCE / Constants.ROTATIONGEARCIRCUMFERENCE;
+    }
+
+    public Command rotate(int i) { // up is i = 1, down is i = -1
+        this.motor.set(-Constants.SHOOTERMOTORSPEED * i);
+        return null;
+    }
+    public Command stop () {
+        this.motor.stopMotor(0);
+        return null;
     }
 
     @Override

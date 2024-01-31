@@ -4,15 +4,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.lib.math.FindCirclePoint;
-import frc.robot.autos.*;
+import frc.robot.autos.exampleAuto;
+import frc.robot.autos.pathPlannerPath2023lib;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -37,15 +35,27 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driveController, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
+    private final JoystickButton robotCentric = new JoystickButton(driveController, PS4Controller.Button.kPS.value);
     private final JoystickButton turnLimelight = new JoystickButton(driveController, PS4Controller.Button.kCircle.value);
     private final JoystickButton followLimelight = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
     //private final JoystickButton driveLimelightX = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
     private final JoystickButton alineAlongCircle = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
 
+    private final JoystickButton leftArm = new JoystickButton(driveController, PS4Controller.Button.kL1.value);
+    private final JoystickButton rightArm = new JoystickButton(driveController, PS4Controller.Button.kR1.value);
+    private final JoystickButton up = new JoystickButton(driveController, PS4Controller.Button.kOptions.value);
+    private final JoystickButton down = new JoystickButton(driveController, PS4Controller.Button.kShare.value);
+
+    private final JoystickButton shooterSpin = new JoystickButton(driveController, PS4Controller.Button.kL2.value);
+    private final JoystickButton shooterRotate = new JoystickButton(driveController, PS4Controller.Button.kR2.value);
+
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final limelightVision lvision = new limelightVision();
+
+    private final ClimbingArms climbingArms = new ClimbingArms(0,0); // change later
+    private final shooterSpin shooterSpinObj = new shooterSpin(0,0); // change later
+    private final shooterRotation shooterRotation = new shooterRotation(0); // change later
 
     /*Autonomous Chooser */
     private final Command exampleAutoChoice = new exampleAuto(s_Swerve);
@@ -95,7 +105,21 @@ public class RobotContainer {
         followLimelight.whileTrue(new LimeLightFollow(s_Swerve));
         //driveLimelightX.whileTrue(new driveToLimelightX(s_Swerve));
         alineAlongCircle.whileTrue(new AlineAlongCircle(s_Swerve));
+
+        //left arm right arm armsup armsdown
+        leftArm.whileTrue((Command) up.whileTrue(climbingArms.leftArm(1)));
+        leftArm.whileTrue((Command) down.whileTrue(climbingArms.leftArm(-1)));
+        rightArm.whileTrue((Command) up.whileTrue(climbingArms.rightArm(1)));
+        rightArm.whileTrue((Command) down.whileTrue(climbingArms.rightArm(-1)));
+        down.whileTrue((Command) up.whileTrue(climbingArms.stopArms()));
+
+        shooterSpin.whileTrue(shooterSpinObj.spin());
+        shooterSpin.whileFalse(shooterSpinObj.stop());
+        shooterRotate.whileTrue((Command) up.whileTrue(shooterRotation.rotate(1)));
+        shooterRotate.whileTrue((Command) down.whileTrue(shooterRotation.rotate(-1)));
+        shooterRotate.whileFalse(shooterRotation.stop());
     }
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
