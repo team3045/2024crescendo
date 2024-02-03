@@ -57,7 +57,7 @@ public class ElevatorSub extends SubsystemBase {
   public ElevatorSub(LimelightSub vision) {
     state = ElevatorState.INTAKE;
 
-    rightElevator = new TalonFX(0);
+    rightElevator = new TalonFX(2);
     leftElevator = new TalonFX(1);
 
     rightElevator.configFactoryDefault();
@@ -66,8 +66,6 @@ public class ElevatorSub extends SubsystemBase {
 
     rightElevator.setSelectedSensorPosition(0);
     leftElevator.setSelectedSensorPosition(0);
-
-    wristMotor = new TalonFX(2);
     
     elevatorPosEncoderTicks = rightElevator.getSelectedSensorPosition();
     elevatorPosMeters = getEncoderMeters();
