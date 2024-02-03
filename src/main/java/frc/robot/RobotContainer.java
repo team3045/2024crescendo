@@ -27,7 +27,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driveController = new Joystick(3);
+    private final Joystick driveController = new Joystick(0);
     //private final Joystick rotationJoystick = new Joystick(1);    
 
     /* Drive Controls */
@@ -84,10 +84,11 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
         //goes to goalPose if target is in sight otherwise just stays in place
+        //possible errpr with sequential command group index out of bounds
         pathPlannerFindPose.whileTrue( new SequentialCommandGroup(
             //autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
-            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).get()),
-            new TurnToTarget(vision, s_Swerve, autoSub))
+            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).get()))
+            //new TurnToTarget(vision, s_Swerve, autoSub))
         );
     }
 

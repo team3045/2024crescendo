@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -47,10 +49,10 @@ public class AutoSub extends SubsystemBase {
 
     instantiated = true;
 
-    PIDConstants translationConstants = new PIDConstants(6.5,0,0);
-    PIDConstants rotationConstants = new PIDConstants(6.5,0,0);
+    PIDConstants translationConstants = new PIDConstants(6,0,0);
+    PIDConstants rotationConstants = new PIDConstants(6,0,0);
     HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
-    AutoBuilder.configureHolonomic(swerve::getPose, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveTest, config,() -> false, swerve);
+    AutoBuilder.configureHolonomic(swerve::getPose, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
   }
 
 
@@ -99,7 +101,6 @@ public class AutoSub extends SubsystemBase {
 
       aController.close();
     }
-
   }
   
 

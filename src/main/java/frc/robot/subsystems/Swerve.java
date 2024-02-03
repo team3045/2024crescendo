@@ -194,6 +194,15 @@ public class Swerve extends SubsystemBase {
         dChassisSpeeds = null;
     }
 
+    public void driveField(ChassisSpeeds speeds){
+        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,getYaw());
+        SwerveModuleState[] states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
+        setModuleStates(states);
+    }
+
+
     //adds the vision measurement to pose estimator if target is seen and the id is correct
     //scales the std dev based on distance from tag TLDR: if we're farther away we trust vision less
     public void addVision(){
@@ -207,13 +216,13 @@ public class Swerve extends SubsystemBase {
 
             visionMeasurementStdDevs = VecBuilder.fill(0.3*xDistance*kDistanceMod, 0.3*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
-            mPoseEstimator.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
+            mPoseEstimator.resetPosition(getYaw(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()));
 
-            odometry.resetPosition(getYaw(), getModulePositions(), limeLightSub.getVisionMeasurement());
+            odometry.resetPosition(getYaw(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()));
 
-            mPoseEstimator.addVisionMeasurement(
-                limeLightSub.getVisionMeasurement(),
-                limeLightSub.getTimeStampSeconds());
+            /*mPoseEstimator.addVisionMeasurement(
+                new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()),
+                limeLightSub.getTimeStampSeconds());*/
         }
         else{
             mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3,0.3,Units.degreesToRadians(3)));
