@@ -44,11 +44,15 @@ public class RobotContainer {
     private final JoystickButton driveToTarget = new JoystickButton(driveController, PS4Controller.Button.kCross.value);
     private final JoystickButton pathPlannerFindPose = new JoystickButton(driveController, PS4Controller.Button.kSquare.value);
 
+    private final JoystickButton shooterTest = new JoystickButton(driveController, PS4Controller.Button.kL1.value);
+    private final JoystickButton feedTest = new JoystickButton(driveController, PS4Controller.Button.kR1.value);
+
 
     /* Subsystems */
     private final LimeLightSub vision = new LimeLightSub();
     private final Swerve s_Swerve = new Swerve(vision);
     private final AutoSub autoSub = new AutoSub(s_Swerve);
+    private final ShooterSub shooterSub = new ShooterSub();
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
@@ -90,6 +94,12 @@ public class RobotContainer {
             autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).get()))
             //new TurnToTarget(vision, s_Swerve, autoSub))
         );
+
+        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shoot(40, 40)));
+        shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
+
+        feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
+        feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
     }
 
     /**
