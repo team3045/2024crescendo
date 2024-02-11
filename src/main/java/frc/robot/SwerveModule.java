@@ -1,6 +1,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -26,6 +29,7 @@ public class SwerveModule {
     /* drive motor control requests */
     private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
     private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
+    private final MotionMagicVelocityDutyCycle motionMagicRequest = new MotionMagicVelocityDutyCycle(0);
 
     /* angle motor control requests */
     private final PositionVoltage anglePosition = new PositionVoltage(0);
@@ -57,8 +61,11 @@ public class SwerveModule {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            mDriveMotor.setControl(driveDutyCycle);
+            /*driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            mDriveMotor.setControl(driveDutyCycle);*/
+
+            double desiredVelocity = desiredState.speedMetersPerSecond;
+            mDriveMotor.setControl(motionMagicRequest.withVelocity(desiredVelocity));
         }
         else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);

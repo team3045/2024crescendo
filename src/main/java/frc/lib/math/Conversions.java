@@ -41,4 +41,24 @@ public class Conversions {
         double wheelRotations = wheelMeters / circumference;
         return wheelRotations;
     }
+    
+    /**
+     * @param wheelMPSS WheelAcceleration (in Meters / seconds^2)
+     * @param circumference Wheel Circumference: (in Meters)
+     * @return Wheel Acceleration: (In Rotations / second^2)
+     */
+    public static double MPSSToRPSS(double wheelMPSS, double circumference){
+        double wheelRPSS = wheelMPSS / circumference;
+        return wheelRPSS;
+    }
+
+    /**
+     * @param wheelRPSS WheelAcceleration (in Rotations / seconds^2)
+     * @param circumference Wheel Circumference: (in Meters)
+     * @return Wheel Acceleration: (In Meters / second^2)
+     */
+    public static double RPSSToMPSS(double wheelRPSS, double circumference){
+        double wheelMPSS = wheelRPSS * circumference;
+        return wheelMPSS;
+    }
 }
