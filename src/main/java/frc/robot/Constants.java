@@ -9,11 +9,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-    public static final double stickDeadband = 0.1;
+    public static final double stickDeadband = 0.05;
 
     public static final class Swerve {
         public static final int pigeonID = 1;
@@ -75,13 +76,13 @@ public final class Constants {
         /* Drive Motor Characterization Values From SYSID */
         public static final double driveKS = 0.32 / 12; //TODO: This must be tuned to specific robot
         public static final double driveKV = 1.51 / 12;
-        public static final double driveKA = 0.27 / 12;
+        public static final double driveKA = 0.15 / 12; //0.27/12;
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 2; //TODO: This must be tuned to specific robot
+        public static double maxSpeed = SmartDashboard.getNumber("maxSpeed", 0.5); //TODO: This must be tuned to specific robot
         /** Radians per Second */
-        public static final double maxAngularVelocity = Math.PI / 2; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = Math.PI / 2.5; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
