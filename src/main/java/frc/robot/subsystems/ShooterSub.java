@@ -95,9 +95,10 @@ public class ShooterSub extends SubsystemBase {
   }
 
   /*Use A regression calculated from testing to determine flyhweel speed in meter/s based on distance */
+  //This mps is the speed of the flywheels not of the ball on exit
+  //ball speed on exit would be the tangential speed which should be half not accounting for slip or friction
   public static double calculateMPS(double distance){
     double MPS = Math.pow(distance, 3) + 2*Math.pow(distance, 2) + distance + 0; //Regression
-
     return MPS;
   }
 
