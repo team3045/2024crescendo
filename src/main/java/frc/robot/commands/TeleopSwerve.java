@@ -1,69 +1,215 @@
 package frc.robot.commands;
 
-import frc.robot.Constants;
-import frc.robot.subsystems.Swerve;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.team3061.RobotConfig;
+import frc.lib.team3061.drivetrain.Drivetrain;
+import frc.lib.team6328.util.TunableNumber;
+import frc.robot.Constants;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
+/**
+ * This command, when executed, instructs the drivetrain subsystem to drive based on the specified
+ * values from the controller(s) and enabled features. Configurable deadband and power function are
+ * applied to the controller inputs. If the robot isn't in "turbo" mode, the acceleration is limited
+ * based on the configurable constraints. This command is designed to be the default command for the
+ * drivetrain subsystem.
+ *
+ * <p>Requires: the Drivetrain subsystem
+ *
+ * <p>Finished When: never
+ *
+ * <p>At End: stops the drivetrain
+ */
+public class TeleopSwerve extends Command {
 
-public class TeleopSwerve extends Command {    
-    private Swerve s_Swerve;    
-    private DoubleSupplier translationSup;
-    private DoubleSupplier strafeSup;
-    private DoubleSupplier rotationSup;
-    private BooleanSupplier robotCentricSup;
+  private final Drivetrain drivetrain;
+  private final DoubleSupplier translationXSupplier;
+  private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationSupplier;
+  private final Supplier<Rotation2d> angleSupplier;
+  private final boolean driveFacingAngle;
 
-    private final SlewRateLimiter veloRateLimiter = new SlewRateLimiter(0.1);
-    private final SlewRateLimiter rotRateLimiter = new SlewRateLimiter(Math.PI / 4);
-    private final SlewRateLimiter translationRateLimiter = new SlewRateLimiter(0.1);
+  private static final double DEADBAND = 0.1;
+  private double lastAngularVelocity;
+  private double lastXVelocity;
+  private double lastYVelocity;
 
-    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
-        this.s_Swerve = s_Swerve;
-        addRequirements(s_Swerve);
+  private final double maxVelocityMetersPerSecond = RobotConfig.getInstance().getRobotMaxVelocity();
+  private final double maxAngularVelocityRadiansPerSecond =
+      RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
-        this.translationSup = translationSup;
-        this.strafeSup = strafeSup;
-        this.rotationSup = rotationSup;
-        this.robotCentricSup = robotCentricSup;
+  private final TunableNumber maxTurnAcceleration =
+      new TunableNumber(
+          "TeleopSwerve/maxTurnAcceleration",
+          RobotConfig.getInstance().getRobotMaxTurnAcceleration());
+  private final TunableNumber joystickPower = new TunableNumber("TeleopSwerve/joystickPower", 2.0);
+  private final TunableNumber maxDriveAcceleration =
+      new TunableNumber(
+          "TeleopSwerve/maxDriveAcceleration",
+          RobotConfig.getInstance().getRobotMaxDriveAcceleration());
+
+  /**
+   * Create a new TeleopSwerve command object.
+   *
+   * @param drivetrain the drivetrain subsystem instructed by this command
+   * @param translationXSupplier the supplier of the translation x value as a percentage of the
+   *     maximum velocity as defined by the standard field or robot coordinate system
+   * @param translationYSupplier the supplier of the translation y value as a percentage of the
+   *     maximum velocity as defined by the standard field or robot coordinate system
+   * @param rotationSupplier the supplier of the rotation value as a percentage of the maximum
+   *     rotational velocity as defined by the standard field or robot coordinate system
+   */
+  public TeleopSwerve(
+      Drivetrain drivetrain,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationSupplier) {
+    this.drivetrain = drivetrain;
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.rotationSupplier = rotationSupplier;
+    this.angleSupplier = null;
+    this.driveFacingAngle = false;
+
+    addRequirements(drivetrain);
+  }
+
+  /**
+   * Create a new TeleopSwerve command object.
+   *
+   * @param drivetrain the drivetrain subsystem instructed by this command
+   * @param translationXSupplier the supplier of the translation x value as a percentage of the
+   *     maximum velocity as defined by the standard field or robot coordinate system
+   * @param translationYSupplier the supplier of the translation y value as a percentage of the
+   *     maximum velocity as defined by the standard field or robot coordinate system
+   * @param rotationSupplier the supplier of the rotation value as a percentage of the maximum
+   *     rotational velocity as defined by the standard field or robot coordinate system
+   */
+  public TeleopSwerve(
+      Drivetrain drivetrain,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      Supplier<Rotation2d> angleSupplier) {
+    this.drivetrain = drivetrain;
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.rotationSupplier = null;
+    this.angleSupplier = angleSupplier;
+    this.driveFacingAngle = true;
+
+    addRequirements(drivetrain);
+  }
+
+  @Override
+  public void initialize() {
+    Logger.recordOutput("ActiveCommands/TeleopSwerve", true);
+  }
+
+  /**
+   * This method is invoked periodically while this command is scheduled. It calculates the
+   * velocities based on the supplied values and enabled features and invokes the drivetrain
+   * subsystem's drive method.
+   */
+  @Override
+  public void execute() {
+
+    // invert the controller input and apply the deadband and exponential function to make the robot
+    // more responsive to small changes in the controller
+    double xPercentage = modifyAxis(translationXSupplier.getAsDouble(), joystickPower.get());
+    double yPercentage = modifyAxis(translationYSupplier.getAsDouble(), joystickPower.get());
+
+    double xVelocity = xPercentage * maxVelocityMetersPerSecond;
+    double yVelocity = yPercentage * maxVelocityMetersPerSecond;
+    double rotationalVelocity = 0.0;
+
+    if (!this.driveFacingAngle) {
+      double rotationPercentage = modifyAxis(rotationSupplier.getAsDouble(), joystickPower.get());
+      rotationalVelocity = rotationPercentage * maxAngularVelocityRadiansPerSecond;
     }
 
-    @Override
-    public void execute() {
-        /* Get Values, Deadband*/
-        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
-        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
+    Logger.recordOutput("TeleopSwerve/xVelocity", xVelocity);
+    Logger.recordOutput("TeleopSwerve/yVelocity", yVelocity);
+    Logger.recordOutput("TeleopSwerve/rotationalVelocity", rotationalVelocity);
 
-        //translationVal = filterVelocity(translationVal);
-        //strafeVal = filterVelocity(strafeVal);
-        // rotationVal = filterRotation(rotationVal);
+    // if the robot is not in turbo mode, limit the acceleration
+    if (!drivetrain.getTurbo()) {
+      double driveAccelerationMetersPer20Ms =
+          maxDriveAcceleration.get() * Constants.LOOP_PERIOD_SECS;
 
-        Translation2d translation = new Translation2d(translationVal,strafeVal).times(Constants.Swerve.maxSpeed);
+      if (Math.abs(xVelocity - lastXVelocity) > driveAccelerationMetersPer20Ms) {
+        xVelocity =
+            lastXVelocity
+                + Math.copySign(driveAccelerationMetersPer20Ms, xVelocity - lastXVelocity);
+      }
 
-        /* Drive */
-        s_Swerve.drive(
-            translation, 
-            rotationVal * Constants.Swerve.maxAngularVelocity, 
-            !robotCentricSup.getAsBoolean(), 
-            true
-        );
+      if (Math.abs(yVelocity - lastYVelocity) > driveAccelerationMetersPer20Ms) {
+        yVelocity =
+            lastYVelocity
+                + Math.copySign(driveAccelerationMetersPer20Ms, yVelocity - lastYVelocity);
+      }
+
+      if (!this.driveFacingAngle) {
+        double turnAccelerationRadiansPer20Ms =
+            maxTurnAcceleration.get() * Constants.LOOP_PERIOD_SECS;
+
+        if (Math.abs(rotationalVelocity - lastAngularVelocity) > turnAccelerationRadiansPer20Ms) {
+          rotationalVelocity =
+              lastAngularVelocity
+                  + Math.copySign(
+                      turnAccelerationRadiansPer20Ms, rotationalVelocity - lastAngularVelocity);
+        }
+      }
     }
 
-    public double filterVelocity(double input){
-        return veloRateLimiter.calculate(input);
-    }
+    lastXVelocity = xVelocity;
+    lastYVelocity = yVelocity;
+    lastAngularVelocity = rotationalVelocity;
 
-    public double filterRotation(double input){
-        return rotRateLimiter.calculate(input);
+    if (this.driveFacingAngle) {
+      drivetrain.driveFacingAngle(xVelocity, yVelocity, angleSupplier.get(), true);
+    } else {
+      drivetrain.drive(
+          xVelocity, yVelocity, rotationalVelocity, true, drivetrain.getFieldRelative());
     }
+  }
 
-    public Translation2d filterTranslation(Translation2d translation){
-        return translation.times(translationRateLimiter.calculate(translation.getNorm()));
+  /**
+   * This method will be invoked when this command finishes or is interrupted. The drivetrain is
+   * left in whatever state it was in when the command finished.
+   *
+   * @param interrupted true if the command was interrupted by another command being scheduled
+   */
+  @Override
+  public void end(boolean interrupted) {
+    Logger.recordOutput("ActiveCommands/TeleopSwerve", false);
+  }
+
+  /**
+   * Squares the specified value, while preserving the sign. This method is used on all joystick
+   * inputs. This is useful as a non-linear range is more natural for the driver.
+   *
+   * @param value the raw controller value
+   * @param power the power to which the value should be raised
+   * @return the modified value
+   */
+  public static double modifyAxis(double value, double power) {
+    double modifiedValue = deadband(value, DEADBAND);
+    modifiedValue = Math.copySign(Math.pow(modifiedValue, power), modifiedValue);
+    return modifiedValue;
+  }
+
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
     }
+  }
 }

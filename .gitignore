@@ -1,3 +1,7 @@
+src/main/java/frc/robot/BuildConstants.java
+
+ctre_sim/*
+
 # This gitignore has been specially created by the WPILib team.
 # If you remove items from this file, intellisense might break.
 
@@ -170,9 +174,3 @@ out/
 
 # Simulation GUI and other tools window save file
 *-window.json
-
-# Simulation data log directory
-logs/
-
-# Folder that has CTRE Phoenix Sim device config storage
-ctre_sim/
