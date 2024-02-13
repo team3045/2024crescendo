@@ -61,10 +61,11 @@ public class SwerveModule {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
-            /*driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            mDriveMotor.setControl(driveDutyCycle);*/
+            // driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            // mDriveMotor.setControl(driveDutyCycle);
 
             double desiredVelocity = desiredState.speedMetersPerSecond;
+            desiredVelocity = Conversions.MPSToRPS(desiredVelocity, Constants.Swerve.wheelCircumference);
             mDriveMotor.setControl(motionMagicRequest.withVelocity(desiredVelocity));
         }
         else {
