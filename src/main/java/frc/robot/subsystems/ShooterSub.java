@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.apache.commons.lang3.Conversion;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -13,13 +15,17 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSub extends SubsystemBase {
   private static final TalonFX topMotor = new TalonFX(11);
   private static final TalonFX bottomMotor = new TalonFX(10);
   private static final TalonFX feedMotor = new TalonFX(12);
+
+  private static final double flywheelCircumference = Units.inchesToMeters(4) * Math.PI; //change later
 
   private enum ShooterSate{
     STOP,
@@ -50,6 +56,7 @@ public class ShooterSub extends SubsystemBase {
     slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // no output for error derivative
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
 
     // set Motion Magic Velocity settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
@@ -63,7 +70,7 @@ public class ShooterSub extends SubsystemBase {
   }
 
   //speeds in rotations per second
-  public void shoot(double topSpeed, double bottomSpeed){
+  public void shootSpeed(double topSpeed, double bottomSpeed){
     //Velocity the motors should go to rot per sec
     var request = new MotionMagicVelocityVoltage(0);
 
@@ -80,11 +87,29 @@ public class ShooterSub extends SubsystemBase {
   }
 
   public void stopShooter(){
-    shoot(0, 0);
+    shootSpeed(0, 0);
   }
 
   public void stopFeed(){
     feedMotor.set(0);
+  }
+
+  /*Use A regression calculated from testing to determine flyhweel speed in meter/s based on distance */
+  public static double calculateMPS(double distance){
+    double MPS = Math.pow(distance, 3) + 2*Math.pow(distance, 2) + distance + 0; //Regression
+
+    return MPS;
+  }
+
+  //MPS = RPS * circumference(meters)
+  public static double MPSToRPS(double wheelMPS, double circumference){
+    double wheelRPS = wheelMPS / circumference;
+    return wheelRPS;
+  }
+
+  public void shootDistance(double distance){
+    double RPS = MPSToRPS(calculateMPS(distance), flywheelCircumference);
+    this.shootSpeed(RPS,RPS);
   }
 
   @Override

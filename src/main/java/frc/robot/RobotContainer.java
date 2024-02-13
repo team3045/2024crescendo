@@ -95,7 +95,7 @@ public class RobotContainer {
             //new TurnToTarget(vision, s_Swerve, autoSub))
         );
 
-        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shoot(40, 40)));
+        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(40, 40)));
         shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
 
         feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
