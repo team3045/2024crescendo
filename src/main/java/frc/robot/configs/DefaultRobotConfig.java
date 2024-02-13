@@ -3,6 +3,7 @@ package frc.robot.configs;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.swerve.SwerveConstants;
 
@@ -13,38 +14,40 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants;
 public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: update all CAN IDs and steer offsets
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 13;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 12;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 14;
-  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.22591;
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 5;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 4;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 10;
+  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = 0.321044921875;
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 16;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 15;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 17;
-  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = -0.390381;
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 9;
+  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = 0.172119140625;
 
   private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7;
   private static final int BACK_LEFT_MODULE_STEER_MOTOR = 6;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 8;
-  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = 0.327393;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 11;
+  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.028564453125;
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 10;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 9;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 11;
-  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = -0.336670;
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 1;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 0;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 8;
+  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = 0.115478515625;
 
-  private static final int GYRO_ID = 3;
+  private static final int GYRO_ID = 1;
 
   // FIXME: update robot dimensions
-  private static final double TRACKWIDTH_METERS = 0.523875; // 20.625
-  private static final double WHEELBASE_METERS = 0.52705; // 20.75
+  private static final double TRACKWIDTH_METERS = Units.inchesToMeters(28); // 20.625
+  private static final double WHEELBASE_METERS = Units.inchesToMeters(26.5); // 20.75
   /*
   	Wheel diameter is best determined empirically. Refer to this document for more information:
     https://docs.google.com/spreadsheets/d/1634BjWwzBszXMECL1l5OMsUfRWFhej5YlExvh_SI944/edit
   */
-  private static final double WHEEL_DIAMETER_METERS = 0.09845567409;
-  private static final double ROBOT_WIDTH_WITH_BUMPERS = 0.8382; // meters //33 in
-  private static final double ROBOT_LENGTH_WITH_BUMPERS = 0.8382; // meters // 33 in
+  private static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+  private static final double ROBOT_WIDTH_WITH_BUMPERS =
+      TRACKWIDTH_METERS + Units.inchesToMeters(3.25); // meters //33 in
+  private static final double ROBOT_LENGTH_WITH_BUMPERS =
+      WHEELBASE_METERS + Units.inchesToMeters(3.25); // meters // 33 in
 
   // FIXME: tune PID values for the angle and drive motors for the swerve modules
 
@@ -79,7 +82,7 @@ public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: specify the name of the CANivore CAN FD bus as appropriate (an empty string uses the
   // default CAN bus)
-  private static final String CAN_BUS_NAME = "";
+  private static final String CAN_BUS_NAME = "Canivore 3045";
 
   // FIXME: specify the name of the camera used for detecting AprilTags
   private static final String CAMERA_NAME = "OV2311";
@@ -194,7 +197,7 @@ public class DefaultRobotConfig extends RobotConfig {
   @Override
   public SwerveConstants getSwerveConstants() {
     // FIXME: specify the type of swerve module (MK4 and MK4i are supported)
-    return SwerveConstants.MK4I_L2_CONSTANTS;
+    return SwerveConstants.MK4_L2_CONSTANTS;
   }
 
   @Override
