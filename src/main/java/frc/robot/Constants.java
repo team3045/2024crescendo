@@ -1,5 +1,11 @@
 package frc.robot;
 
+import java.sql.ClientInfoStatus;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -72,6 +78,15 @@ public final class Constants {
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
+        /*Phoenix 6 Steer Motor gains */
+        private static final Slot0Configs steerMotorGains = new Slot0Configs()
+            .withKP(angleKP).withKI(angleKI).withKD(angleKD)
+            .withKS(0).withKV(1.5).withKA(0);
+        
+        private static final Slot0Configs driveMotorGains = new Slot0Configs()
+            .withKP(driveKP).withKI(driveKI).withKD(driveKD)
+            .withKS(0).withKV(0).withKA(0);
+
         /* Drive Motor Characterization Values From SYSID */
         public static final double driveKS = 0.32 / 12; //TODO: This must be tuned to specific robot
         public static final double driveKV = 1.51 / 12;
@@ -86,6 +101,30 @@ public final class Constants {
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
+
+        /*The stator current at which the wheels start to slip;
+        This needs to be tuned to your individual robot*/
+        private static final double kSlipCurrentA = 300; //Amps, Read documentation for how to tune
+        
+
+        /*Not used right now but might try later to help with slipping
+         * Based off CTRE phoenix 6 swerve with pathplanner example
+         * also https://pro.docs.ctr-electronics.com/_/downloads/en/latest/pdf/
+         */
+        private static final SwerveModuleConstantsFactory constantsFactory = new SwerveModuleConstantsFactory()
+            .withDriveMotorGearRatio(driveGearRatio)
+            .withSteerMotorGearRatio(angleGearRatio)
+            .withWheelRadius(2) // 4 inch wheels = 2 in radius
+            .withSlipCurrent(angleCurrentLimit)
+            .withSteerMotorGains(steerMotorGains)
+            .withDriveMotorGains(driveMotorGains)
+            .withSteerMotorClosedLoopOutput(ClosedLoopOutputType.Voltage)
+            .withDriveMotorClosedLoopOutput(ClosedLoopOutputType.Voltage)
+            .withSpeedAt12VoltsMps(maxSpeed) //Limited Max speed because we dont want it to drive at full power when pushed all the way
+            .withSteerFrictionVoltage(0.25) //Simulated voltage necessary to overcome friction
+            .withDriveFrictionVoltage(0.25) //Simulated voltage necessary to overcome friction
+            .withFeedbackSource(SteerFeedbackType.RemoteCANcoder)
+            .withSteerMotorInverted(true); //CounterClockWise positive is inverted i think?
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
