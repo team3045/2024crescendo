@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.apache.commons.lang3.Conversion;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -23,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ShooterSub extends SubsystemBase {
   private static final TalonFX topMotor = new TalonFX(11);
   private static final TalonFX bottomMotor = new TalonFX(10);
-  private static final TalonFX feedMotor = new TalonFX(12);
+  private static final TalonFX feedMotor = new TalonFX(13);
 
   private static final double flywheelCircumference = Units.inchesToMeters(4) * Math.PI; //change later
 
@@ -85,7 +83,7 @@ public class ShooterSub extends SubsystemBase {
 
   public void feed(){
     state = ShooterSate.FEED;
-    feedMotor.set(0.30);
+    feedMotor.set(0.15);
   }
 
   public void stopShooter(){
