@@ -30,9 +30,11 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kR2.value);
+    private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final Intake intake = new Intake();
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -60,6 +62,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        intakeButton.onTrue(new InstantCommand(() -> intake.setEnabledOrDisable()));
     }
 
     /**
