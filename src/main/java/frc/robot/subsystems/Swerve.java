@@ -42,8 +42,8 @@ public class Swerve extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    translation.getX(), 
-                                    translation.getY(), 
+                                    translation.getX() / 2, 
+                                    translation.getY() /2 , 
                                     rotation, 
                                     getHeading()
                                 )
