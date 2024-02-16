@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.*;
@@ -33,9 +34,21 @@ public class RobotContainer {
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
     private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kCross.value);
     private final JoystickButton overDrive = new JoystickButton(driver, PS4Controller.Button.kCircle.value); 
+    private final JoystickButton shooterTest = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+    private final JoystickButton feedTest = new JoystickButton(driver, PS4Controller.Button.kR1.value);
+    private final JoystickButton pathPlannerFindPose = new JoystickButton(driver, PS4Controller.Button.kSquare.value);
+    private final JoystickButton positionButton = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+
 
     /* Subsystems */
+    private final LimeLightSub localizer = new LimeLightSub("limelight");
+    private final LimeLightSub shooterLimelight = new LimeLightSub("Some name");
     private final Swerve s_Swerve = new Swerve();
+    private final AutoSub autoSub = new AutoSub(s_Swerve);
+    private final ShooterSub shooterSub = new ShooterSub();
+    private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
+    //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
+
     private final Intake intake = new Intake();
 
 
@@ -50,6 +63,10 @@ public class RobotContainer {
                 () -> robotCentric.getAsBoolean()
             )
         );
+
+        //poseEstimation.periodic();
+        localizer.periodic();
+        positionerSub.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -87,6 +104,22 @@ public class RobotContainer {
                 Constants.Swerve.maxSpeed = 6.0;
                 Constants.Swerve.maxAngularVelocity = Math.PI * 2;
                 Constants.Swerve.normalControl = false;}));
+        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        //goes to goalPose if target is in sight otherwise just stays in place
+        //possible errpr with sequential command group index out of bounds
+        pathPlannerFindPose.whileTrue( new SequentialCommandGroup(
+            //autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
+            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, localizer).get()))
+            //new TurnToTarget(vision, s_Swerve, autoSub))
+        );
+
+        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(-80, -80)));
+        shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
+
+        feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
+        feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
+
+        positionButton.onTrue(new InstantCommand(() -> positionerSub.goToAngle(36.5)));
     }
 
     /**
