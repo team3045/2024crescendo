@@ -66,5 +66,8 @@ public final class CTREConfigs {
         swerveDriveFXConfig.MotionMagic.MotionMagicAcceleration = Conversions.MPSSToRPSS(Constants.Swerve.maxSpeed * 5, Constants.Swerve.wheelCircumference); 
             // Target jerk of 4.5*5*10 mps/s/s (0.1 seconds)
         swerveDriveFXConfig.MotionMagic.MotionMagicJerk = swerveDriveFXConfig.MotionMagic.MotionMagicAcceleration * 10;
+
+        /*Torque Limits */
+        //swerveDriveFXConfig.TorqueCurrent.PeakForwardTorqueCurrent = 1;
     }
 }
