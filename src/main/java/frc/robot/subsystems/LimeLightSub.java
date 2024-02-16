@@ -26,9 +26,10 @@ import frc.robot.Constants;
 import frc.robot.Constants.EstimationConstants;
 
 public class LimeLightSub extends SubsystemBase {
+  //Camera name
+  private String name;
 
   //Network tables values
-
   public Pigeon2 gyro;
 
   private double[] camPose_TargetSpace;
@@ -45,13 +46,16 @@ public class LimeLightSub extends SubsystemBase {
   private double tId;
 
   private static final ShuffleboardTab tab = Shuffleboard.getTab("limelight");
-  private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  private NetworkTable table;
 
   private GenericEntry seen, id, camTransform, test;
 
 
   /** Creates a new LimeLightSub. */
-  public LimeLightSub() {
+  public LimeLightSub(String name) {
+    this.name = name;
+    table = NetworkTableInstance.getDefault().getTable(name);
+
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 
     tx = table.getEntry("tx").getDouble(0);

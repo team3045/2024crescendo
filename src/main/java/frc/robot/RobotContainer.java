@@ -51,11 +51,12 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    private final LimeLightSub vision = new LimeLightSub();
-    private final Swerve s_Swerve = new Swerve(vision);
+    private final LimeLightSub localizer = new LimeLightSub("limelight");
+    private final LimeLightSub shooterLimelight = new LimeLightSub("Some name");
+    private final Swerve s_Swerve = new Swerve(localizer);
     private final AutoSub autoSub = new AutoSub(s_Swerve);
     private final ShooterSub shooterSub = new ShooterSub();
-    private final PositionerSub positionerSub = new PositionerSub();
+    private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
@@ -89,12 +90,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        driveToTarget.whileTrue(new DriveToTarget(5.0, vision, s_Swerve));
+        driveToTarget.whileTrue(new DriveToTarget(5.0, localizer, s_Swerve));
         //goes to goalPose if target is in sight otherwise just stays in place
         //possible errpr with sequential command group index out of bounds
         pathPlannerFindPose.whileTrue( new SequentialCommandGroup(
             //autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
-            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).get()))
+            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, localizer).get()))
             //new TurnToTarget(vision, s_Swerve, autoSub))
         );
 
