@@ -54,7 +54,7 @@ public class LimeLightSub extends SubsystemBase {
   /** Creates a new LimeLightSub. */
   public LimeLightSub(String name) {
     this.name = name;
-    table = NetworkTableInstance.getDefault().getTable(name);
+    table = NetworkTableInstance.getDefault().getTable(this.name);
 
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 
