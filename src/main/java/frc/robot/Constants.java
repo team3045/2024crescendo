@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.sql.ClientInfoStatus;
+import java.util.Map;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
@@ -10,15 +11,24 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static final double startTime = System.currentTimeMillis();
+
     public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
@@ -184,5 +194,46 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    //Used in LimelightSub
+    public static final class EstimationConstants{
+
+         public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
+
+        //where on ther field does the robot start compared to origin SET LATER
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(73), Units.inchesToMeters(37),0), new Rotation3d(0,0,0));
+        public static final Transform3d testStartPose = new Transform3d(new Translation3d(5.0,5.0,0), new Rotation3d(0,0,0));
+        
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(originToRobotStart);
+
+        //Cameras position in relation to robot SET LATER
+        public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 
+            new Rotation3d(0,0,0));
+
+        //Where we want to be in relation to the tag
+        public static final Transform3d tagToGoal = new Transform3d(new Translation3d(1, 0, 0), 
+             new Rotation3d(0,0,Units.degreesToRadians(180)));
+
+        //Max velocity and Max accel
+        public static final TrapezoidProfile.Constraints X_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        public static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+        //Max angular velo and accel
+        public static final TrapezoidProfile.Constraints A_CONSTRAINTS = new Constraints(Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared);
+
+        //PID CONSTANTS TUNE LATER
+        public static final double kPXGain = 0.5;
+        public static final double kPYGain = 0.5;
+        public static final double kPAGain = 1.0;
+
+        //4.57, 2.57
+        //SHOP: Map of Apriltags IDs and their 3d positions on the field SET LATER
+        public static final Map<Double, Pose3d> idPoses = Map.of(
+            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
+            5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(101.25), Units.inchesToMeters(53.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
+            11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(192.25),Units.inchesToMeters(51.25),new Rotation3d(0,0,Units.degreesToRadians(270))));
+        
+        //SHOP: Map of Apriltags IDs and their 3d positions on the field
+        public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
 }

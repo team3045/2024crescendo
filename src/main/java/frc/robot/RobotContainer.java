@@ -44,7 +44,6 @@ public class RobotContainer {
     private final LimeLightSub localizer = new LimeLightSub("limelight");
     private final LimeLightSub shooterLimelight = new LimeLightSub("Some name");
     private final Swerve s_Swerve = new Swerve();
-    private final AutoSub autoSub = new AutoSub(s_Swerve);
     private final ShooterSub shooterSub = new ShooterSub();
     private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
@@ -105,13 +104,6 @@ public class RobotContainer {
                 Constants.Swerve.maxAngularVelocity = Math.PI * 2;
                 Constants.Swerve.normalControl = false;}));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        //goes to goalPose if target is in sight otherwise just stays in place
-        //possible errpr with sequential command group index out of bounds
-        pathPlannerFindPose.whileTrue( new SequentialCommandGroup(
-            //autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, vision).orElse(s_Swerve.getPose())),
-            autoSub.getOnFlyCommand(autoSub.getGoalPose(5.0, localizer).get()))
-            //new TurnToTarget(vision, s_Swerve, autoSub))
-        );
 
         shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(-80, -80)));
         shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
