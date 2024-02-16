@@ -19,8 +19,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSub extends SubsystemBase {
-  private static final TalonFX topMotor = new TalonFX(11);
-  private static final TalonFX bottomMotor = new TalonFX(10);
+  private static final TalonFX topMotor = new TalonFX(14);
+  private static final TalonFX bottomMotor = new TalonFX(15);
   private static final TalonFX feedMotor = new TalonFX(13);
 
   private static final double flywheelCircumference = Units.inchesToMeters(4) * Math.PI; //change later

@@ -5,11 +5,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
@@ -50,33 +53,48 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 1.0;
+    slot0Configs.kP = 60;
     slot0Configs.kI = 0;
-    slot0Configs.kD = 0;
+    slot0Configs.kD = 0.1;
+    slot0Configs.kV = 0.12;
+    slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
+
 
     configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4);
 
     /*We want to be able to move anywhere within a second 
      * Divide by 60 to go from minute to seconds
     */
-    configs.MotionMagic.MotionMagicAcceleration = Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
+    configs.MotionMagic.MotionMagicCruiseVelocity = 5;
+    configs.MotionMagic.MotionMagicAcceleration =  10; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
 
+    configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     leftPositioner.getConfigurator().apply(configs);
-    rightPositioner.getConfigurator().apply(configs);
+
+    var rightConfigs = configs;
+    rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    rightPositioner.getConfigurator().apply(rightConfigs);
 
     //They rotate opposite directions so opposite inverted values
-    leftPositioner.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
-    rightPositioner.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    // leftPositioner.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    // rightPositioner.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
   }
 
   //angle should be between -5 and 79 degrees or sum like that ask carson
   public void goToAngle(double angle){
     desiredAngle = angle;
-    var request = new MotionMagicVoltage(0);
+    PositionVoltage voltage = new PositionVoltage(0);
 
-    leftPositioner.setControl(request.withPosition(Units.degreesToRotations(desiredAngle)));
-    rightPositioner.setControl(request.withPosition(Units.degreesToRotations(desiredAngle)));
+    MotionMagicVoltage request = new MotionMagicVoltage(0);
+    
+
+    //leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    //leftPositioner.setControl(voltage.withPosition(angle));
+    //rightPositioner.setControl(voltage.withPosition(angle));
+    SmartDashboard.putNumber("position output", request.Position);
   }
 
 
@@ -85,5 +103,6 @@ public class PositionerSub extends SubsystemBase {
   public void periodic() {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
+      SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
   }
 }

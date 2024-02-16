@@ -47,12 +47,15 @@ public class RobotContainer {
     private final JoystickButton shooterTest = new JoystickButton(driveController, PS4Controller.Button.kL1.value);
     private final JoystickButton feedTest = new JoystickButton(driveController, PS4Controller.Button.kR1.value);
 
+    private final JoystickButton positionButton = new JoystickButton(driveController, PS4Controller.Button.kL2.value);
+
 
     /* Subsystems */
     private final LimeLightSub vision = new LimeLightSub();
     private final Swerve s_Swerve = new Swerve(vision);
     private final AutoSub autoSub = new AutoSub(s_Swerve);
     private final ShooterSub shooterSub = new ShooterSub();
+    private final PositionerSub positionerSub = new PositionerSub();
     //private final PoseEstimationPhoton poseEstimation = new PoseEstimationPhoton(new PhotonCamera("limelight"), s_Swerve);
     
 
@@ -69,8 +72,8 @@ public class RobotContainer {
         );
 
         //poseEstimation.periodic();
-        vision.periodic();
-
+        //vision.periodic();
+        positionerSub.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -95,11 +98,13 @@ public class RobotContainer {
             //new TurnToTarget(vision, s_Swerve, autoSub))
         );
 
-        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(-60, -60)));
+        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(-80, -80)));
         shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
 
         feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
         feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
+
+        positionButton.onTrue(new InstantCommand(() -> positionerSub.goToAngle(36.5)));
     }
 
     /**
