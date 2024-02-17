@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSub extends SubsystemBase {
@@ -108,13 +109,24 @@ public class ShooterSub extends SubsystemBase {
     return wheelRPS;
   }
 
+  public static double RPSToMPS(double wheelRPS, double circumference){
+    double wheelMPS = wheelRPS*circumference;
+    return wheelMPS;
+  }
+
   public void shootDistance(double distance){
     double RPS = MPSToRPS(calculateMPS(distance), flywheelCircumference);
     this.shootSpeed(RPS,RPS);
   }
 
+  public void shootPct(){
+    topMotor.set(-0.9);
+    bottomMotor.set(-0.9);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Current Speed", RPSToMPS(topMotor.getVelocity().getValueAsDouble(),flywheelCircumference));
   }
 }

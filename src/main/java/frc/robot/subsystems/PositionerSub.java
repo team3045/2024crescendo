@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,11 +28,13 @@ public class PositionerSub extends SubsystemBase {
 
   private static final boolean absoluteEncoder = false;
 
-  private static double currAngle;
+  public static double currAngle;
   private static double desiredAngle;
 
-  public static final double MIN_ANGLE = Units.degreesToRadians(-5); 
-  public static final double MAX_ANGLE = Units.degreesToRadians(70); 
+  
+
+  public static final double MIN_ANGLE = 0; 
+  public static final double MAX_ANGLE = 79; 
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
     /*Initialize our limelight for the shooter 
@@ -57,6 +60,11 @@ public class PositionerSub extends SubsystemBase {
     
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
+
+    SmartDashboard.putNumber("Desired angle", 0);
+    SmartDashboard.putNumber("kP", 60);
+    SmartDashboard.putNumber("kI", 0);
+    SmartDashboard.putNumber("kD", 0.1);
   }
 
   public void configMotors(){
@@ -79,9 +87,14 @@ public class PositionerSub extends SubsystemBase {
     * Accel: Takes 0.5s to reach cruise velo
     * Jerk: takes 0.1s to reach desired accel
     */
-    configs.MotionMagic.MotionMagicCruiseVelocity = 5; //RPS
-    configs.MotionMagic.MotionMagicAcceleration =  10; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
+    configs.MotionMagic.MotionMagicCruiseVelocity = 2;
+    configs.MotionMagic.MotionMagicAcceleration =  4; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
+
+    configs.CurrentLimits.SupplyCurrentLimit = 40;
+    configs.CurrentLimits.SupplyCurrentThreshold = 60;
+    configs.CurrentLimits.SupplyTimeThreshold = 0.2;
+    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -93,22 +106,23 @@ public class PositionerSub extends SubsystemBase {
 
   }
 
+  
   //angle should be between -5 and 79 degrees or sum like that ask carson
   public void goToAngle(double angle){
-    try {
-      desiredAngle = angle;
-      if(angle > MAX_ANGLE || angle < MIN_ANGLE){
-        throw new IllegalArgumentException("Arm does not reach that angle");
-      }
+    desiredAngle = angle;
 
-      MotionMagicVoltage request = new MotionMagicVoltage(0);
-      
-      //leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
-      rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
-      SmartDashboard.putNumber("position output", request.Position);
-    } catch (IllegalArgumentException e) {
-        System.out.println("Arm does not reach that angle");
-    }
+    if(angle > MAX_ANGLE)
+      angle = MAX_ANGLE;
+    if(angle < MIN_ANGLE)
+      angle = MIN_ANGLE;
+        
+    MotionMagicVoltage request = new MotionMagicVoltage(0);
+    
+
+    leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+
+    SmartDashboard.putNumber("position output", request.Position);
   }
 
   //Calculate the angle the arm needs to go to
@@ -139,6 +153,25 @@ public class PositionerSub extends SubsystemBase {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
-    SmartDashboard.putNumber("Desired Angle", desiredAngle);
+    desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
+
+    if(currAngle > MAX_ANGLE)
+      goToAngle(MAX_ANGLE);
+    if(currAngle < MIN_ANGLE)
+      goToAngle(MIN_ANGLE);
+    
+    
+    goToAngle(desiredAngle);
+    leftPositioner.getConfigurator().apply(new Slot0Configs().
+     withKP(SmartDashboard.getNumber("kP", 60))
+     .withKI(SmartDashboard.getNumber("kI", 0))
+     .withKD(SmartDashboard.getNumber("kD", 0.1))
+     .withKA(0)
+     .withKS(0.12)
+     .withKV(0.25)
+
+     );
+   
   }
+ 
 }
