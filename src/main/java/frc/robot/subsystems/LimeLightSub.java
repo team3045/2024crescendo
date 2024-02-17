@@ -50,6 +50,9 @@ public class LimeLightSub extends SubsystemBase {
 
   private GenericEntry seen, id, camTransform, test;
 
+  private static final int speakerPipline = 1;
+  private static final int localizationPipeline = 0;
+
 
   /** Creates a new LimeLightSub. */
   public LimeLightSub(String name) {
@@ -153,7 +156,22 @@ public class LimeLightSub extends SubsystemBase {
 
   //End Formatting
 
+  /*Returns negative one if ID not seen */
+  public double getHorizDistanceSpeaker(){
+    table.getEntry("pipeline").setNumber(speakerPipline);
+    if(getTargetSeen() && getID() == 3){
+      //gets second value of the array which should be depth, or z, in camera space
+      //essentially is horizontal distance to target, no matter what angle facing bc camera space
+      double distance = table.getEntry("targetpose_cameraspace").getDoubleArray(new double[] {-1.0,-1.0,-1.0,-1.0,-1.0,-1.0})[2];
+      table.getEntry("pipeline").setNumber(localizationPipeline);
+      return Units.metersToInches(distance);
+    }
+    else{
+      table.getEntry("pipeline").setNumber(localizationPipeline);
+      return -1;
+    }
 
+  }
 
   //returns vision measurement to add to pose estimator
   public Pose2d getVisionMeasurement(){

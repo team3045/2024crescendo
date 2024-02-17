@@ -49,9 +49,7 @@ public class RobotContainer {
     private final JoystickButton shooterTest = new JoystickButton(driveController, PS4Controller.Button.kL1.value);
     private final JoystickButton feedTest = new JoystickButton(driveController, PS4Controller.Button.kR1.value);
 
-    private final JoystickButton positionButton = new JoystickButton(driveController, PS4Controller.Button.kL2.value);
-    private final JoystickButton positioningUp = new JoystickButton(driveController, PS4Controller.Button.kOptions.value);
-    private final JoystickButton positioningDown = new JoystickButton(driveController, PS4Controller.Button.kShare.value);
+    private final JoystickButton turnAndPoint = new JoystickButton(driveController, PS4Controller.Button.kShare.value);
 
 
     /* Subsystems */
@@ -109,9 +107,9 @@ public class RobotContainer {
         feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
         feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
 
-        positionButton.onTrue(new InstantCommand(() -> positionerSub.goToAngle(60)));
-        positioningUp.onTrue(new InstantCommand(() -> positionerSub.goToAngle(PositionerSub.currAngle + 20)));
-        positioningDown.onTrue(new InstantCommand(() -> positionerSub.goToAngle(PositionerSub.currAngle - 20)));
+        turnAndPoint.onTrue(new TurnAndPoint(s_Swerve, shooterLimelight, positionerSub, autoSub));
+
+        
     }
 
     /**
