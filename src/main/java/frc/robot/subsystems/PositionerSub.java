@@ -18,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import pabeles.concurrency.IntOperatorTask.Min;
 
 public class PositionerSub extends SubsystemBase {
   public static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
@@ -30,8 +31,8 @@ public class PositionerSub extends SubsystemBase {
 
   
 
-  public static final double MIN_ANGLE = Units.degreesToRadians(-5); 
-  public static final double MAX_ANGLE = Units.degreesToRadians(79); 
+  public static final double MIN_ANGLE = -5; 
+  public static final double MAX_ANGLE = 79; 
   /** Creates a new PositionerSub. */
   public PositionerSub() {
     configMotors();
@@ -91,15 +92,17 @@ public class PositionerSub extends SubsystemBase {
   public void goToAngle(double angle){
     desiredAngle = angle;
 
-    PositionVoltage voltage = new PositionVoltage(0);
-    
+    if(angle > MAX_ANGLE)
+      goToAngle(MAX_ANGLE);
+    if(angle < MIN_ANGLE)
+      goToAngle(MIN_ANGLE);
+        
     MotionMagicVoltage request = new MotionMagicVoltage(0);
     
 
     leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
     rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
-    //leftPositioner.setControl(voltage.withPosition(angle));
-    //rightPositioner.setControl(voltage.withPosition(angle));
+
     SmartDashboard.putNumber("position output", request.Position);
   }
 
@@ -110,6 +113,11 @@ public class PositionerSub extends SubsystemBase {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
+
+    if(currAngle > MAX_ANGLE)
+      goToAngle(MAX_ANGLE);
+    if(currAngle < MIN_ANGLE)
+      goToAngle(MIN_ANGLE);
     
     desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
     goToAngle(desiredAngle);
