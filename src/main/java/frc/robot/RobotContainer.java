@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.PS4ControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -48,6 +50,8 @@ public class RobotContainer {
     private final JoystickButton feedTest = new JoystickButton(driveController, PS4Controller.Button.kR1.value);
 
     private final JoystickButton positionButton = new JoystickButton(driveController, PS4Controller.Button.kL2.value);
+    private final JoystickButton positioningUp = new JoystickButton(driveController, PS4Controller.Button.kOptions.value);
+    private final JoystickButton positioningDown = new JoystickButton(driveController, PS4Controller.Button.kShare.value);
 
 
     /* Subsystems */
@@ -98,13 +102,15 @@ public class RobotContainer {
             //new TurnToTarget(vision, s_Swerve, autoSub))
         );
 
-        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootSpeed(-80, -80)));
+        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootPct()));
         shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
 
         feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
         feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
 
-        positionButton.onTrue(new InstantCommand(() -> positionerSub.goToAngle(36.5)));
+        positionButton.onTrue(new InstantCommand(() -> positionerSub.goToAngle(60)));
+        positioningUp.onTrue(new InstantCommand(() -> positionerSub.goToAngle(PositionerSub.currAngle + 20)));
+        positioningDown.onTrue(new InstantCommand(() -> positionerSub.goToAngle(PositionerSub.currAngle - 20)));
     }
 
     /**

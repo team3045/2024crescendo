@@ -20,13 +20,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
-  private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
-  private static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
+  public static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
+  public static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
 
   private static final boolean absoluteEncoder = false;
 
-  private static double currAngle;
+  public static double currAngle;
   private static double desiredAngle;
+
+  
 
   public static final double MIN_ANGLE = Units.degreesToRadians(-5); 
   public static final double MAX_ANGLE = Units.degreesToRadians(79); 
@@ -43,6 +45,8 @@ public class PositionerSub extends SubsystemBase {
     
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
+
+    SmartDashboard.putNumber("Desired angle", 0);
   }
 
   public void configMotors(){
@@ -65,8 +69,8 @@ public class PositionerSub extends SubsystemBase {
     /*We want to be able to move anywhere within a second 
      * Divide by 60 to go from minute to seconds
     */
-    configs.MotionMagic.MotionMagicCruiseVelocity = 5;
-    configs.MotionMagic.MotionMagicAcceleration =  10; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
+    configs.MotionMagic.MotionMagicCruiseVelocity = 2;
+    configs.MotionMagic.MotionMagicAcceleration =  4; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
 
     configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -82,15 +86,17 @@ public class PositionerSub extends SubsystemBase {
     // rightPositioner.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
   }
 
+  
   //angle should be between -5 and 79 degrees or sum like that ask carson
   public void goToAngle(double angle){
     desiredAngle = angle;
-    PositionVoltage voltage = new PositionVoltage(0);
 
+    PositionVoltage voltage = new PositionVoltage(0);
+    
     MotionMagicVoltage request = new MotionMagicVoltage(0);
     
 
-    //leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
     rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
     //leftPositioner.setControl(voltage.withPosition(angle));
     //rightPositioner.setControl(voltage.withPosition(angle));
@@ -103,6 +109,10 @@ public class PositionerSub extends SubsystemBase {
   public void periodic() {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
-      SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
+    SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
+    
+    desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
+    goToAngle(desiredAngle);
   }
+ 
 }
