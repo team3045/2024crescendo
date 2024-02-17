@@ -1,9 +1,8 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.SwerveModule;
-import frc.robot.Constants.EstimationConstants;
 import frc.robot.Constants;
+import frc.robot.Constants.EstimationConstants;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -11,7 +10,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.stream.IntStream;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -22,20 +22,18 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
-    public SwerveDriveOdometry odometry;
+    public SwerveDriveOdometry swerveOdometry;
     public SwerveDrivePoseEstimator mPoseEstimator;
     public LimeLightSub limeLightSub;
     public SwerveModule[] mSwerveMods;
-    public static Pigeon2 gyro;
+    public Pigeon2 gyro;
     private ChassisSpeeds dChassisSpeeds;
-    Field2d robotField2d = new Field2d();
-    /**
+
+     /**
     * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
     * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
     */
@@ -49,15 +47,12 @@ public class Swerve extends SubsystemBase {
     //how much it trusts the vision measurements
      private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(30));
 
-
     public Swerve(LimeLightSub limeLightSub) {
         this.limeLightSub = limeLightSub;
-        gyro = new Pigeon2(15,"3045 Canivore");
-        //apply default config
-        gyro.configFactoryDefault();
 
-        //zeroGyro();
-        gyro.setYaw(Units.degreesToRadians(EstimationConstants.robotStartPose.getRotation().getZ()));
+        gyro = new Pigeon2(Constants.Swerve.pigeonID, "Canivore 3045");
+        gyro.getConfigurator().apply(new Pigeon2Configuration());
+        gyro.setYaw(0);
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -66,36 +61,25 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-        /* By pausing init for a second before setting module offsets, we avoid a bug with inverting motors.
-         * See https://github.com/Team364/BaseFalconSwerve/issues/8 for more info.
-         */
-        Timer.delay(1.0);
-        resetModulesToAbsolute();
-
         mPoseEstimator = new SwerveDrivePoseEstimator(
             Constants.Swerve.swerveKinematics,
-             getYaw(), 
+             getHeading(), 
              getModulePositions(), 
              EstimationConstants.robotStartPose.toPose2d(),
              stateStdDevs,
              visionMeasurementStdDevs);
 
-        odometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
-
-        //odometry.resetPosition(getYaw(), getModulePositions(), getPose());
-        //mPoseEstimator.resetPosition(getYaw(), getModulePositions(), getPose());
-
-    
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getHeading(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    translation.getX(), 
-                                    translation.getY(), 
+                                    Constants.Swerve.normalControl ? translation.getX() / 2: translation.getX(), 
+                                    Constants.Swerve.normalControl ? translation.getY() / 2: translation.getY(), 
                                     rotation, 
-                                    getYaw()
+                                    getHeading()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -110,7 +94,6 @@ public class Swerve extends SubsystemBase {
     }    
 
     /* Used by SwerveControllerCommand in Auto */
-    //Specificalled 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
@@ -119,23 +102,6 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    //returns estimated position including vision and odometry
-    public Pose2d getPose() {
-        return mPoseEstimator.getEstimatedPosition();
-    }
-
-    //returns position from odometry only
-    public Pose2d getOdomPose2d(){
-        return odometry.getPoseMeters();
-    }
-
-    //pass in current position to reset where you are to be origin
-    public void resetPose(Pose2d pose) {
-        mPoseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
-        odometry.resetPosition(getYaw(), getModulePositions(), pose);
-    }
-
-    //Getters for swerve modules
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -152,27 +118,42 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
-    //sets your current heading to be zero
-    public void zeroGyro(){
-        gyro.setYaw(0);
+    public Pose2d getPose() {
+        return mPoseEstimator.getEstimatedPosition();
     }
 
-    //returns yaw according to gyro NOT poseestimator 
-    //TODO: change to pose estimator yaw, and make std dev for vision estimate angles very large
-    //aka we only trust the gyro for angle estimates
-    public Rotation2d getYaw() {
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+    public Pose2d getOdomPose(){
+        return swerveOdometry.getPoseMeters();
+    }
+
+    public void setPose(Pose2d pose) {
+        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    }
+
+    public Rotation2d getHeading(){
+        return getPose().getRotation();
+    }
+
+    public ChassisSpeeds getChassisSpeeds(){
+        return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
+    }
+
+    public void setHeading(Rotation2d heading){
+        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
+    }
+
+    public void zeroHeading(){
+        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
+    }
+
+    public Rotation2d getGyroYaw() {
+        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
     }
 
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
         }
-    }
-
-    //
-    public ChassisSpeeds getChassisSpeeds(){
-        return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
     }
 
     public void driveTest(ChassisSpeeds chassisSpeeds){
@@ -195,13 +176,12 @@ public class Swerve extends SubsystemBase {
     }
 
     public void driveField(ChassisSpeeds speeds){
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,getYaw());
+        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,getHeading());
         SwerveModuleState[] states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
         setModuleStates(states);
     }
-
 
     //adds the vision measurement to pose estimator if target is seen and the id is correct
     //scales the std dev based on distance from tag TLDR: if we're farther away we trust vision less
@@ -216,9 +196,9 @@ public class Swerve extends SubsystemBase {
 
             visionMeasurementStdDevs = VecBuilder.fill(0.3*xDistance*kDistanceMod, 0.3*kDistanceMod*yDistance, Units.degreesToRadians(30));
             mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
-            mPoseEstimator.resetPosition(getYaw(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()));
+            mPoseEstimator.resetPosition(getHeading(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getHeading()));
 
-            odometry.resetPosition(getYaw(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()));
+            swerveOdometry.resetPosition(getHeading(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getHeading()));
 
             /*mPoseEstimator.addVisionMeasurement(
                 new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()),
@@ -226,32 +206,21 @@ public class Swerve extends SubsystemBase {
         }
         else{
             mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3,0.3,Units.degreesToRadians(3)));
-            mPoseEstimator.addVisionMeasurement(getOdomPose2d(), System.currentTimeMillis()-Constants.startTime);
+            mPoseEstimator.addVisionMeasurement(getOdomPose(), System.currentTimeMillis()-Constants.startTime);
 
         }
     }
 
     @Override
     public void periodic(){
-        mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getYaw(), getModulePositions());
-        addVision(); //disabled while testing odom, causes issues by resetting odometry
-
-        robotField2d.setRobotPose(getPose());
-
-        odometry.update(getYaw(), getModulePositions());
+        mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getGyroYaw(), getModulePositions());
+        //addVision(); //disabled while testing odom, causes issues by resetting odometry
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
-
-        SmartDashboard.putNumber("Robot Headin: ", getYaw().getDegrees());
-        SmartDashboard.putString("Robot Position", getPose().getTranslation().toString());
-        SmartDashboard.putData("Robot Position Graph", robotField2d);
-
-        SmartDashboard.putString("Odometry", getOdomPose2d().toString());
-        SmartDashboard.putString("start pos", EstimationConstants.robotStartPose.toPose2d().toString());
-        
     }
 }

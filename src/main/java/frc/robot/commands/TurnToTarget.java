@@ -48,7 +48,7 @@ public class TurnToTarget extends Command {
     else{
       PIDController aController = new PIDController(0.1, 0, 0);
       aController.setSetpoint(auto.getGoalPose(5.0, vision).get().getRotation().getDegrees());
-      double aOutput = aController.calculate(swerve.getYaw().getDegrees());
+      double aOutput = aController.calculate(swerve.getHeading().getDegrees());
 
       aController.setTolerance(1);
 

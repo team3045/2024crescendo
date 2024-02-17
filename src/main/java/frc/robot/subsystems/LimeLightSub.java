@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -57,7 +57,7 @@ public class LimeLightSub extends SubsystemBase {
   /** Creates a new LimeLightSub. */
   public LimeLightSub(String name) {
     this.name = name;
-    table = NetworkTableInstance.getDefault().getTable(name);
+    table = NetworkTableInstance.getDefault().getTable(this.name);
 
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 

@@ -52,7 +52,7 @@ public class AutoSub extends SubsystemBase {
     PIDConstants translationConstants = new PIDConstants(6,0,0);
     PIDConstants rotationConstants = new PIDConstants(6,0,0);
     HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
-    AutoBuilder.configureHolonomic(swerve::getPose, swerve::resetPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
+    AutoBuilder.configureHolonomic(swerve::getPose, swerve::setPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
   }
 
 
