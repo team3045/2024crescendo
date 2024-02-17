@@ -31,7 +31,7 @@ public class PositionerSub extends SubsystemBase {
 
   
 
-  public static final double MIN_ANGLE = -5; 
+  public static final double MIN_ANGLE = 0; 
   public static final double MAX_ANGLE = 79; 
   /** Creates a new PositionerSub. */
   public PositionerSub() {
@@ -48,6 +48,9 @@ public class PositionerSub extends SubsystemBase {
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
 
     SmartDashboard.putNumber("Desired angle", 0);
+    SmartDashboard.putNumber("kP", 60);
+    SmartDashboard.putNumber("kI", 0);
+    SmartDashboard.putNumber("kD", 0.1);
   }
 
   public void configMotors(){
@@ -98,9 +101,9 @@ public class PositionerSub extends SubsystemBase {
     desiredAngle = angle;
 
     if(angle > MAX_ANGLE)
-      goToAngle(MAX_ANGLE);
+      angle = MAX_ANGLE;
     if(angle < MIN_ANGLE)
-      goToAngle(MIN_ANGLE);
+      angle = MIN_ANGLE;
         
     MotionMagicVoltage request = new MotionMagicVoltage(0);
     
@@ -118,14 +121,25 @@ public class PositionerSub extends SubsystemBase {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
+    desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
 
     if(currAngle > MAX_ANGLE)
       goToAngle(MAX_ANGLE);
     if(currAngle < MIN_ANGLE)
       goToAngle(MIN_ANGLE);
     
-    desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
+    
     goToAngle(desiredAngle);
+    leftPositioner.getConfigurator().apply(new Slot0Configs().
+     withKP(SmartDashboard.getNumber("kP", 60))
+     .withKI(SmartDashboard.getNumber("kI", 0))
+     .withKD(SmartDashboard.getNumber("kD", 0.1))
+     .withKA(0)
+     .withKS(0.12)
+     .withKV(0.25)
+
+     );
+   
   }
  
 }
