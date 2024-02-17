@@ -74,6 +74,11 @@ public class PositionerSub extends SubsystemBase {
     configs.MotionMagic.MotionMagicAcceleration =  4; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
 
+    configs.CurrentLimits.SupplyCurrentLimit = 40;
+    configs.CurrentLimits.SupplyCurrentThreshold = 60;
+    configs.CurrentLimits.SupplyTimeThreshold = 0.2;
+    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+
     configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     leftPositioner.getConfigurator().apply(configs);
