@@ -12,14 +12,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ArmSub extends SubsystemBase {
+public class ElevatorSub extends SubsystemBase {
   private static TalonFX armMotor = new TalonFX(14);
   private static TalonFX followerMotor = new TalonFX(15);
   private static Encoder armEncoder = new Encoder(null, null);
 
   private static double armEncoderOffset = 0.1; //SET LATER, in rotations
   /** Creates a new ArmSub. */
-  public ArmSub() {
+  public ElevatorSub() {
     configureMotors();
   }
 
@@ -32,7 +32,7 @@ public class ArmSub extends SubsystemBase {
     armConfigs.Feedback.SensorToMechanismRatio = 1; //set sensor to mechanism ratio
     
     var slot0Configs = armConfigs.Slot0;
-    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
