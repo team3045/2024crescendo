@@ -35,6 +35,7 @@ public class PositionerSub extends SubsystemBase {
 
   public static final double MIN_ANGLE = 0; 
   public static final double MAX_ANGLE = 79; 
+  public static final double INTAKE_ANGLE = 30;
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
     /*Initialize our limelight for the shooter 
@@ -145,6 +146,10 @@ public class PositionerSub extends SubsystemBase {
       System.out.println("Arm does not reach that angle");
       e.printStackTrace();
     }
+  }
+
+  public void goToIntake(){
+    goToAngle(INTAKE_ANGLE);
   }
 
 

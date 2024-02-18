@@ -45,7 +45,7 @@ public class LimeLightSub extends SubsystemBase {
 
   private double tId;
 
-  private static final ShuffleboardTab tab = Shuffleboard.getTab("limelight");
+  private static final ShuffleboardTab localizerTab = Shuffleboard.getTab("limelight");
   private NetworkTable table;
 
   private GenericEntry seen, id, camTransform, test;
@@ -76,9 +76,9 @@ public class LimeLightSub extends SubsystemBase {
 
     tId = table.getEntry("tid").getDouble(-1);
 
-    seen = tab.add("seen", getTargetSeen()).getEntry();
-    id = tab.add("Tag ID", getID()).getEntry();
-    camTransform = tab.add("Target Cam Transform", transform3dToString(getCamToTargetTransform())).getEntry();
+    seen = localizerTab.add("seen by: " + name, getTargetSeen()).getEntry();
+    id = localizerTab.add("Tag ID by: " + name, getID()).getEntry();
+    camTransform = localizerTab.add("Target Cam Transform by: " + name, transform3dToString(getCamToTargetTransform())).getEntry();
 
 
     tl = table.getEntry("tl").getDouble(0);

@@ -22,7 +22,7 @@ public class PointAtTarget extends Command {
     this.swerve = swerve;
     this.arm = arm;
 
-    addRequirements(swerve, arm);
+    addRequirements(arm);
   }
 
   /*Regression to calculate angle based on distance */

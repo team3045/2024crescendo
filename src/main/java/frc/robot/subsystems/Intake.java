@@ -29,5 +29,13 @@ public class Intake extends SubsystemBase {
     enabled = !enabled;
   }
 
+  public void enable(){
+    enabled = true;
+  }
+
+  public void disable(){
+    enabled = false;
+  }
+
   
 }

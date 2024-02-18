@@ -79,7 +79,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        intakeButton.onTrue(new InstantCommand(() -> intake.setEnabledOrDisable()));
+        intakeButton.onTrue(new FullIntake(positionerSub, intake, shooterSub));
 
         fineControl.onTrue(new InstantCommand(() ->
             {if(Constants.Swerve.maxSpeed == 4.5){
@@ -111,6 +111,7 @@ public class RobotContainer {
         feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
 
         turnAndPoint.onTrue(new TurnAndPoint(s_Swerve, shooterLimelight, positionerSub, autoSub));
+        
 
         
     }
