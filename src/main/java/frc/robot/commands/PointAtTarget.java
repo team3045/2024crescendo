@@ -4,22 +4,17 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.PositionerSub;
 
 public class PointAtTarget extends Command {
-  private Swerve swerve;
   private LimeLightSub vision;
   private PositionerSub arm;
 
   /** Creates a new PointAtTarget. */
-  public PointAtTarget(Swerve swerve, LimeLightSub vision, PositionerSub arm) {
+  public PointAtTarget(LimeLightSub vision, PositionerSub arm) {
     this.vision = vision;
-    this.swerve = swerve;
     this.arm = arm;
 
     addRequirements(arm);

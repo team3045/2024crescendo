@@ -18,6 +18,6 @@ public class TurnAndPoint extends ParallelCommandGroup {
   public TurnAndPoint(Swerve swerve, LimeLightSub vision, PositionerSub arm, AutoSub auto) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new PointAtTarget(swerve, vision, arm), new TurnToTarget(vision, swerve, auto));
+    addCommands(new PointAtTarget(vision, arm), new TurnToTarget(vision, swerve, auto));
   }
 }
