@@ -118,6 +118,11 @@ public class ShooterSub extends SubsystemBase {
     bottomMotor.set(-0.9);
   }
 
+  public void shootAmp(){
+    topMotor.set(-0.20);
+    bottomMotor.set(-0.15);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

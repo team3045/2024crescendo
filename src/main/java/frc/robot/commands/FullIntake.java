@@ -14,10 +14,17 @@ import frc.robot.subsystems.ShooterSub;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FullIntake extends SequentialCommandGroup {
+  public static IntakeNote intakeNote;
+  public static int count = 1;
   /** Creates a new FullIntake. */
   public FullIntake(PositionerSub arm, Intake intake, ShooterSub shooter) {
+    count++;
+    if(count % 2 == 0){
+      System.out.println("full intake");
+      //addCommands(new InstantCommand(() -> arm.goToIntake()), new IntakeNote(intake, shooter));
+    }
+    else
+      addCommands(new StopIntake(intake,shooter));
 
-    // Add your commands in the addCommands() call, e.g.
-    addCommands(new InstantCommand(() -> arm.goToIntake()), new IntakeNote(intake,shooter));
   }
 }

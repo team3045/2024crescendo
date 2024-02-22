@@ -63,7 +63,7 @@ public class Swerve extends SubsystemBase {
 
         mPoseEstimator = new SwerveDrivePoseEstimator(
             Constants.Swerve.swerveKinematics,
-             getHeading(), 
+             getGyroYaw(), 
              getModulePositions(), 
              EstimationConstants.robotStartPose.toPose2d(),
              stateStdDevs,
@@ -76,8 +76,8 @@ public class Swerve extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    Constants.Swerve.normalControl ? translation.getX() / 2: translation.getX(), 
-                                    Constants.Swerve.normalControl ? translation.getY() / 2: translation.getY(), 
+                                    Constants.Swerve.normalControl ? translation.getX(): translation.getX(), 
+                                    Constants.Swerve.normalControl ? translation.getY(): translation.getY(), 
                                     rotation, 
                                     getHeading()
                                 )

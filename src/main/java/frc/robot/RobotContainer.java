@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.PS4ControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -37,8 +38,6 @@ public class RobotContainer {
     private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kCross.value);
     private final JoystickButton overDrive = new JoystickButton(driver, PS4Controller.Button.kCircle.value); 
     private final JoystickButton shooterTest = new JoystickButton(driver, PS4Controller.Button.kL1.value);
-    private final JoystickButton feedTest = new JoystickButton(driver, PS4Controller.Button.kR1.value);
-
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -49,6 +48,10 @@ public class RobotContainer {
     private final AutoSub autoSub = new AutoSub(s_Swerve);
     private final Intake intake = new Intake();
 
+    /*Commands */
+    private final ShootClose shootClose = new ShootClose(positionerSub, shooterSub);
+    private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
+    private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -79,8 +82,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        intakeButton.onTrue(new FullIntake(positionerSub, intake, shooterSub));
-
+        //intakeButton.onTrue(new IntakeNote(intake, shooterSub, positionerSub));
+        intakeButton.toggleOnTrue(intakeNote);
         fineControl.onTrue(new InstantCommand(() ->
             {if(Constants.Swerve.maxSpeed == 4.5){
                 Constants.Swerve.maxSpeed = 2.0;
@@ -104,11 +107,7 @@ public class RobotContainer {
                 Constants.Swerve.normalControl = false;}));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        shooterTest.whileTrue(new InstantCommand(() -> shooterSub.shootPct()));
-        shooterTest.whileFalse(new InstantCommand(() -> shooterSub.stopShooter()));
-
-        feedTest.whileTrue(new InstantCommand(() -> shooterSub.feed()));
-        feedTest.whileFalse(new InstantCommand(() -> shooterSub.stopFeed()));
+        shooterTest.onTrue(shootClose);
 
         turnAndPoint.onTrue(new TurnAndPoint(s_Swerve, shooterLimelight, positionerSub, autoSub));
         

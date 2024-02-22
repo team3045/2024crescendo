@@ -11,7 +11,10 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PositionerSub;
 import frc.robot.subsystems.ShooterSub;
 
 public class IntakeNote extends Command {
@@ -20,6 +23,7 @@ public class IntakeNote extends Command {
   private static final I2C.Port i2cPort = I2C.Port.kOnboard;
   private Intake intake;
   private ShooterSub shooter;
+  private PositionerSub arm;
   private static final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
 
    /**
@@ -34,16 +38,18 @@ public class IntakeNote extends Command {
   private static final Color noteColor = new Color(255, 165, 0);
 
   /** Creates a new IntakeNote. */
-  public IntakeNote(Intake intake, ShooterSub shooter) {
+  public IntakeNote(Intake intake, ShooterSub shooter, PositionerSub arm) {
     this.intake = intake;
     this.shooter = shooter;
+    this.arm = arm;
 
-    addRequirements(intake,shooter);
+    addRequirements(intake,shooter, arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Constants.intakeEnabled = true;
     colorMatch.addColorMatch(noteColor);
     colorMatch.setConfidenceThreshold(0.90);
   }
@@ -51,6 +57,9 @@ public class IntakeNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shooter.stopShooter();
+    arm.goToIntake();
+
     if(noteDetected()){
       shooter.stopFeed();
       intake.disable();
@@ -64,6 +73,8 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.disable();
+    shooter.stopFeed();
   }
 
   // Returns true when the command should end.

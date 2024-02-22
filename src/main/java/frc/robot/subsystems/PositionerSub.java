@@ -35,7 +35,8 @@ public class PositionerSub extends SubsystemBase {
 
   public static final double MIN_ANGLE = 0; 
   public static final double MAX_ANGLE = 79; 
-  public static final double INTAKE_ANGLE = 30;
+  public static final double INTAKE_ANGLE = 37.5;
+  public static final double SPEAKER_ANGLE = 58;
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
     /*Initialize our limelight for the shooter 
@@ -151,6 +152,10 @@ public class PositionerSub extends SubsystemBase {
   public void goToIntake(){
     goToAngle(INTAKE_ANGLE);
   }
+  
+  public void goToSpeaker(){
+    goToAngle(SPEAKER_ANGLE);
+  }
 
 
   @Override
@@ -158,7 +163,7 @@ public class PositionerSub extends SubsystemBase {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
-    desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
+    //desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
 
     if(currAngle > MAX_ANGLE)
       goToAngle(MAX_ANGLE);

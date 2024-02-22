@@ -28,6 +28,7 @@ import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final double startTime = System.currentTimeMillis();
+    public static boolean intakeEnabled = false;
 
     public static final double stickDeadband = 0.1;
 
