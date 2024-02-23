@@ -157,7 +157,12 @@ public class PositionerSub extends SubsystemBase {
   }
 
   public double getPositionRot(){
-    double difference = absEncoder.getAbsolutePosition() - absEncoderOffset;
+    double position = absEncoder.getAbsolutePosition();
+    if(absEncoder.getAbsolutePosition() > 0.108264602706615 || absEncoder.getAbsolutePosition() == 0){
+      position = absEncoder.getAbsolutePosition()-1;
+    }
+
+    double difference = position - absEncoderOffset;
 
     return absEncoderOffset - difference;
   }
