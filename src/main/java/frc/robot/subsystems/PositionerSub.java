@@ -162,6 +162,7 @@ public class PositionerSub extends SubsystemBase {
 
   public double getPositionRot(){
     double position = absEncoder.getAbsolutePosition();
+    /*Fix for wrapping issue */
     if(absEncoder.getAbsolutePosition() > 0.108264602706615 || absEncoder.getAbsolutePosition() == 0){
       position = absEncoder.getAbsolutePosition()-1;
     }
