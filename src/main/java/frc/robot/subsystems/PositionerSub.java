@@ -83,7 +83,6 @@ public class PositionerSub extends SubsystemBase {
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
-    //configs.Feedback.RotorToSensorRatio = (70 / 26) * (5) * (4);
     configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4);
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
@@ -170,22 +169,15 @@ public class PositionerSub extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //leftPositioner.setPosition(getPositionRot());
-    //rightPositioner.setPosition(getPositionRot());
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
-    //desiredAngle = SmartDashboard.getNumber("Desired angle", 0);
-
     if(currAngle > MAX_ANGLE)
       goToAngle(MAX_ANGLE);
     if(currAngle < MIN_ANGLE)
       goToAngle(MIN_ANGLE);
     
-    
-    //goToAngle(desiredAngle);
-
-    SmartDashboard.putNumber("Abs encoder", absEncoder.getAbsolutePosition());
+    SmartDashboard.putNumber("Abs encoder", getPositionDeg());
    
   }
  
