@@ -9,6 +9,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -35,7 +36,7 @@ public class IntakeNote extends Command {
    */
   private static final ColorMatch colorMatch = new ColorMatch();
   /*Colors */
-  private static final Color noteColor = new Color(255, 165, 0);
+  private static final Color noteColor = new Color("#7B6320");
 
   /** Creates a new IntakeNote. */
   public IntakeNote(Intake intake, ShooterSub shooter, PositionerSub arm) {
@@ -75,6 +76,8 @@ public class IntakeNote extends Command {
   public void end(boolean interrupted) {
     intake.disable();
     shooter.stopFeed();
+
+    shooter.runBack();
   }
 
   // Returns true when the command should end.
@@ -88,6 +91,7 @@ public class IntakeNote extends Command {
 
   public boolean noteDetected(){
     Color detectedColor = colorSensor.getColor();
+    SmartDashboard.putString("Color Sensor", detectedColor.toString());
 
     /*Matches detectedColor to NoteColor 
      * if confidence is below 0.9 it returns null, otherwise it returns detectedColor

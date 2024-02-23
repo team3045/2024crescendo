@@ -4,8 +4,15 @@
 
 package frc.robot.subsystems;
 
+import javax.print.DocFlavor.READER;
+import javax.swing.plaf.basic.BasicToolTipUI;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
@@ -55,11 +62,15 @@ public class ShooterSub extends SubsystemBase {
 
     // set Motion Magic Velocity settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 1;
     motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
     motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
     topMotor.getConfigurator().apply(talonFXConfigs);
     bottomMotor.getConfigurator().apply(talonFXConfigs);
+    feedMotor.getConfigurator().apply(talonFXConfigs);
+    topMotor.setPosition(0);
+    bottomMotor.setPosition(0);
 
     state = ShooterSate.STOP;
   }
@@ -121,6 +132,21 @@ public class ShooterSub extends SubsystemBase {
   public void shootAmp(){
     topMotor.set(-0.20);
     bottomMotor.set(-0.15);
+  }
+
+  /*runs it back a little bit for intaking */
+  public void runBack(){
+    var request = new MotionMagicVoltage(0);
+    Slot1Configs temp = new Slot1Configs();
+    temp.kS = 0.25; // Add 0.25 V output to overcome static friction
+    temp.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    temp.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    temp.kP = 2.5; // An error of 1 rps results in 0.11 V output
+    temp.kI = 0; // no output for integrated error
+    temp.kD = 0; // no output for error derivative
+    feedMotor.getConfigurator().apply(temp);
+    feedMotor.setPosition(0);
+    feedMotor.setControl(request.withPosition(-1).withSlot(0));
   }
 
   @Override

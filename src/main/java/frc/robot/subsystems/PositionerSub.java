@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.AbsoluteEncoder;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -18,24 +19,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
-  private DutyCycleEncoder absEncoder = new DutyCycleEncoder(1); //Encoder on channel 1
-  private final double absEncoderOffset = 0; //range 0-1, in rotations I presume
+  private DutyCycleEncoder absEncoder = new DutyCycleEncoder(0); //Encoder on channel 1
+  private final double absEncoderOffset = Units.degreesToRotations(20.417706510442354); //range 0-1, in rotations I presume
  
   private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
   private static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
 
   private LimeLightSub vision;
 
-  private static final boolean absoluteEncoder = false;
+  private static final boolean absoluteEncoder = true;
 
   public static double currAngle;
   private static double desiredAngle;
 
   
 
-  public static final double MIN_ANGLE = 0; 
+  public static final double MIN_ANGLE = 0; //0.108264602706615
   public static final double MAX_ANGLE = 79; 
-  public static final double INTAKE_ANGLE = 37.5;
+  public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
   public static final double SPEAKER_ANGLE = 58;
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
@@ -55,9 +56,8 @@ public class PositionerSub extends SubsystemBase {
       rightPositioner.setPosition(0);
     }
     else{
-      absEncoder.setPositionOffset(absEncoderOffset);
-      leftPositioner.setPosition(absEncoder.getAbsolutePosition());
-      rightPositioner.setPosition(absEncoder.getAbsolutePosition());
+      leftPositioner.setPosition(getPositionRot());
+      rightPositioner.setPosition(getPositionRot());
     }
     
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
@@ -83,7 +83,7 @@ public class PositionerSub extends SubsystemBase {
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
-
+    //configs.Feedback.RotorToSensorRatio = (70 / 26) * (5) * (4);
     configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4);
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
@@ -157,9 +157,21 @@ public class PositionerSub extends SubsystemBase {
     goToAngle(SPEAKER_ANGLE);
   }
 
+  public double getPositionRot(){
+    double difference = absEncoder.getAbsolutePosition() - absEncoderOffset;
+
+    return absEncoderOffset - difference;
+  }
+
+  public double getPositionDeg(){
+    return Units.rotationsToDegrees(getPositionRot());
+  }
+
 
   @Override
   public void periodic() {
+    //leftPositioner.setPosition(getPositionRot());
+    //rightPositioner.setPosition(getPositionRot());
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
@@ -171,16 +183,9 @@ public class PositionerSub extends SubsystemBase {
       goToAngle(MIN_ANGLE);
     
     
-    goToAngle(desiredAngle);
-    leftPositioner.getConfigurator().apply(new Slot0Configs().
-     withKP(SmartDashboard.getNumber("kP", 60))
-     .withKI(SmartDashboard.getNumber("kI", 0))
-     .withKD(SmartDashboard.getNumber("kD", 0.1))
-     .withKA(0)
-     .withKS(0.12)
-     .withKV(0.25)
+    //goToAngle(desiredAngle);
 
-     );
+    SmartDashboard.putNumber("Abs encoder", absEncoder.getAbsolutePosition());
    
   }
  

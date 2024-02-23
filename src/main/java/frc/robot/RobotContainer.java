@@ -67,7 +67,7 @@ public class RobotContainer {
 
         //poseEstimation.periodic();
         localizer.periodic();
-        positionerSub.periodic();
+        //positionerSub.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -92,7 +92,7 @@ public class RobotContainer {
             }
             else
                 Constants.Swerve.maxSpeed = 4.5;
-                Constants.Swerve.maxAngularVelocity = Math.PI * 2;
+                Constants.Swerve.maxAngularVelocity = Math.PI * 3/2;
                 Constants.Swerve.normalControl = true;}));
 
         overDrive.onTrue(new InstantCommand(() ->
