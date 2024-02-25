@@ -4,51 +4,52 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.PositionerSub;
-import frc.robot.subsystems.ShooterSub;
 
-public class ShootAmp extends Command {
+public class FindSpeakerAprilTag extends Command {
   private PositionerSub arm;
-  private ShooterSub shooter;
+  private LimeLightSub vision;
 
-  private int count;
-  /** Creates a new ShootClose. */
-  public ShootAmp(PositionerSub arm, ShooterSub shooter) {
+  private boolean seen;
+  /** Creates a new FindSpeakerAprilTag. */
+  public FindSpeakerAprilTag(PositionerSub arm, LimeLightSub vision) {
     this.arm = arm;
-    this.shooter = shooter;
-    count = 0;
+    this.vision = vision;
+
+    seen = false;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arm,shooter);
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    shooter.shootAmp();
-    arm.goToAngle(66);
-    count++;
-
-    if(count >= 40){
-      shooter.feed();
+    seen = vision.getTargetSeen();
+    if(seen){
+      arm.goToAngle(arm.getPositionDeg());
+    }
+    else{
+      arm.decreaseAngle();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    count=0;
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(seen)
+      return true;
     return false;
   }
 }

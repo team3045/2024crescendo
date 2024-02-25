@@ -37,7 +37,7 @@ public class PositionerSub extends SubsystemBase {
   public static final double MIN_ANGLE = 0; //0.108264602706615
   public static final double MAX_ANGLE = 79; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
-  public static final double SPEAKER_ANGLE = 58;
+  public static final double SPEAKER_ANGLE = 56;
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
     /*Initialize our limelight for the shooter 
@@ -77,19 +77,19 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 60;
+    slot0Configs.kP = 100;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0.1;
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
-    configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4);
+    configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4); //* 1/1.4 to fix the gear ratio empiraclly */
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
     * Jerk: takes 0.1s to reach desired accel
     */
-    configs.MotionMagic.MotionMagicCruiseVelocity = 2;
-    configs.MotionMagic.MotionMagicAcceleration =  4; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
+    configs.MotionMagic.MotionMagicCruiseVelocity = 1;
+    configs.MotionMagic.MotionMagicAcceleration =  2; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
 
     configs.CurrentLimits.SupplyCurrentLimit = 40;
@@ -156,6 +156,10 @@ public class PositionerSub extends SubsystemBase {
     goToAngle(SPEAKER_ANGLE);
   }
 
+  public void decreaseAngle(){
+    goToAngle(getPositionDeg() - 2);
+  }
+
   public double getPositionRot(){
     double position = absEncoder.getAbsolutePosition();
     if(absEncoder.getAbsolutePosition() > 0.108264602706615 || absEncoder.getAbsolutePosition() == 0){
@@ -174,6 +178,10 @@ public class PositionerSub extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
+      leftPositioner.setPosition(getPositionRot());
+      rightPositioner.setPosition(getPositionRot());  
+    }
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());

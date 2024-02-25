@@ -42,6 +42,7 @@ public class LimeLightSub extends SubsystemBase {
   private double tl;
 
   private double tx;
+  private double ty;
 
   private double tId;
 
@@ -62,6 +63,7 @@ public class LimeLightSub extends SubsystemBase {
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 
     tx = table.getEntry("tx").getDouble(0);
+    ty = table.getEntry("ty").getDouble(0);
 
     camPose_TargetSpace =
       table.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
@@ -111,6 +113,10 @@ public class LimeLightSub extends SubsystemBase {
   //if target is to the left of camera center tx is neg, vice versa is pos 
   public double getTx(){
     return tx;
+  }
+
+  public double getTy(){
+    return ty;
   }
 
   //Used with getTimeStampMillis to add vision estimations at the correct time
@@ -197,6 +203,14 @@ public class LimeLightSub extends SubsystemBase {
     }
   }
 
+  public void setAimingPipeline(){
+    table.getEntry("pipeline").setNumber(1);
+  }
+
+  public void setLocalizerPipeline(){
+    table.getEntry("pipeline").setNumber(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -205,6 +219,7 @@ public class LimeLightSub extends SubsystemBase {
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 
     tx = table.getEntry("tx").getDouble(0);
+    ty = table.getEntry("ty").getDouble(0);
     camPose_TargetSpace =
       table.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
     

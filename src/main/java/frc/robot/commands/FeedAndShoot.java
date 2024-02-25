@@ -4,38 +4,32 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PositionerSub;
 import frc.robot.subsystems.ShooterSub;
 
-public class ShootAmp extends Command {
-  private PositionerSub arm;
+public class FeedAndShoot extends Command {
   private ShooterSub shooter;
 
   private int count;
-  /** Creates a new ShootClose. */
-  public ShootAmp(PositionerSub arm, ShooterSub shooter) {
-    this.arm = arm;
+  /** Creates a new FeedAndShoot. */
+  public FeedAndShoot(ShooterSub shooter) {
     this.shooter = shooter;
-    count = 0;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arm,shooter);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    shooter.shootAmp();
-    arm.goToAngle(66);
+    shooter.shootPct();
     count++;
 
-    if(count >= 40){
+    if(count >= 20){
       shooter.feed();
     }
   }
@@ -44,6 +38,8 @@ public class ShootAmp extends Command {
   @Override
   public void end(boolean interrupted) {
     count=0;
+    shooter.stopFeed();
+    shooter.stopShooter();
   }
 
   // Returns true when the command should end.

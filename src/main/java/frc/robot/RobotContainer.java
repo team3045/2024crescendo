@@ -38,6 +38,7 @@ public class RobotContainer {
     private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kCross.value);
     private final JoystickButton overDrive = new JoystickButton(driver, PS4Controller.Button.kCircle.value); 
     private final JoystickButton shooterTest = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+    private final JoystickButton shootNote = new JoystickButton(driver, PS4Controller.Button.kL2.value);
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -52,6 +53,7 @@ public class RobotContainer {
     private final ShootClose shootClose = new ShootClose(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
+    private final FullAim shoot = new FullAim(positionerSub, localizer, shooterSub);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -107,7 +109,9 @@ public class RobotContainer {
                 Constants.Swerve.normalControl = false;}));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        shooterTest.onTrue(shootClose);
+        //shooterTest.whileTrue(shoot);
+        shooterTest.onTrue(shootAmp);
+        shootNote.toggleOnTrue(new FeedAndShoot(shooterSub));
 
         turnAndPoint.onTrue(new TurnAndPoint(s_Swerve, shooterLimelight, positionerSub, autoSub));
         
