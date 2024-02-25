@@ -15,7 +15,7 @@ public class PointAtTarget extends Command {
   /*How much higher we have to aim to get the shooter
    to see the point rather than just camera 
    Determined by testing rather than mathematically*/
-  private static final double camDegOffset = 25; 
+  private static final double camDegOffset = 0; //0 once we mount in new spot
 
   private double desiredAng;
   /** Creates a new PointAtTarget. */
@@ -69,6 +69,10 @@ public class PointAtTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
+      //calc angle everytime so hopefulyl you can hold down and it adjusts while moving
+      //PRECONDITION: CAN SEE APRILTAG
+      //POSTCONDITION: POINTS SHOOTER AT DESIRED OFFSET FROM APRILTAG
+      calcAngle();
       arm.goToAngle(desiredAng);
   }
 

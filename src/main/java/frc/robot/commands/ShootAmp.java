@@ -31,8 +31,8 @@ public class ShootAmp extends Command {
   @Override
   public void execute() {
     
-    shooter.shootAmp();
     arm.goToAngle(66);
+    shooter.shootAmp();
     count++;
 
     if(count >= 40){

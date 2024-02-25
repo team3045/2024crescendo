@@ -34,7 +34,7 @@ public class ShootClose extends Command {
     arm.goToSpeaker();
     count++;
 
-    if(count >= 20){
+    if(count >= 40){
       shooter.feed();
     }
   }

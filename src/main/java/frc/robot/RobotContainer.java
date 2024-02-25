@@ -4,11 +4,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.simulation.PS4ControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.*;
@@ -31,14 +28,18 @@ public class RobotContainer {
     private final int rotationAxis = 2;
 
     /* Driver Buttons */
-    private final JoystickButton turnAndPoint = new JoystickButton(driver, PS4Controller.Button.kShare.value);
-    private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kR2.value);
-    private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
-    private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kCross.value);
     private final JoystickButton overDrive = new JoystickButton(driver, PS4Controller.Button.kCircle.value); 
-    private final JoystickButton shooterTest = new JoystickButton(driver, PS4Controller.Button.kL1.value);
-    private final JoystickButton shootNote = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+
+    private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value); //Single Press
+    private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kR2.value); //Toggle
+    private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
+    private final JoystickButton ampScore = new JoystickButton(driver, PS4Controller.Button.kCross.value); //Single Press
+    private final JoystickButton turnAndPoint = new JoystickButton(driver, PS4Controller.Button.kL1.value); //Hold to continously track while moving
+    private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+    private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
+    private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
+
+
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -53,7 +54,6 @@ public class RobotContainer {
     private final ShootClose shootClose = new ShootClose(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
-    private final FullAim shoot = new FullAim(positionerSub, localizer, shooterSub);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -69,7 +69,7 @@ public class RobotContainer {
 
         //poseEstimation.periodic();
         localizer.periodic();
-        //positionerSub.periodic();
+        positionerSub.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -97,23 +97,23 @@ public class RobotContainer {
                 Constants.Swerve.maxAngularVelocity = Math.PI * 3/2;
                 Constants.Swerve.normalControl = true;}));
 
-        overDrive.onTrue(new InstantCommand(() ->
-            {if(Constants.Swerve.maxSpeed == 6.0){
-                Constants.Swerve.maxSpeed = 4.5;
-                Constants.Swerve.maxAngularVelocity = Math.PI * 2;
-                Constants.Swerve.normalControl = true;
-            }
-            else
-                Constants.Swerve.maxSpeed = 6.0;
-                Constants.Swerve.maxAngularVelocity = Math.PI * 2;
-                Constants.Swerve.normalControl = false;}));
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        // overDrive.onTrue(new InstantCommand(() ->
+        //     {if(Constants.Swerve.maxSpeed == 6.0){
+        //         Constants.Swerve.maxSpeed = 4.5;
+        //         Constants.Swerve.maxAngularVelocity = Math.PI * 2;
+        //         Constants.Swerve.normalControl = true;
+        //     }
+        //     else
+        //         Constants.Swerve.maxSpeed = 6.0;
+        //         Constants.Swerve.maxAngularVelocity = Math.PI * 2;
+        //         Constants.Swerve.normalControl = false;}));
 
         //shooterTest.whileTrue(shoot);
-        shooterTest.onTrue(shootAmp);
-        shootNote.toggleOnTrue(new FeedAndShoot(shooterSub));
+        turnAndPoint.whileTrue(new FullAim(positionerSub, localizer, shooterSub)); //TODO: ADD TURN FUNCTIONALIY AND REV FUNCTIONALITY
+        feed.toggleOnTrue(new FeedAndShoot(shooterSub));
 
-        turnAndPoint.onTrue(new TurnAndPoint(s_Swerve, shooterLimelight, positionerSub, autoSub));
+        ampScore.onTrue(shootAmp);
+        safeShoot.onTrue(new ShootClose(positionerSub, shooterSub));
         
 
         
