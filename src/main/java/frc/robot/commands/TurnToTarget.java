@@ -33,7 +33,7 @@ public class TurnToTarget extends Command {
   @Override
   public void execute() {
     if(vision.getTargetSeen()){
-      PIDController aController = new PIDController(0.1, 0, 0);
+      PIDController aController = new PIDController(0.5, 0, 0);
       aController.setSetpoint(0);
       double aOutput = aController.calculate(vision.getTx());
 
@@ -47,7 +47,7 @@ public class TurnToTarget extends Command {
     }
     else{
       PIDController aController = new PIDController(0.1, 0, 0);
-      aController.setSetpoint(auto.getGoalPose(5.0, vision).get().getRotation().getDegrees());
+      aController.setSetpoint(auto.getGoalPose(3.0, vision).get().getRotation().getDegrees());
       double aOutput = aController.calculate(swerve.getHeading().getDegrees());
 
       aController.setTolerance(1);
@@ -62,11 +62,16 @@ public class TurnToTarget extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    swerve.driveField(new ChassisSpeeds());
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(Math.abs(vision.getTx())<1){
+      return true;
+    }
     return false;
   }
 }

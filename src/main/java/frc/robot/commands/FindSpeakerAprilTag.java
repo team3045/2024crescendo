@@ -27,6 +27,7 @@ public class FindSpeakerAprilTag extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    seen = vision.getTargetSeen();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,8 +35,7 @@ public class FindSpeakerAprilTag extends Command {
   public void execute() {
     seen = vision.getTargetSeen();
     if(seen){
-      arm.goToAngle(arm.getPositionDeg());
-    }
+      return;    }
     else{
       arm.decreaseAngle();
     }

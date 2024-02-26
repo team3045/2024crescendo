@@ -77,7 +77,7 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 100;
+    slot0Configs.kP = 40;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0.1;
     slot0Configs.kV = 0.12;
@@ -179,10 +179,14 @@ public class PositionerSub extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
-      leftPositioner.setPosition(getPositionRot());
-      rightPositioner.setPosition(getPositionRot());  
-    }
+    // if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
+    //   leftPositioner.setPosition(getPositionRot());
+    //   rightPositioner.setPosition(getPositionRot());  
+    // }
+    leftPositioner.setPosition(getPositionRot());
+    rightPositioner.setPosition(getPositionRot());
+
+
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     SmartDashboard.putNumber("Current Arm Angle", currAngle);
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());

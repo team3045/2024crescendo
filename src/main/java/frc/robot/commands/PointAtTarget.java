@@ -64,11 +64,19 @@ public class PointAtTarget extends Command {
   @Override
   public void initialize() {
     calcAngle();
+
+    if(Math.abs(vision.getTy()) < 1){
+      end(false);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
+      if(Math.abs(vision.getTy()) < 1){
+      end(false);
+    }
+
       //calc angle everytime so hopefulyl you can hold down and it adjusts while moving
       //PRECONDITION: CAN SEE APRILTAG
       //POSTCONDITION: POINTS SHOOTER AT DESIRED OFFSET FROM APRILTAG
