@@ -110,7 +110,7 @@ public class RobotContainer {
 
         //shooterTest.whileTrue(shoot);
         //Change this to "onTrue()" if you want to continously aim
-        turnAndPoint.whileTrue(new FullAim(positionerSub, localizer, shooterSub, s_Swerve, autoSub)); //TODO: ADD TURN FUNCTIONALIY AND REV FUNCTIONALITY
+        turnAndPoint.onTrue(new FullAim(positionerSub, localizer, shooterSub, s_Swerve, autoSub)); //TODO: ADD TURN FUNCTIONALIY AND REV FUNCTIONALITY
         feed.toggleOnTrue(new FeedAndShoot(shooterSub));
 
         ampScore.onTrue(shootAmp);
