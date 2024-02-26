@@ -183,6 +183,18 @@ public class Swerve extends SubsystemBase {
         setModuleStates(states);
     }
 
+    public void xStance(){
+        SwerveModuleState frontLeft = new SwerveModuleState(0.0,Rotation2d.fromDegrees(-45));
+        SwerveModuleState frontright = new SwerveModuleState(0.0,Rotation2d.fromDegrees(45));
+        SwerveModuleState backLeft = new SwerveModuleState(0.0,Rotation2d.fromDegrees(45));
+        SwerveModuleState backRight = new SwerveModuleState(0.0,Rotation2d.fromDegrees(-45));
+
+        mSwerveMods[0].setDesiredState(frontLeft, false);
+        mSwerveMods[1].setDesiredState(frontright, false);
+        mSwerveMods[2].setDesiredState(backLeft,false);
+        mSwerveMods[3].setDesiredState(backRight, false);
+    }
+
     //adds the vision measurement to pose estimator if target is seen and the id is correct
     //scales the std dev based on distance from tag TLDR: if we're farther away we trust vision less
     public void addVision(){
