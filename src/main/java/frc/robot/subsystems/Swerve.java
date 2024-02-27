@@ -69,7 +69,7 @@ public class Swerve extends SubsystemBase {
              stateStdDevs,
              visionMeasurementStdDevs);
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getHeading(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -119,7 +119,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return mPoseEstimator.getEstimatedPosition();
+        return swerveOdometry.getPoseMeters();
     }
 
     public Pose2d getOdomPose(){
@@ -143,6 +143,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void zeroHeading(){
+        System.out.println("zero heading");
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
 
@@ -234,5 +235,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
+
+        SmartDashboard.putNumber("Heading: ", getHeading().getDegrees());
     }
 }

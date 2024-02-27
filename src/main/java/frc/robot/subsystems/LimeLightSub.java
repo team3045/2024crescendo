@@ -170,13 +170,20 @@ public class LimeLightSub extends SubsystemBase {
       //essentially is horizontal distance to target, no matter what angle facing bc camera space
       double distance = table.getEntry("targetpose_cameraspace").getDoubleArray(new double[] {-1.0,-1.0,-1.0,-1.0,-1.0,-1.0})[2];
       table.getEntry("pipeline").setNumber(localizationPipeline);
-      return Units.metersToInches(distance);
+      return distance;
     }
     else{
       table.getEntry("pipeline").setNumber(localizationPipeline);
       return -1;
     }
+  }
 
+  public Transform3d getTargetCamTransform3d(){
+    return getCamToTargetTransform().inverse();
+  }
+
+  public double getNormToSpeaker(){
+    return getTargetCamTransform3d().getTranslation().getNorm();
   }
 
   //returns vision measurement to add to pose estimator

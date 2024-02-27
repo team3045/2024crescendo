@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.AutoSub;
 import frc.robot.subsystems.LimeLightSub;
@@ -17,8 +18,10 @@ import frc.robot.subsystems.Swerve;
 public class FullAim extends SequentialCommandGroup {
   /** Creates a new FullAim. */
   public FullAim(PositionerSub arm, LimeLightSub vision, ShooterSub shooter, Swerve swerve, AutoSub auto) {
+
+    ParallelCommandGroup findTag = new ParallelCommandGroup(new TurnToTarget(vision, swerve, auto),new FindSpeakerAprilTag(arm, vision));
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new TurnToTarget(vision, swerve, auto),new FindSpeakerAprilTag(arm, vision),new PointAtTarget(vision, arm));
+    addCommands(findTag, new PointAtTarget(vision, arm));
   }
 }

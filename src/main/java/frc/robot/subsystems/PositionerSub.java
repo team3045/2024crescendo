@@ -77,19 +77,19 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 40;
+    slot0Configs.kP = 100;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0.1;
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
-    configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4); //* 1/1.4 to fix the gear ratio empiraclly */
+    configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4) *(1/1.4); //* 1/1.4 to fix the gear ratio empiraclly */
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
     * Jerk: takes 0.1s to reach desired accel
     */
-    configs.MotionMagic.MotionMagicCruiseVelocity = 1;
-    configs.MotionMagic.MotionMagicAcceleration =  2; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
+    configs.MotionMagic.MotionMagicCruiseVelocity = 2;
+    configs.MotionMagic.MotionMagicAcceleration =  4; //Units.radiansPerSecondToRotationsPerMinute(MAX_ANGLE-MIN_ANGLE) / 60;
     configs.MotionMagic.MotionMagicJerk = configs.MotionMagic.MotionMagicAcceleration * 10;
 
     configs.CurrentLimits.SupplyCurrentLimit = 40;
@@ -179,12 +179,12 @@ public class PositionerSub extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
-    //   leftPositioner.setPosition(getPositionRot());
-    //   rightPositioner.setPosition(getPositionRot());  
-    // }
-    leftPositioner.setPosition(getPositionRot());
-    rightPositioner.setPosition(getPositionRot());
+    if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
+      leftPositioner.setPosition(getPositionRot());
+      rightPositioner.setPosition(getPositionRot());  
+    }
+    // leftPositioner.setPosition(getPositionRot());
+    // rightPositioner.setPosition(getPositionRot());
 
 
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees

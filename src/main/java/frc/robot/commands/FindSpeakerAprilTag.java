@@ -28,15 +28,20 @@ public class FindSpeakerAprilTag extends Command {
   @Override
   public void initialize() {
     seen = vision.getTargetSeen();
+    if(seen || (seen &&Math.abs(vision.getTy()) < 1)){
+      end(false);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     seen = vision.getTargetSeen();
-    if(seen){
-      return;    }
+    if(seen || (seen &&Math.abs(vision.getTy()) < 1)){
+      end(false);
+    }
     else{
+      System.out.println("find april tag");
       arm.decreaseAngle();
     }
   }
@@ -48,7 +53,7 @@ public class FindSpeakerAprilTag extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(seen)
+    if(seen||vision.getTargetSeen())
       return true;
     return false;
   }

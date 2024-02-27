@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.PositionerSub;
 
@@ -58,6 +60,11 @@ public class PointAtTarget extends Command {
     }
     else
       desiredAng = arm.getPositionDeg();
+
+    if(vision.getNormToSpeaker() > 3.85){
+      desiredAng += vision.getNormToSpeaker() * 0.5;
+      SmartDashboard.putNumber("Norm", vision.getNormToSpeaker());
+    }
   }
 
   // Called when the command is initially scheduled.
@@ -66,7 +73,7 @@ public class PointAtTarget extends Command {
     calcAngle();
 
     if(Math.abs(vision.getTy()) < 1){
-      end(false);
+      CommandScheduler.getInstance().cancel(this);
     }
   }
 
@@ -74,20 +81,24 @@ public class PointAtTarget extends Command {
   @Override
   public void execute(){
       if(Math.abs(vision.getTy()) < 1){
-      end(false);
-    }
+        System.out.println("cancel this");
+        CommandScheduler.getInstance().cancel(this);
+      }
+      else{
+        //calc angle everytime so hopefulyl you can hold down and it adjusts while moving
+        //PRECONDITION: CAN SEE APRILTAG
+        //POSTCONDITION: POINTS SHOOTER AT DESIRED OFFSET FROM APRILTAG
+        calcAngle();
+        arm.goToAngle(desiredAng);
+      }
 
-      //calc angle everytime so hopefulyl you can hold down and it adjusts while moving
-      //PRECONDITION: CAN SEE APRILTAG
-      //POSTCONDITION: POINTS SHOOTER AT DESIRED OFFSET FROM APRILTAG
-      calcAngle();
-      arm.goToAngle(desiredAng);
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    vision.setLocalizerPipeline();
+    //vision.setLocalizerPipeline();
   }
 
   // Returns true when the command should end.

@@ -29,7 +29,7 @@ public class FeedAndShoot extends Command {
     shooter.shootPct();
     count++;
 
-    if(count >= 20){
+    if(count >= 50){
       shooter.feed();
     }
   }

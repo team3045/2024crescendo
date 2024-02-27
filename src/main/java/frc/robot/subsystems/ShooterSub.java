@@ -126,7 +126,7 @@ public class ShooterSub extends SubsystemBase {
 
   public void shootPct(){
     topMotor.set(-0.9);
-    bottomMotor.set(-0.9);
+    bottomMotor.set(-0.95);
   }
 
   public void shootAmp(){
