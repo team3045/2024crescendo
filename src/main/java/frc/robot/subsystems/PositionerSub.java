@@ -27,7 +27,7 @@ public class PositionerSub extends SubsystemBase {
 
   private LimeLightSub vision;
 
-  private static final boolean absoluteEncoder = true;
+  private static final boolean absoluteEncoder = false;
 
   public static double currAngle;
   private static double desiredAngle;
