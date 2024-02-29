@@ -4,13 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.AbsoluteEncoder;
 
 import edu.wpi.first.math.util.Units;
@@ -19,7 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
-  private DutyCycleEncoder absEncoder = new DutyCycleEncoder(0); //Encoder on channel 1
+  private final CANcoder absEncoder = new CANcoder(20);
   private final double absEncoderOffset = Units.degreesToRotations(20.417706510442354); //range 0-1, in rotations I presume
  
   private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
@@ -46,6 +51,7 @@ public class PositionerSub extends SubsystemBase {
     this.vision = vision;
 
     /*Config both positioners */
+    configCanCoder();
     configMotors();
 
     /*Resets both values on boot, change if using absolute encoder 
@@ -83,7 +89,9 @@ public class PositionerSub extends SubsystemBase {
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
-    configs.Feedback.SensorToMechanismRatio = (70 / 26) * (5) * (4) *(1/1.4); //* 1/1.4 to fix the gear ratio empiraclly */
+    configs.Feedback.FeedbackRemoteSensorID = 20;
+    configs.Feedback.RotorToSensorRatio = (70 / 26) * (5) * (4) *(1/1.4);
+    configs.Feedback.SensorToMechanismRatio = 1; //* 1/1.4 to fix the gear ratio empiraclly */
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
     * Jerk: takes 0.1s to reach desired accel
@@ -105,6 +113,18 @@ public class PositionerSub extends SubsystemBase {
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rightPositioner.getConfigurator().apply(rightConfigs);
 
+  }
+
+  public void configCanCoder(){
+    var config = new CANcoderConfiguration();
+    
+    MagnetSensorConfigs sensorConfigs = config.MagnetSensor;
+
+    sensorConfigs.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+    sensorConfigs.MagnetOffset = absEncoderOffset;
+    sensorConfigs.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+
+    absEncoder.getConfigurator().apply(config);
   }
 
   
@@ -161,15 +181,9 @@ public class PositionerSub extends SubsystemBase {
   }
 
   public double getPositionRot(){
-    double position = absEncoder.getAbsolutePosition();
-    /*Fix for wrapping issue */
-    if(absEncoder.getAbsolutePosition() > 0.108264602706615 || absEncoder.getAbsolutePosition() == 0){
-      position = absEncoder.getAbsolutePosition()-1;
-    }
+    double position = absEncoder.getAbsolutePosition().getValueAsDouble();
 
-    double difference = position - absEncoderOffset;
-
-    return absEncoderOffset - difference;
+    return position;
   }
 
   public double getPositionDeg(){
