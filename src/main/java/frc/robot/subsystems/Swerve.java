@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
+import frc.robot.LimelightHelpers.LimelightResults;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -224,11 +226,22 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void updateOdometry(){
+        mPoseEstimator.update(getGyroYaw(), getModulePositions());
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
+
+        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
+        if(measurement.tagCount >= 2){
+            mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,999999));
+            mPoseEstimator.addVisionMeasurement(
+                measurement.pose, 
+                measurement.timestampSeconds);
+        }
+    }
+
     @Override
     public void periodic(){
-        mPoseEstimator.updateWithTime(System.currentTimeMillis()-Constants.startTime, getGyroYaw(), getModulePositions());
-        //addVision(); //disabled while testing odom, causes issues by resetting odometry
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
+        updateOdometry();
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());

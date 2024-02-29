@@ -69,7 +69,7 @@ public class TeleopSwerve extends Command {
 
             aController.close();
             vision.setLocalizerPipeline();
-            return aOutput;
+            return aOutput * Constants.Swerve.maxAngularVelocity;
         }
 
         vision.setLocalizerPipeline();

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
 
 public class LimeLightSub extends SubsystemBase {
@@ -188,34 +189,19 @@ public class LimeLightSub extends SubsystemBase {
 
   //returns vision measurement to add to pose estimator
   public Pose2d getVisionMeasurement(){
-    try {
-      //should be the inverse but for some reason this way works?
-      Transform3d camToRobot = EstimationConstants.robotToCam;
-      Pose3d tagPose = EstimationConstants.idPoses.get(getID());
-
-      Transform3d tagToCam = getCamToTargetTransform().inverse();
-
-      Translation3d fieldSystemTranslation = CoordinateSystem.convert(tagToCam.getTranslation().rotateBy(tagToCam.inverse().getRotation()), CoordinateSystem.EDN(), CoordinateSystem.NWU());
-      
-      //add .transformBy(camToRovot)
-      Pose3d robotPose = tagPose.transformBy(new Transform3d(fieldSystemTranslation, new Rotation3d())).transformBy(camToRobot);
-    
-      Pose2d visionPose = new Pose2d(robotPose.getX(),robotPose.getY(),new Rotation2d());
-
-      return visionPose;
-
-    } catch (Exception e) {
-       // System.out.println("ID NOT FOUND");
-        return new Pose2d();
-    }
+    return LimelightHelpers.getBotPose2d(name);
   }
 
   public void setAimingPipeline(){
-    table.getEntry("pipeline").setNumber(1);
+    LimelightHelpers.setPipelineIndex(name,speakerPipline);
   }
 
   public void setLocalizerPipeline(){
-    table.getEntry("pipeline").setNumber(0);
+    LimelightHelpers.setPipelineIndex(name, localizationPipeline);
+  }
+
+  public String getName(){
+    return name;
   }
 
   @Override
