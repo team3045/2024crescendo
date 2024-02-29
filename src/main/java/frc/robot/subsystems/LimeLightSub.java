@@ -49,7 +49,7 @@ public class LimeLightSub extends SubsystemBase {
   private static final ShuffleboardTab localizerTab = Shuffleboard.getTab("limelight");
   private NetworkTable table;
 
-  private GenericEntry seen, id, camTransform, test;
+  private GenericEntry seen, id, camTransform;
 
   private static final int speakerPipline = 1;
   private static final int localizationPipeline = 0;

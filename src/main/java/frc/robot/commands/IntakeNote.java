@@ -5,16 +5,10 @@
 package frc.robot.commands;
 
 import com.playingwithfusion.TimeOfFlight;
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PositionerSub;

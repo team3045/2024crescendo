@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.sql.ClientInfoStatus;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
