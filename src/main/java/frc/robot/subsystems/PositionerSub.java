@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
   private final CANcoder absEncoder = new CANcoder(20);
-  private final double absEncoderOffset = Units.degreesToRotations(20.417706510442354); //range 0-1, in rotations I presume
+  private final double absEncoderOffset = 0.514892578125; //range 0-1, in rotations I presume
  
   private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
   private static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
@@ -122,7 +122,7 @@ public class PositionerSub extends SubsystemBase {
 
     sensorConfigs.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
     sensorConfigs.MagnetOffset = absEncoderOffset;
-    sensorConfigs.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    sensorConfigs.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 
     absEncoder.getConfigurator().apply(config);
   }
