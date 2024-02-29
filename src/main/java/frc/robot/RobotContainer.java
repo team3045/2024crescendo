@@ -38,6 +38,7 @@ public class RobotContainer {
     private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
     private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
+    private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kSquare.value);
 
 
 
@@ -64,9 +65,11 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
                 () -> robotCentric.getAsBoolean(),
-                shooterLimelight
+                localizer
             )
         );
+
+        positionerSub.setDefaultCommand(new FullAim(positionerSub, localizer, shooterSub, s_Swerve, autoSub));
 
         //poseEstimation.periodic();
         localizer.periodic();
@@ -116,6 +119,8 @@ public class RobotContainer {
 
         ampScore.onTrue(shootAmp);
         safeShoot.onTrue(new ShootClose(positionerSub, shooterSub));
+
+        shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
         
 
         
