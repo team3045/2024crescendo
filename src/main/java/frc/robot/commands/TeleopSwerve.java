@@ -41,7 +41,6 @@ public class TeleopSwerve extends Command {
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         rotationVal = shooterMode ? calcRotationShooterMode() : rotationVal;
-        System.out.println(shooterMode + " AND " + rotationVal);
 
         /* Drive */
         s_Swerve.drive(
@@ -60,7 +59,7 @@ public class TeleopSwerve extends Command {
     public double calcRotationShooterMode(){
         vision.setAimingPipeline();
         if(vision.getTargetSeen()){
-            PIDController aController = new PIDController(0.03, 0, 0);
+            PIDController aController = new PIDController(0.02, 0, 0);
             aController.setSetpoint(0);
             double aOutput = aController.calculate(vision.getTx());
 
