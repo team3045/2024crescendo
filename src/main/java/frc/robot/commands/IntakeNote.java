@@ -19,7 +19,7 @@ public class IntakeNote extends Command {
   private Intake intake;
   private ShooterSub shooter;
   private PositionerSub arm;
-  private static final TimeOfFlight rangeSensor= new TimeOfFlight(19);
+  private static final TimeOfFlight rangeSensor = new TimeOfFlight(0);
   private static final double MaxDistance = Units.inchesToMeters(4) * 1000; //in mm
 
   /** Creates a new IntakeNote. */

@@ -37,7 +37,7 @@ public class PositionerSub extends SubsystemBase {
 
   
 
-  public static final double MIN_ANGLE = 0; //0.108264602706615
+  public static final double MIN_ANGLE = 16; //0.108264602706615
   public static final double MAX_ANGLE = 79; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
   public static final double SPEAKER_ANGLE = 56;

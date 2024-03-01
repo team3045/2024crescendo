@@ -41,7 +41,6 @@ public class FindSpeakerAprilTag extends Command {
       end(false);
     }
     else{
-      System.out.println("find april tag");
       arm.decreaseAngle();
     }
   }

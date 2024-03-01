@@ -21,6 +21,6 @@ public class FullAim extends SequentialCommandGroup {
     //ParallelCommandGroup findTag = new ParallelCommandGroup(new TurnToTarget(vision, swerve, auto),new FindSpeakerAprilTag(arm, vision));
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new PointAtTarget(vision, arm));
+    addCommands(new FindSpeakerAprilTag(arm, vision),new PointAtTarget(vision, arm));
   }
 }

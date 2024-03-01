@@ -17,6 +17,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
+  public static final double startTime = System.currentTimeMillis();
+  public static double currTime = startTime;
+  public static double prevTime = currTime;
+
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -46,7 +50,16 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    prevTime = currTime;
+    currTime = System.currentTimeMillis();
     
+    if(currTime - prevTime > 100){
+      System.out.println("Current Packet time: " + currTime);
+      System.out.println("Prev Packet Time: " + prevTime);
+      System.out.println("Difference: " + (currTime - prevTime));
+      System.out.println();
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

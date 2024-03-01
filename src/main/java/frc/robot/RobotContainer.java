@@ -34,11 +34,10 @@ public class RobotContainer {
     private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kR2.value); //Toggle
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
     private final JoystickButton ampScore = new JoystickButton(driver, PS4Controller.Button.kCross.value); //Single Press
-    private final JoystickButton turnAndPoint = new JoystickButton(driver, PS4Controller.Button.kL1.value); //Hold to continously track while moving
     private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
     private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
-    private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kSquare.value);
+    private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
 
 
 
@@ -114,7 +113,6 @@ public class RobotContainer {
 
         //shooterTest.whileTrue(shoot);
         //Change this to "onTrue()" if you want to continously aim
-        turnAndPoint.whileTrue(new FullAim(positionerSub, localizer, shooterSub, s_Swerve, autoSub).repeatedly()); //TODO: ADD TURN FUNCTIONALIY AND REV FUNCTIONALITY
         feed.toggleOnTrue(new FeedAndShoot(shooterSub));
 
         ampScore.onTrue(shootAmp);

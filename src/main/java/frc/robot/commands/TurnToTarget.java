@@ -16,6 +16,8 @@ public class TurnToTarget extends Command {
   private LimeLightSub vision;
   private Swerve swerve;
   private AutoSub auto;
+
+  private static double kP = 0.2;
   /** Creates a new TurnToTarget. */
   public TurnToTarget(LimeLightSub vision, Swerve swerve, AutoSub auto) {
     this.swerve =swerve;
@@ -38,13 +40,11 @@ public class TurnToTarget extends Command {
       if(vision.getTx() < 2)
         CommandScheduler.getInstance().cancel(this);
       else {
-        PIDController aController = new PIDController(0.5, 0, 0);
+        PIDController aController = new PIDController(kP, 0, 0);
         aController.setSetpoint(0);
         double aOutput = aController.calculate(vision.getTx());
 
         aController.setTolerance(1);
-
-        System.out.println("turning");
 
         swerve.driveTest(new ChassisSpeeds(0, 0, aOutput*0.7));
 

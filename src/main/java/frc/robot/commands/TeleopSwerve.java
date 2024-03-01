@@ -40,7 +40,7 @@ public class TeleopSwerve extends Command {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
-        rotationVal = shooterMode ? calcRotationShooterMode() : rotationVal;
+        rotationVal = shooterMode ? calcRotationShooterMode(rotationVal) : rotationVal;
 
         /* Drive */
         s_Swerve.drive(
@@ -56,7 +56,7 @@ public class TeleopSwerve extends Command {
         shooterMode = !shooterMode;
     }
 
-    public double calcRotationShooterMode(){
+    public double calcRotationShooterMode(double rotation){
         vision.setAimingPipeline();
         if(vision.getTargetSeen()){
             PIDController aController = new PIDController(0.02, 0, 0);
@@ -67,11 +67,8 @@ public class TeleopSwerve extends Command {
 
 
             aController.close();
-            vision.setLocalizerPipeline();
-            return aOutput * Constants.Swerve.maxAngularVelocity;
+            return aOutput;
         }
-
-        vision.setLocalizerPipeline();
-        return 0;
+        return rotation;
     }
 }

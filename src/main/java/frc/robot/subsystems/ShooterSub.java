@@ -141,7 +141,7 @@ public class ShooterSub extends SubsystemBase {
     temp.kD = 0; // no output for error derivative
     feedMotor.getConfigurator().apply(temp);
     feedMotor.setPosition(0);
-    feedMotor.setControl(request.withPosition(-1).withSlot(0));
+    feedMotor.setControl(request.withPosition(-0.5).withSlot(0));
   }
 
   @Override
