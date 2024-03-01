@@ -81,7 +81,6 @@ public class PointAtTarget extends Command {
   @Override
   public void execute(){
       if(Math.abs(vision.getTy()) < 1){
-        System.out.println("cancel this");
         CommandScheduler.getInstance().cancel(this);
       }
       else{

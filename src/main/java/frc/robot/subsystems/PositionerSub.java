@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
   private final CANcoder absEncoder = new CANcoder(20);
-  private final double absEncoderOffset = 0.514892578125; //range 0-1, in rotations I presume
+  private final double absEncoderOffset = Units.degreesToRotations(-166.552734375+15); //range 0-1, in rotations I presume
  
   private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
   private static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
@@ -83,15 +84,16 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 100;
+    slot0Configs.kP = 60;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0.1;
     slot0Configs.kV = 0.12;
     slot0Configs.kS = 0.25; // Approximately 0.25V to get the mechanism moving
 
     configs.Feedback.FeedbackRemoteSensorID = 20;
-    configs.Feedback.RotorToSensorRatio = (70 / 26) * (5) * (4) *(1/1.4);
-    configs.Feedback.SensorToMechanismRatio = 1; //* 1/1.4 to fix the gear ratio empiraclly */
+    configs.Feedback.RotorToSensorRatio = (70 / 26) * (5) * (4) *(1/1.4); //* 1/1.4 to fix the gear ratio empiraclly */
+    configs.Feedback.SensorToMechanismRatio = 1;
+    configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     /* Rps at cruise velocity, should be in rotations of mechanism rather than just motor axle
     * Accel: Takes 0.5s to reach cruise velo
     * Jerk: takes 0.1s to reach desired accel
@@ -110,7 +112,7 @@ public class PositionerSub extends SubsystemBase {
     leftPositioner.getConfigurator().apply(configs);
 
     var rightConfigs = configs;
-    rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    rightConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     rightPositioner.getConfigurator().apply(rightConfigs);
 
   }
@@ -141,7 +143,7 @@ public class PositionerSub extends SubsystemBase {
     
 
     leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
-    rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    //rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
 
     SmartDashboard.putNumber("position output", request.Position);
   }
@@ -181,7 +183,7 @@ public class PositionerSub extends SubsystemBase {
   }
 
   public double getPositionRot(){
-    double position = absEncoder.getAbsolutePosition().getValueAsDouble();
+    double position = absEncoder.getPosition().getValueAsDouble();
 
     return position;
   }
@@ -193,23 +195,15 @@ public class PositionerSub extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(Units.rotationsToDegrees(Math.abs(leftPositioner.getPosition().getValue() - getPositionRot())) > 1){
-      leftPositioner.setPosition(getPositionRot());
-      rightPositioner.setPosition(getPositionRot());  
-    }
-    // leftPositioner.setPosition(getPositionRot());
-    // rightPositioner.setPosition(getPositionRot());
-
-
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
-    SmartDashboard.putNumber("Current Arm Angle", currAngle);
+    SmartDashboard.putNumber("Current Arm Angle", getPositionDeg());
     SmartDashboard.putNumber("Curren rot arm", leftPositioner.getPosition().getValue());
     if(currAngle > MAX_ANGLE)
       goToAngle(MAX_ANGLE);
     if(currAngle < MIN_ANGLE)
       goToAngle(MIN_ANGLE);
     
-    SmartDashboard.putNumber("Abs encoder", getPositionDeg());
+    SmartDashboard.putNumber("Abs encoder", Units.rotationsToDegrees(absEncoder.getAbsolutePosition().getValueAsDouble()));
    
   }
  
