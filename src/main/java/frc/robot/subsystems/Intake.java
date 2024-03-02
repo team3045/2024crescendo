@@ -6,18 +6,14 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.FullIntake;
 
 public class Intake extends SubsystemBase {
   private static final TalonFX intakeMotor = new TalonFX(12, "Canivore 3045");
   private boolean enabled;
-  private boolean intakeEnabled;
   /** Creates a new Intake. */
   public Intake() {
     enabled = false;
-    intakeEnabled = false;
   }
 
   @Override
@@ -39,18 +35,5 @@ public class Intake extends SubsystemBase {
 
   public void disable(){
     enabled = false;
-  }
-
-  public Command fullIntake(PositionerSub arm, ShooterSub shooter){
-    if(!intakeEnabled){
-      intakeEnabled = true;
-      return new FullIntake(arm, this, shooter);
-    }
-    else {
-      intakeEnabled = false;
-      return null;
-    }
-  }
-
-  
+  }  
 }

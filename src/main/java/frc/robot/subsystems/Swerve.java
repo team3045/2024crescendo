@@ -4,7 +4,6 @@ import frc.robot.SwerveModule;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
-import frc.robot.LimelightHelpers.LimelightResults;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -40,14 +39,14 @@ public class Swerve extends SubsystemBase {
     * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
     */
     //ie how much it trusts its current estimate
-    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(3));
+    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(3));
 
     /**
     * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
     * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
     */
     //how much it trusts the vision measurements
-     private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(30));
+     private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 999999);
 
     public Swerve(LimeLightSub limeLightSub) {
         this.limeLightSub = limeLightSub;
@@ -121,7 +120,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return mPoseEstimator.getEstimatedPosition();
     }
 
     public Pose2d getOdomPose(){
@@ -129,7 +128,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void setPose(Pose2d pose) {
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+        mPoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
     public Rotation2d getHeading(){
@@ -141,12 +140,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public void setHeading(Rotation2d heading){
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
+        mPoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
     }
 
     public void zeroHeading(){
-        System.out.println("zero heading");
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        mPoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
 
     public Rotation2d getGyroYaw() {
@@ -198,41 +196,16 @@ public class Swerve extends SubsystemBase {
         mSwerveMods[3].setDesiredState(backRight, false);
     }
 
-    //adds the vision measurement to pose estimator if target is seen and the id is correct
-    //scales the std dev based on distance from tag TLDR: if we're farther away we trust vision less
-    public void addVision(){
-        if (limeLightSub.getTargetSeen()&&EstimationConstants.idPoses.containsKey(limeLightSub.getID())){
-            double xDistance = limeLightSub.getCamToTargetTransform().getTranslation().getX();
-            double yDistance = limeLightSub.getCamToTargetTransform().getTranslation().getZ();
-        
-            //if were farther than 3 meters away than we discard the measurment by making the std dev huge
-            double kDistanceMod = limeLightSub.getNorm() > 3.0 ? 10000 : 0.3; 
-        
-
-            visionMeasurementStdDevs = VecBuilder.fill(0.3*xDistance*kDistanceMod, 0.3*kDistanceMod*yDistance, Units.degreesToRadians(30));
-            mPoseEstimator.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
-            mPoseEstimator.resetPosition(getHeading(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getHeading()));
-
-            swerveOdometry.resetPosition(getHeading(), getModulePositions(), new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getHeading()));
-
-            /*mPoseEstimator.addVisionMeasurement(
-                new Pose2d(limeLightSub.getVisionMeasurement().getTranslation(),getYaw()),
-                limeLightSub.getTimeStampSeconds());*/
-        }
-        else{
-            mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3,0.3,Units.degreesToRadians(3)));
-            mPoseEstimator.addVisionMeasurement(getOdomPose(), System.currentTimeMillis()-Constants.startTime);
-
-        }
-    }
-
+    /*Use to update the odometry, adds vision measurement if tags are seen */
     public void updateOdometry(){
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
-        if(measurement.tagCount >= 2){
-            mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,999999));
+        if(measurement.tagCount >= 1){
+            double kDistanceMod = 0.1;
+            double stdDev = kDistanceMod*measurement.avgTagDist;
+            mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev,stdDev,999999));
             mPoseEstimator.addVisionMeasurement(
                 measurement.pose, 
                 measurement.timestampSeconds);
@@ -250,5 +223,7 @@ public class Swerve extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("Heading: ", getHeading().getDegrees());
+        SmartDashboard.putString("Estimated Pose", getPose().toString());
+        SmartDashboard.putString("Odometry Pose", getOdomPose().toString());
     }
 }
