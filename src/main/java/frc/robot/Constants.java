@@ -107,7 +107,7 @@ public final class Constants {
         /** Meters per Second */
         public static double maxSpeed = 4.5; //TODO: This must be tuned to specific robot
         /** Radians per Second */
-        public static double maxAngularVelocity = Math.PI * 2; //TODO: This must be tuned to specific robot
+        public static double maxAngularVelocity = Units.degreesToRadians(540); //TODO: This must be tuned to specific robot
 
         public static boolean normalControl = true;
 

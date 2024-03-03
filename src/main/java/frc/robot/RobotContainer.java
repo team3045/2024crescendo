@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -101,7 +102,7 @@ public class RobotContainer {
             }
             else
                 Constants.Swerve.maxSpeed = 4.5;
-                Constants.Swerve.maxAngularVelocity = Math.PI * 3/2;
+                Constants.Swerve.maxAngularVelocity = Units.degreesToRadians(540);
                 Constants.Swerve.normalControl = true;}));
 
         // overDrive.onTrue(new InstantCommand(() ->
