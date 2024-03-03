@@ -203,10 +203,10 @@ public final class Constants {
          public static final Pose3d originPose = new Pose3d(new Translation3d(0,0, 0), new Rotation3d(0,0,0));
 
         //where on ther field does the robot start compared to origin SET LATER
-        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(73), Units.inchesToMeters(37),0), new Rotation3d(0,0,0));
-        public static final Transform3d testStartPose = new Transform3d(new Translation3d(5.0,5.0,0), new Rotation3d(0,0,0));
+        public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(75)+Swerve.wheelBase/2, Swerve.trackWidth /2,0), new Rotation3d(0,0,Units.degreesToRadians(180)));
+        public static final Transform3d testStartPose = new Transform3d(new Translation3d(1.18,5.5,0), new Rotation3d(0,0,0));
         
-        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(originToRobotStart);
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(testStartPose);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 

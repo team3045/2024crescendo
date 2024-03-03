@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -47,13 +49,15 @@ public class RobotContainer {
     private final Swerve s_Swerve = new Swerve(localizer);
     private final ShooterSub shooterSub = new ShooterSub();
     private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
-    private final AutoSub autoSub = new AutoSub(s_Swerve);
     private final Intake intake = new Intake();
+    private final AutoSub autoSub = new AutoSub(s_Swerve, positionerSub, shooterSub, intake,shooterLimelight);
 
     /*Commands */
-    private final ShootClose shootClose = new ShootClose(positionerSub, shooterSub);
+    private final ShootMiddleNote ShootClose = new ShootMiddleNote(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
+
+    /*Named Commands */
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -116,12 +120,9 @@ public class RobotContainer {
         feed.toggleOnTrue(new FeedAndShoot(shooterSub));
 
         ampScore.onTrue(shootAmp);
-        safeShoot.onTrue(new ShootClose(positionerSub, shooterSub));
+        safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
-        
-
-        
     }
 
     /**
@@ -131,6 +132,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new exampleAuto(s_Swerve);
+        return autoSub.getAutoCommand("2 Note Middle Auto");
     }
 }

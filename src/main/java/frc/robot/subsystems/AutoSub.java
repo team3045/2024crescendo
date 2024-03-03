@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -22,13 +23,19 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.EstimationConstants;
+import frc.robot.commands.FeedAndShoot;
+import frc.robot.commands.FullAim;
+import frc.robot.commands.IntakeNote;
+import frc.robot.commands.ShootClose;
+import frc.robot.commands.ShootMiddleNote;
 
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
-  private LimeLightSub vision;
+  private LimeLightSub aimingVision;
   private boolean instantiated = false;
 
   /*For On Fly PathPlanning */
@@ -41,10 +48,18 @@ public class AutoSub extends SubsystemBase {
 
 
   /** Creates a new AutoSub. */
-  public AutoSub(Swerve swerve) {
+  public AutoSub(Swerve swerve, PositionerSub positionerSub, ShooterSub shooterSub, Intake intake, LimeLightSub aimiingVision) {
     this.swerve = swerve;
+    this.aimingVision = aimiingVision;
 
     instantiated = true;
+
+    NamedCommands.registerCommand("ShootClose", new ShootClose(positionerSub, shooterSub));
+    NamedCommands.registerCommand("IntakeNote",  new IntakeNote(intake, shooterSub, positionerSub));
+    NamedCommands.registerCommand("FullAim", new FullAim(positionerSub, aimingVision, shooterSub, swerve, null));
+    NamedCommands.registerCommand("FeedAndShoot", new FeedAndShoot(shooterSub));
+    NamedCommands.registerCommand("MiddleNote", new ShootMiddleNote(positionerSub, shooterSub));
+    NamedCommands.registerCommand("Stop Feed", new InstantCommand(() -> shooterSub.stopFeed()));
 
     PIDConstants translationConstants = new PIDConstants(6,0,0);
     PIDConstants rotationConstants = new PIDConstants(6,0,0);
@@ -54,10 +69,8 @@ public class AutoSub extends SubsystemBase {
 
 
   //get an Autonomous command from a pathplanner path
-  public Command getAutoCommand(String pathName){
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-    return AutoBuilder.followPath(path);
+  public Command getAutoCommand(String autoName){
+    return AutoBuilder.buildAuto(autoName);
   }
 
   //gets the pose where you want to be in relation to an apriltag

@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PositionerSub;
 import frc.robot.subsystems.ShooterSub;
 
-public class ShootClose extends Command {
+public class ShootMiddleNote extends Command {
   private PositionerSub arm;
   private ShooterSub shooter;
   private int finishCount;
 
   private int count;
   /** Creates a new ShootClose. */
-  public ShootClose(PositionerSub arm, ShooterSub shooter) {
+  public ShootMiddleNote(PositionerSub arm, ShooterSub shooter) {
     this.arm = arm;
     this.shooter = shooter;
     count = 0;
@@ -26,14 +26,16 @@ public class ShootClose extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    shooter.stopFeed();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     
+    arm.goToMiddleNote();
     shooter.shootPct();
-    arm.goToSpeaker();
     count++;
 
     if(count >= 40){
@@ -45,6 +47,7 @@ public class ShootClose extends Command {
   @Override
   public void end(boolean interrupted) {
     count=0;
+    finishCount = 0;
   }
 
   // Returns true when the command should end.

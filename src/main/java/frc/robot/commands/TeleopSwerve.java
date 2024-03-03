@@ -59,7 +59,7 @@ public class TeleopSwerve extends Command {
     public double calcRotationShooterMode(double rotation){
         vision.setAimingPipeline();
         if(vision.getTargetSeen()){
-            PIDController aController = new PIDController(0.02, 0, 0);
+            PIDController aController = new PIDController(0.03, 0, 0);
             aController.setSetpoint(0);
             double aOutput = aController.calculate(vision.getTx());
 
