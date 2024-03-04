@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "MiddleNote"
+            "name": "RightNote"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootClose"
+            "name": "RightNote"
           }
         }
       ]

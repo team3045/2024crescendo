@@ -41,7 +41,9 @@ public class PositionerSub extends SubsystemBase {
   public static final double MAX_ANGLE = 79; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
   public static final double SPEAKER_ANGLE = 50;
-  public static final double MIDDLE_NOTE = 35;
+  public static final double MIDDLE_NOTE = 33;
+  public static final double RIGHT_NOTE = 31;
+
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
     /*Initialize our limelight for the shooter 
@@ -192,6 +194,10 @@ public class PositionerSub extends SubsystemBase {
 
   public void goToMiddleNote(){
     goToAngle(MIDDLE_NOTE);
+  }
+
+  public void goToRightNote(){
+    goToAngle(RIGHT_NOTE);
   }
 
 

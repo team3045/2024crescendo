@@ -133,6 +133,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoSub.getAutoCommand("2 Note Middle Auto");
+        return autoSub.getAutoCommand("4 Right Middle Left");
     }
 }

@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +33,7 @@ import frc.robot.commands.FullAim;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.ShootClose;
 import frc.robot.commands.ShootMiddleNote;
+import frc.robot.commands.ShootRightNote;
 
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
@@ -60,17 +62,21 @@ public class AutoSub extends SubsystemBase {
     NamedCommands.registerCommand("FeedAndShoot", new FeedAndShoot(shooterSub));
     NamedCommands.registerCommand("MiddleNote", new ShootMiddleNote(positionerSub, shooterSub));
     NamedCommands.registerCommand("Stop Feed", new InstantCommand(() -> shooterSub.stopFeed()));
+    NamedCommands.registerCommand("RightNote", new ShootRightNote(positionerSub, shooterSub));
 
-    PIDConstants translationConstants = new PIDConstants(6,0,0);
-    PIDConstants rotationConstants = new PIDConstants(6,0,0);
-    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig());
+    PIDConstants translationConstants = new PIDConstants(55,0,0);
+    PIDConstants rotationConstants = new PIDConstants(50,0,0);
+    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig(true,true));
     AutoBuilder.configureHolonomic(swerve::getPose, swerve::setPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
   }
 
 
   //get an Autonomous command from a pathplanner path
   public Command getAutoCommand(String autoName){
-    return AutoBuilder.buildAuto(autoName);
+    PathPlannerPath path = PathPlannerPath.fromPathFile("2 Note Right");
+
+    return AutoBuilder.followPath(path);
+    //return AutoBuilder.buildAuto(autoName);
   }
 
   //gets the pose where you want to be in relation to an apriltag

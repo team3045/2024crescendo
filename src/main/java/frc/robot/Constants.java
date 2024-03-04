@@ -204,9 +204,10 @@ public final class Constants {
 
         //where on ther field does the robot start compared to origin SET LATER
         public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(75)+Swerve.wheelBase/2, Swerve.trackWidth /2,0), new Rotation3d(0,0,Units.degreesToRadians(180)));
-        public static final Transform3d testStartPose = new Transform3d(new Translation3d(1.18,5.5,0), new Rotation3d(0,0,0));
+        public static final Transform3d middleStartPose = new Transform3d(new Translation3d(1.18,5.5,0), new Rotation3d(0,0,0));
+        public static final Transform3d rightStartPose = new Transform3d(new Translation3d(0.74,6.67,0), new Rotation3d(0,0,Units.degreesToRadians(56.87)));
         
-        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(testStartPose);
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(rightStartPose);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 

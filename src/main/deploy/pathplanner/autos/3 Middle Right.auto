@@ -12,51 +12,26 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "2 Note Middle"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "MiddleNote"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
                   "name": "IntakeNote"
                 }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Middle to Right Note"
-                }
               }
             ]
           }
@@ -71,6 +46,43 @@
           "type": "named",
           "data": {
             "name": "MiddleNote"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle to Right Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RightNote"
           }
         }
       ]
