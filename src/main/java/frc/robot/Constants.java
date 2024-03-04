@@ -207,7 +207,7 @@ public final class Constants {
         public static final Transform3d middleStartPose = new Transform3d(new Translation3d(1.18,5.5,0), new Rotation3d(0,0,0));
         public static final Transform3d rightStartPose = new Transform3d(new Translation3d(0.74,6.67,0), new Rotation3d(0,0,Units.degreesToRadians(56.87)));
         
-        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(rightStartPose);
+        public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(middleStartPose);
 
         //Cameras position in relation to robot SET LATER
         public static final Transform3d robotToCam = new Transform3d(new Translation3d(Swerve.wheelBase/2,0, Units.feetToMeters(1)), 
