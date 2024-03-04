@@ -73,10 +73,10 @@ public class AutoSub extends SubsystemBase {
 
   //get an Autonomous command from a pathplanner path
   public Command getAutoCommand(String autoName){
-    PathPlannerPath path = PathPlannerPath.fromPathFile("2 Note Right");
+    //PathPlannerPath path = PathPlannerPath.fromPathFile("2 Note Right");
 
-    return AutoBuilder.followPath(path);
-    //return AutoBuilder.buildAuto(autoName);
+    //return AutoBuilder.followPath(path);
+    return AutoBuilder.buildAuto(autoName);
   }
 
   //gets the pose where you want to be in relation to an apriltag
