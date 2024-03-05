@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.8010561101107322,
+      "y": 4.467894921652939
+    },
+    "rotation": -59.670000000000016
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootClose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 Note Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RightNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
