@@ -6,7 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.IntakeNote;
 
 public class Intake extends SubsystemBase {
   private static final TalonFX intakeMotor = new TalonFX(12, "Canivore 3045");
@@ -23,6 +27,8 @@ public class Intake extends SubsystemBase {
     }
     else
       intakeMotor.set(0);
+
+    SmartDashboard.putBoolean("Note Detected", IntakeNote.noteDetected());
   }
 
   public void setEnabledOrDisable(){

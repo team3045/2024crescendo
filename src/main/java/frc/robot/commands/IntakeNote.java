@@ -19,7 +19,7 @@ public class IntakeNote extends Command {
   private Intake intake;
   private ShooterSub shooter;
   private PositionerSub arm;
-  private static final TimeOfFlight rangeSensor = new TimeOfFlight(0);
+  public static final TimeOfFlight rangeSensor = new TimeOfFlight(0);
   private static final double MaxDistance = Units.inchesToMeters(4) * 1000; //in mm
 
   /** Creates a new IntakeNote. */
@@ -71,7 +71,7 @@ public class IntakeNote extends Command {
     return false;
   }
 
-  public boolean noteDetected(){
+  public static boolean noteDetected(){
     double range = rangeSensor.getRange();
     SmartDashboard.putNumber("Range Sensor Value", range);
   
