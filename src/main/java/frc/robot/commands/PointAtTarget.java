@@ -29,25 +29,6 @@ public class PointAtTarget extends Command {
     addRequirements(arm);
   }
 
-  /*Regression to calculate angle based on distance */
-  // public double calcAngle(){
-  //   double distance = vision.getHorizDistanceSpeaker();
-
-  //   /*break out of function if target not seen */
-  //   if(distance == -1){
-  //     System.out.println("target not seen, cant move arm");
-  //     return -1;
-  //   }
-
-  //   /*Regression for angle, currently arbitray values */
-  //   double angle = 3 * Math.pow(distance, 3);
-  //   angle += 2 * Math.pow(distance, 2);
-  //   angle += 1.5 * distance;
-  //   angle += 5;
-
-  //   return angle;
-  // }
-
   public void calcAngle(){
     vision.setAimingPipeline();
     double currAngle = arm.getPositionDeg();
@@ -62,7 +43,7 @@ public class PointAtTarget extends Command {
       desiredAng = arm.getPositionDeg();
 
     if(vision.getNormToSpeaker() > 3.85){
-      desiredAng += vision.getNormToSpeaker() * 0.5;
+      desiredAng += vision.getNormToSpeaker() * 0.56;
       SmartDashboard.putNumber("Norm", vision.getNormToSpeaker());
     }
   }
@@ -81,6 +62,9 @@ public class PointAtTarget extends Command {
   @Override
   public void execute(){
       if(Math.abs(vision.getTy()) < 1){
+        CommandScheduler.getInstance().cancel(this);
+      }
+      else if(Math.abs(desiredAng-arm.getPositionDeg()) < 1){
         CommandScheduler.getInstance().cancel(this);
       }
       else{

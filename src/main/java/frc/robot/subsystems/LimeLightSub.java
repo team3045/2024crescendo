@@ -48,7 +48,7 @@ public class LimeLightSub extends SubsystemBase {
 
   private GenericEntry seen, id, camTransform;
 
-  private static final int speakerPipline = 1;
+  private static final int speakerPipline = 0; // changed to 1 for practice field 
   private static final int localizationPipeline = 0;
 
 

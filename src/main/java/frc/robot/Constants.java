@@ -105,7 +105,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static double maxSpeed = 4.5; //TODO: This must be tuned to specific robot
+        public static double maxSpeed = 5.0; //TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static double maxAngularVelocity = Math.PI * 2; //TODO: This must be tuned to specific robot
 
@@ -230,10 +230,10 @@ public final class Constants {
         //4.57, 2.57
         //SHOP: Map of Apriltags IDs and their 3d positions on the field SET LATER
         public static final Map<Double, Pose3d> idPoses = Map.of(
-            3.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
+            7.0, new Pose3d(Units.inchesToMeters(0), Units.inchesToMeters(97.25), Units.inchesToMeters(57.25), new Rotation3d(0,0,Units.degreesToRadians(0))),
             5.0, new Pose3d(Units.inchesToMeters(180.25), Units.inchesToMeters(101.25), Units.inchesToMeters(53.25), new Rotation3d(0,0,Units.degreesToRadians(180))),
             11.0, new Pose3d(Units.inchesToMeters(116.75),Units.inchesToMeters(192.25),Units.inchesToMeters(51.25),new Rotation3d(0,0,Units.degreesToRadians(270))));
-        
+
         //SHOP: Map of Apriltags IDs and their 3d positions on the field
         public static final AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
