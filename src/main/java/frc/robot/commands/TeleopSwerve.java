@@ -4,12 +4,18 @@ import frc.robot.Constants;
 import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.Swerve;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
@@ -69,6 +75,41 @@ public class TeleopSwerve extends Command {
             aController.close();
             return aOutput;
         }
+        // else{
+        //     return turnToAngle(getRotationGoal());
+        // }
         return rotation;
     }
+
+    public double turnToAngle(double goal){
+        PIDController aController = new PIDController(0.1, 0, 0);
+        aController.setSetpoint(goal);
+        double aOutput = aController.calculate(s_Swerve.getHeading().getDegrees());
+
+        aController.setTolerance(1);
+
+        System.out.println("turning GYRO");
+
+        aController.close();
+        return aOutput;
+    }
+    
+    public double getRotationGoal(){
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if(ally.isPresent()){
+            Pose3d tagPose;
+
+            if(ally.get() == Alliance.Red)
+                tagPose = Constants.EstimationConstants.fieldLayout.getTagPose(3).orElse(new Pose3d(s_Swerve.getPose()));
+            else
+                tagPose = Constants.EstimationConstants.fieldLayout.getTagPose(5).orElse(new Pose3d(s_Swerve.getPose()));
+
+            Rotation2d goalRotation = tagPose.getRotation().toRotation2d().rotateBy(s_Swerve.getHeading());
+            return goalRotation.getDegrees();
+        }
+        else{
+            System.out.println("DriverStation No Color");
+            return s_Swerve.getHeading().getDegrees();
+        }
+  }
 }
