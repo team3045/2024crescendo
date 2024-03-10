@@ -15,9 +15,9 @@ import frc.robot.subsystems.Swerve;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TurnAndPoint extends ParallelCommandGroup {
   /** Creates a new TurnAndPoint. */
-  public TurnAndPoint(Swerve swerve, LimeLightSub vision, PositionerSub arm, AutoSub auto) {
+  public TurnAndPoint(Swerve swerve, LimeLightSub vision, PositionerSub arm) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new PointAtTarget(vision, arm), new TurnToTarget(vision, swerve, auto));
+    addCommands(new PointAtTarget(vision, arm), new TurnToTarget(vision, swerve));
   }
 }

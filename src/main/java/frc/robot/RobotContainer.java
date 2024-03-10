@@ -46,8 +46,6 @@ public class RobotContainer {
     private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
     private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
 
-
-
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
     private final LimeLightSub shooterLimelight = new LimeLightSub("Some name");

@@ -4,25 +4,30 @@
 
 package frc.robot.commands.aiming;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Swerve;
+import frc.robot.Constants;
 import frc.robot.subsystems.AutoSub;
 import frc.robot.subsystems.LimeLightSub;
 
 public class TurnToTarget extends Command {
   private LimeLightSub vision;
   private Swerve swerve;
-  private AutoSub auto;
 
   private static double kP = 0.2;
   /** Creates a new TurnToTarget. */
-  public TurnToTarget(LimeLightSub vision, Swerve swerve, AutoSub auto) {
+  public TurnToTarget(LimeLightSub vision, Swerve swerve) {
     this.swerve =swerve;
     this.vision = vision;
-    this.auto = auto;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
@@ -51,19 +56,9 @@ public class TurnToTarget extends Command {
         aController.close();
       }
     }
-    // else{
-    //   PIDController aController = new PIDController(0.1, 0, 0);
-    //   aController.setSetpoint(auto.getGoalPose(3.0, vision).get().getRotation().getDegrees());
-    //   double aOutput = aController.calculate(swerve.getHeading().getDegrees());
-
-    //   aController.setTolerance(1);
-
-    //   System.out.println("turning GYRO");
-
-    //   swerve.driveTest(new ChassisSpeeds(0, 0, aOutput*0.7));
-
-    //   aController.close();
-    // }
+    else{
+      turnToAngle(getRotationGoal());
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -79,5 +74,38 @@ public class TurnToTarget extends Command {
       return true;
     }
     return false;
+  }
+
+  public void turnToAngle(double goal){
+    PIDController aController = new PIDController(0.1, 0, 0);
+    aController.setSetpoint(goal);
+    double aOutput = aController.calculate(swerve.getHeading().getDegrees());
+
+    aController.setTolerance(1);
+
+    System.out.println("turning GYRO");
+
+    swerve.driveTest(new ChassisSpeeds(0, 0, aOutput));
+
+    aController.close();
+  }
+
+  public double getRotationGoal(){
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if(ally.isPresent()){
+      Pose3d tagPose;
+
+      if(ally.get() == Alliance.Red)
+        tagPose = Constants.EstimationConstants.fieldLayout.getTagPose(3).orElse(new Pose3d(swerve.getPose()));
+      else
+        tagPose = Constants.EstimationConstants.fieldLayout.getTagPose(5).orElse(new Pose3d(swerve.getPose()));
+
+      Rotation2d goalRotation = tagPose.getRotation().toRotation2d().rotateBy(swerve.getHeading());
+      return goalRotation.getDegrees();
+    }
+    else{
+      System.out.println("DriverStation No Color");
+      return swerve.getHeading().getDegrees();
+    }
   }
 }
