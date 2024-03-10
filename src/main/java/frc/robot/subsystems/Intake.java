@@ -8,7 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.FullIntake;
+import frc.robot.commands.intaking.FullIntake;
 
 public class Intake extends SubsystemBase {
   private static final TalonFX intakeMotor = new TalonFX(12, "Canivore 3045");

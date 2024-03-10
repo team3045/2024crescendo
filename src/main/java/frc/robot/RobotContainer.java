@@ -10,6 +10,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.aiming.FullAim;
+import frc.robot.commands.intaking.IntakeNote;
+import frc.robot.commands.shots.ShootAmp;
+import frc.robot.commands.shots.ShootClose;
 import frc.robot.subsystems.*;
 
 /**
