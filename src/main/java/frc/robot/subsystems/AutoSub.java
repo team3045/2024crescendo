@@ -29,11 +29,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.commands.FeedAndShoot;
-import frc.robot.commands.FullAim;
-import frc.robot.commands.IntakeNote;
-import frc.robot.commands.ShootClose;
 import frc.robot.commands.ShootMiddleNote;
 import frc.robot.commands.ShootRightNote;
+import frc.robot.commands.aiming.FullAim;
+import frc.robot.commands.intaking.IntakeNote;
+import frc.robot.commands.shots.ShootClose;
 
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;

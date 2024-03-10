@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.aiming.FullAim;
+import frc.robot.commands.intaking.IntakeNote;
+import frc.robot.commands.shots.ShootAmp;
+import frc.robot.commands.shots.ShootClose;
 import frc.robot.subsystems.*;
 
 /**
@@ -95,13 +99,13 @@ public class RobotContainer {
         //intakeButton.onTrue(new IntakeNote(intake, shooterSub, positionerSub));
         intakeButton.toggleOnTrue(intakeNote);
         fineControl.onTrue(new InstantCommand(() ->
-            {if(Constants.Swerve.maxSpeed == 4.5){
+            {if(Constants.Swerve.maxSpeed == 5.0){
                 Constants.Swerve.maxSpeed = 2.0;
                 Constants.Swerve.maxAngularVelocity = Math.PI / 2;
                 Constants.Swerve.normalControl = false;
             }
             else
-                Constants.Swerve.maxSpeed = 4.5;
+                Constants.Swerve.maxSpeed = 5.0;
                 Constants.Swerve.maxAngularVelocity = Units.degreesToRadians(540);
                 Constants.Swerve.normalControl = true;}));
 
