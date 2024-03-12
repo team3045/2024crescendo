@@ -7,9 +7,11 @@ package frc.robot.commands;
 import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PositionerSub;
 import frc.robot.subsystems.ShooterSub;
@@ -59,7 +61,7 @@ public class IntakeNote extends Command {
     intake.disable();
     shooter.stopFeed();
 
-    shooter.runBack();
+    RobotContainer.driver.setRumble(RumbleType.kBothRumble, 0.88);
   }
 
   // Returns true when the command should end.
