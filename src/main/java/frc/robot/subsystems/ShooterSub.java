@@ -129,6 +129,15 @@ public class ShooterSub extends SubsystemBase {
     bottomMotor.set(-0.20);
   }
 
+  public double getCurrentSpeedMPS(){
+    return RPSToMPS(bottomMotor.getVelocity().getValueAsDouble(),flywheelCircumference);
+  }
+
+  public void setRev(){
+    topMotor.set(-0.70);
+    bottomMotor.set(-0.70);
+  }
+
   /*runs it back a little bit for intaking */
   public void runBack(){
     var request = new MotionMagicVoltage(0);
@@ -147,6 +156,6 @@ public class ShooterSub extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Current Speed", RPSToMPS(topMotor.getVelocity().getValueAsDouble(),flywheelCircumference));
+    SmartDashboard.putNumber("Current Speed", getCurrentSpeedMPS());
   }
 }

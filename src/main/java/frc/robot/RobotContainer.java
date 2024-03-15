@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.*;
@@ -51,6 +53,7 @@ public class RobotContainer {
     /*Operator Buttons */
     private final JoystickButton climberUp = new JoystickButton(operator, PS4Controller.Button.kL2.value);
     private final JoystickButton climberDown = new JoystickButton(operator, PS4Controller.Button.kR2.value);
+    private final JoystickButton revShooter = new JoystickButton(operator, PS4Controller.Button.kR1.value);
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -117,7 +120,12 @@ public class RobotContainer {
                 Constants.Swerve.maxAngularVelocity = Units.degreesToRadians(540);
                 Constants.Swerve.normalControl = true;}));
     
-        feed.toggleOnTrue(new FeedAndShoot(shooterSub));
+        /*Waits for it to rev up to 29 MPS or 0.5s before feeding */
+        feed.toggleOnTrue(
+            new FeedAndShoot(shooterSub).
+            raceWith(new SequentialCommandGroup(
+                new WaitCommand(0.5), 
+                Commands.runOnce(() -> shooterSub.feed()))));
 
         ampScore.onTrue(shootAmp);
         safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
@@ -128,8 +136,12 @@ public class RobotContainer {
         new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
         new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
         
+
+        /*Operator controls */
         climberUp.whileTrue(Commands.runEnd(() -> elevator.goUp(),() -> elevator.stop(),elevator));
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
+
+        revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
     }
 
     /**

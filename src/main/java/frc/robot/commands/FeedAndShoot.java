@@ -10,7 +10,6 @@ import frc.robot.subsystems.ShooterSub;
 public class FeedAndShoot extends Command {
   private ShooterSub shooter;
 
-  private int count;
   /** Creates a new FeedAndShoot. */
   public FeedAndShoot(ShooterSub shooter) {
     this.shooter = shooter;
@@ -26,9 +25,8 @@ public class FeedAndShoot extends Command {
   @Override
   public void execute() {
     shooter.shootPct();
-    count++;
-
-    if(count >= 50){
+    
+    if(shooter.getCurrentSpeedMPS() > 29.3){
       shooter.feed();
     }
   }
@@ -36,9 +34,8 @@ public class FeedAndShoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    count=0;
     shooter.stopFeed();
-    shooter.stopShooter();
+    shooter.setRev();
   }
 
   // Returns true when the command should end.
