@@ -3,14 +3,16 @@ package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.commands.aiming.FullAim;
@@ -54,6 +56,7 @@ public class RobotContainer {
     private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
     private final Intake intake = new Intake();
     private final AutoSub autoSub = new AutoSub(s_Swerve, positionerSub, shooterSub, intake,shooterLimelight);
+    private final LEDSub LEDS = new LEDSub();
 
     /*Commands */
     private final ShootMiddleNote ShootClose = new ShootMiddleNote(positionerSub, shooterSub);
@@ -80,6 +83,7 @@ public class RobotContainer {
         //poseEstimation.periodic();
         localizer.periodic();
         positionerSub.periodic();
+        intake.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -95,7 +99,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         //intakeButton.onTrue(new IntakeNote(intake, shooterSub, positionerSub));
-        intakeButton.toggleOnTrue(intakeNote);
+        intakeButton.toggleOnTrue(intakeNote.alongWith(new InstantCommand(() -> LEDS.setIntaking())));
         fineControl.onTrue(new InstantCommand(() ->
             {if(Constants.Swerve.maxSpeed == 5.0){
                 Constants.Swerve.maxSpeed = 2.0;
@@ -106,26 +110,17 @@ public class RobotContainer {
                 Constants.Swerve.maxSpeed = 5.0;
                 Constants.Swerve.maxAngularVelocity = Units.degreesToRadians(540);
                 Constants.Swerve.normalControl = true;}));
-
-        // overDrive.onTrue(new InstantCommand(() ->
-        //     {if(Constants.Swerve.maxSpeed == 6.0){
-        //         Constants.Swerve.maxSpeed = 4.5;
-        //         Constants.Swerve.maxAngularVelocity = Math.PI * 2;
-        //         Constants.Swerve.normalControl = true;
-        //     }
-        //     else
-        //         Constants.Swerve.maxSpeed = 6.0;
-        //         Constants.Swerve.maxAngularVelocity = Math.PI * 2;
-        //         Constants.Swerve.normalControl = false;}));
-
-        //shooterTest.whileTrue(shoot);
-        //Change this to "onTrue()" if you want to continously aim
+    
         feed.toggleOnTrue(new FeedAndShoot(shooterSub));
 
         ampScore.onTrue(shootAmp);
         safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
+
+        new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
+        new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
+        new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
     }
 
     /**

@@ -39,5 +39,9 @@ public class Intake extends SubsystemBase {
 
   public void disable(){
     enabled = false;
-  }  
+  }
+  
+  public boolean getIntaking(){
+    return enabled;
+  }
 }
