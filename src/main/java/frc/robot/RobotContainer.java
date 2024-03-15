@@ -47,13 +47,13 @@ public class RobotContainer {
     private final JoystickButton ampScore = new JoystickButton(driver, PS4Controller.Button.kCross.value); //Single Press
     private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
-    private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
     private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     
     /*Operator Buttons */
     private final JoystickButton climberUp = new JoystickButton(operator, PS4Controller.Button.kL2.value);
     private final JoystickButton climberDown = new JoystickButton(operator, PS4Controller.Button.kR2.value);
     private final JoystickButton revShooter = new JoystickButton(operator, PS4Controller.Button.kR1.value);
+    private final JoystickButton safeShoot = new JoystickButton(operator, PS4Controller.Button.kCircle.value);
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -107,7 +107,6 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        //intakeButton.onTrue(new IntakeNote(intake, shooterSub, positionerSub));
         intakeButton.toggleOnTrue(intakeNote.alongWith(new InstantCommand(() -> LEDS.setIntaking())));
         fineControl.onTrue(new InstantCommand(() ->
             {if(Constants.Swerve.maxSpeed == 5.0){
@@ -119,29 +118,29 @@ public class RobotContainer {
                 Constants.Swerve.maxSpeed = 5.0;
                 Constants.Swerve.maxAngularVelocity = Units.degreesToRadians(540);
                 Constants.Swerve.normalControl = true;}));
-    
-        /*Waits for it to rev up to 29 MPS or 0.5s before feeding */
-        feed.toggleOnTrue(
+      
+        feed.toggleOnTrue( /*Waits for it to rev up to 29 MPS or 0.5s before feeding */
             new FeedAndShoot(shooterSub).
             raceWith(new SequentialCommandGroup(
                 new WaitCommand(0.5), 
                 Commands.runOnce(() -> shooterSub.feed()))));
 
         ampScore.onTrue(shootAmp);
-        safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
-
-        new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
-        new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
-        new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
         
 
         /*Operator controls */
         climberUp.whileTrue(Commands.runEnd(() -> elevator.goUp(),() -> elevator.stop(),elevator));
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
-
+        safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
+
+        /*LED triggers */
+        new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
+        new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
+        new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
+
     }
 
     /**
