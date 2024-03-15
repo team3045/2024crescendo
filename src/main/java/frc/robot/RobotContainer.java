@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
+    private final Joystick operator = new Joystick(1);
 
     /* Drive Controls */
     private final int translationAxis = 1;
@@ -37,8 +39,6 @@ public class RobotContainer {
     private final int rotationAxis = 2;
 
     /* Driver Buttons */
-    private final JoystickButton overDrive = new JoystickButton(driver, PS4Controller.Button.kCircle.value); 
-
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value); //Single Press
     private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kR2.value); //Toggle
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
@@ -47,6 +47,10 @@ public class RobotContainer {
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
     private final JoystickButton safeShoot = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
     private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+    
+    /*Operator Buttons */
+    private final JoystickButton climberUp = new JoystickButton(operator, PS4Controller.Button.kL2.value);
+    private final JoystickButton climberDown = new JoystickButton(operator, PS4Controller.Button.kR2.value);
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("limelight");
@@ -57,6 +61,7 @@ public class RobotContainer {
     private final Intake intake = new Intake();
     private final AutoSub autoSub = new AutoSub(s_Swerve, positionerSub, shooterSub, intake,shooterLimelight);
     private final LEDSub LEDS = new LEDSub();
+    private final ElevatorSub elevator = new ElevatorSub();
 
     /*Commands */
     private final ShootMiddleNote ShootClose = new ShootMiddleNote(positionerSub, shooterSub);
@@ -84,6 +89,7 @@ public class RobotContainer {
         localizer.periodic();
         positionerSub.periodic();
         intake.periodic();
+        elevator.periodic();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -121,6 +127,9 @@ public class RobotContainer {
         new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
         new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
         new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
+        
+        climberUp.whileTrue(Commands.runEnd(() -> elevator.goUp(),() -> elevator.stop(),elevator));
+        climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
     }
 
     /**
