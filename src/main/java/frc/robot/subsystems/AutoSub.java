@@ -29,11 +29,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.commands.FeedAndShoot;
-import frc.robot.commands.ShootMiddleNote;
-import frc.robot.commands.ShootRightNote;
 import frc.robot.commands.aiming.FullAim;
 import frc.robot.commands.intaking.IntakeNote;
 import frc.robot.commands.shots.ShootClose;
+import frc.robot.commands.shots.ShootMiddleNote;
+import frc.robot.commands.shots.ShootRightNote;
 
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
@@ -60,9 +60,9 @@ public class AutoSub extends SubsystemBase {
     NamedCommands.registerCommand("IntakeNote",  new IntakeNote(intake, shooterSub, positionerSub));
     NamedCommands.registerCommand("FullAim", new FullAim(positionerSub, aimingVision, shooterSub, swerve, null));
     NamedCommands.registerCommand("FeedAndShoot", new FeedAndShoot(shooterSub));
-    NamedCommands.registerCommand("MiddleNote", new ShootMiddleNote(positionerSub, shooterSub));
+    NamedCommands.registerCommand("MiddleNote", new ShootMiddleNote(shooterSub, positionerSub));
     NamedCommands.registerCommand("Stop Feed", new InstantCommand(() -> shooterSub.stopFeed()));
-    NamedCommands.registerCommand("RightNote", new ShootRightNote(positionerSub, shooterSub));
+    NamedCommands.registerCommand("RightNote", new ShootRightNote(shooterSub, positionerSub));
 
     PIDConstants translationConstants = new PIDConstants(55,0,0);
     PIDConstants rotationConstants = new PIDConstants(50,0,0);

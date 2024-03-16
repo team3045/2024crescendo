@@ -22,6 +22,7 @@ import frc.robot.commands.aiming.FullAim;
 import frc.robot.commands.intaking.IntakeNote;
 import frc.robot.commands.shots.ShootAmp;
 import frc.robot.commands.shots.ShootClose;
+import frc.robot.commands.shots.ShootMiddleNote;
 import frc.robot.subsystems.*;
 
 /**
@@ -67,7 +68,7 @@ public class RobotContainer {
     private final ElevatorSub elevator = new ElevatorSub();
 
     /*Commands */
-    private final ShootMiddleNote ShootClose = new ShootMiddleNote(positionerSub, shooterSub);
+    private final ShootClose ShootClose = new ShootClose(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
 
@@ -133,10 +134,11 @@ public class RobotContainer {
         /*Operator controls */
         climberUp.whileTrue(Commands.runEnd(() -> elevator.goUp(),() -> elevator.stop(),elevator));
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
-        safeShoot.onTrue(new ShootMiddleNote(positionerSub, shooterSub));
+        safeShoot.onTrue(new ShootMiddleNote(shooterSub, positionerSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
 
         /*LED triggers */
+        new Trigger(() -> true).onTrue(new InstantCommand(() -> LEDS.setDefaultState())); //Base state, stays like this if nothing else is detected
         new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
         new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
         new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
