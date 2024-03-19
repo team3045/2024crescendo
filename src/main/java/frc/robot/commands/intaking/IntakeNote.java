@@ -58,8 +58,6 @@ public class IntakeNote extends Command {
   public void end(boolean interrupted) {
     intake.disable();
     shooter.stopFeed();
-
-    shooter.runBack();
   }
 
   // Returns true when the command should end.

@@ -57,8 +57,8 @@ public class RobotContainer {
     private final JoystickButton safeShoot = new JoystickButton(operator, PS4Controller.Button.kCircle.value);
 
     /* Subsystems */
-    private final LimeLightSub localizer = new LimeLightSub("limelight");
-    private final LimeLightSub shooterLimelight = new LimeLightSub("Some name");
+    private final LimeLightSub localizer = new LimeLightSub("intake");
+    private final LimeLightSub shooterLimelight = new LimeLightSub("shooter");
     private final Swerve s_Swerve = new Swerve(localizer);
     private final ShooterSub shooterSub = new ShooterSub();
     private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
@@ -83,14 +83,15 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
                 () -> robotCentric.getAsBoolean(),
-                localizer
+                shooterLimelight
             )
         );
 
-        positionerSub.setDefaultCommand(new FullAim(positionerSub, localizer, shooterSub, s_Swerve, autoSub));
+        positionerSub.setDefaultCommand(new FullAim(positionerSub, shooterLimelight, shooterSub, s_Swerve, autoSub));
 
         //poseEstimation.periodic();
         localizer.periodic();
+        shooterLimelight.periodic();
         positionerSub.periodic();
         intake.periodic();
         elevator.periodic();
@@ -121,10 +122,11 @@ public class RobotContainer {
                 Constants.Swerve.normalControl = true;}));
       
         feed.toggleOnTrue( /*Waits for it to rev up to 29 MPS or 0.5s before feeding */
-            new FeedAndShoot(shooterSub).
+            new FeedAndShoot(shooterSub, positionerSub).
             raceWith(new SequentialCommandGroup(
-                new WaitCommand(0.5), 
-                Commands.runOnce(() -> shooterSub.feed()))));
+                new WaitCommand(0.7), 
+                Commands.runOnce(() -> shooterSub.feed()))).
+                andThen(new WaitCommand(0.4).andThen(new InstantCommand(() -> shooterSub.stopAll()))));
 
         ampScore.onTrue(shootAmp);
 

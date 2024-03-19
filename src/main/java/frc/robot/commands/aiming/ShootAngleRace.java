@@ -17,7 +17,7 @@ public class ShootAngleRace extends ParallelRaceGroup {
   public ShootAngleRace(double angle, PositionerSub positionerSub) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ShootAngle(angle, positionerSub), new WaitCommand(1));
+    addCommands(new ShootAngle(angle, positionerSub), new WaitCommand(1.5));
   }
 
   private class ShootAngle extends Command{

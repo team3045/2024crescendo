@@ -66,10 +66,10 @@ public class TeleopSwerve extends Command {
         vision.setAimingPipeline();
         if(vision.getTargetSeen()){
             PIDController aController = new PIDController(0.01, 0, 0);
-            aController.setSetpoint(0);
+            aController.setSetpoint(getSideSetpoint());
             double aOutput = aController.calculate(vision.getTx());
 
-            aController.setTolerance(1);
+            aController.setTolerance(0.5);
 
 
             aController.close();
@@ -86,7 +86,7 @@ public class TeleopSwerve extends Command {
         aController.setSetpoint(goal);
         double aOutput = aController.calculate(s_Swerve.getHeading().getDegrees());
 
-        aController.setTolerance(1);
+        aController.setTolerance(0.5);
 
         System.out.println("turning GYRO");
 
@@ -111,5 +111,15 @@ public class TeleopSwerve extends Command {
             System.out.println("DriverStation No Color");
             return s_Swerve.getHeading().getDegrees();
         }
+  }
+
+  public double getSideSetpoint(){
+    double sideKP = -1;
+    if(Math.abs(vision.getHorizontalDistanceToSpeaker()) > 3.5){
+        System.out.println(0 + vision.getHorizontalDistanceToSpeaker() * sideKP);
+        return 0 + vision.getHorizontalDistanceToSpeaker() * sideKP;
+    }
+    else
+        return 0;
   }
 }

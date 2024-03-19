@@ -55,7 +55,7 @@ public class LimeLightSub extends SubsystemBase {
   /** Creates a new LimeLightSub. */
   public LimeLightSub(String name) {
     this.name = name;
-    table = NetworkTableInstance.getDefault().getTable(this.name);
+    table = NetworkTableInstance.getDefault().getTable("limelight-" + this.name);
 
     targetSeen = table.getEntry("tv").getDouble(0) == 1.0;
 
@@ -159,28 +159,16 @@ public class LimeLightSub extends SubsystemBase {
 
   //End Formatting
 
-  /*Returns negative one if ID not seen */
-  public double getHorizDistanceSpeaker(){
-    table.getEntry("pipeline").setNumber(speakerPipline);
-    if(getTargetSeen() && getID() == 3){
-      //gets second value of the array which should be depth, or z, in camera space
-      //essentially is horizontal distance to target, no matter what angle facing bc camera space
-      double distance = table.getEntry("targetpose_cameraspace").getDoubleArray(new double[] {-1.0,-1.0,-1.0,-1.0,-1.0,-1.0})[2];
-      table.getEntry("pipeline").setNumber(localizationPipeline);
-      return distance;
-    }
-    else{
-      table.getEntry("pipeline").setNumber(localizationPipeline);
-      return -1;
-    }
-  }
-
   public Transform3d getTargetCamTransform3d(){
     return getCamToTargetTransform().inverse();
   }
 
   public double getNormToSpeaker(){
     return getTargetCamTransform3d().getTranslation().getNorm();
+  }
+
+  public double getHorizontalDistanceToSpeaker(){
+    return getTargetCamTransform3d().getTranslation().getX();
   }
 
   //returns vision measurement to add to pose estimator

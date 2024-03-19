@@ -6,6 +6,7 @@ package frc.robot.commands.shots;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.FeedAndShoot;
@@ -22,9 +23,9 @@ public class ShootAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> shooter.shootAmp()), 
-        new ShootAngleRace(PositionerSub.AMP_ANGLE, arm)),
+      new ParallelDeadlineGroup(
+        new ShootAngleRace(PositionerSub.AMP_ANGLE, arm),
+        new InstantCommand(() -> shooter.shootAmp())),
       new InstantCommand(() -> shooter.feed())
         .andThen(new WaitCommand(0.5))
         .andThen(new InstantCommand(() -> shooter.stopFeed()))  

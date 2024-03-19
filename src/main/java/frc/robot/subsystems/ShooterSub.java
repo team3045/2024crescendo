@@ -48,18 +48,18 @@ public class ShooterSub extends SubsystemBase {
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
+    slot0Configs.kP = 10; // An error of 1 rps results in 0.11 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // no output for error derivative
 
     slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
-    talonFXConfigs.Feedback.SensorToMechanismRatio = 1; //currently arbitary value
+    talonFXConfigs.Feedback.SensorToMechanismRatio = 1.5; //currently arbitary value
 
     // set Motion Magic Velocity settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 1;
-    motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
-    motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+    motionMagicConfigs.MotionMagicCruiseVelocity = 400;
+    motionMagicConfigs.MotionMagicAcceleration = 4000; // Target acceleration of 400 rps/s (0.25 seconds to max)
+    motionMagicConfigs.MotionMagicJerk = 40000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
     topMotor.getConfigurator().apply(talonFXConfigs);
     bottomMotor.getConfigurator().apply(talonFXConfigs);
@@ -95,6 +95,11 @@ public class ShooterSub extends SubsystemBase {
     feedMotor.set(0);
   }
 
+  public void stopAll(){
+    stopFeed();
+    stopShooter();
+  }
+
   /*Use A regression calculated from testing to determine flyhweel speed in meter/s based on distance */
   //This mps is the speed of the flywheels not of the ball on exit
   //ball speed on exit would be the tangential speed which should be half not accounting for slip or friction
@@ -125,8 +130,8 @@ public class ShooterSub extends SubsystemBase {
   }
 
   public void shootAmp(){
-    topMotor.set(-0.14);
-    bottomMotor.set(-0.20);
+    topMotor.set(-0.12);
+    bottomMotor.set(-0.19);
   }
 
   public double getCurrentSpeedMPS(){

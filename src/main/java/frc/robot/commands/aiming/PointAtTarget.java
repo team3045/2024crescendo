@@ -43,7 +43,7 @@ public class PointAtTarget extends Command {
       desiredAng = arm.getPositionDeg();
 
     if(vision.getNormToSpeaker() > 3.85){
-      desiredAng += vision.getNormToSpeaker() * 0.56;
+      desiredAng += vision.getNormToSpeaker() * 0.59;
       SmartDashboard.putNumber("Norm", vision.getNormToSpeaker());
     }
   }
@@ -53,7 +53,7 @@ public class PointAtTarget extends Command {
   public void initialize() {
     calcAngle();
 
-    if(Math.abs(vision.getTy()) < 1){
+    if(Math.abs(vision.getTy()) < 0.5){
       CommandScheduler.getInstance().cancel(this);
     }
   }
@@ -61,7 +61,7 @@ public class PointAtTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
-      if(Math.abs(vision.getTy()) < 1){
+      if(Math.abs(vision.getTy()) < 0.5){
         CommandScheduler.getInstance().cancel(this);
       }
       else if(Math.abs(desiredAng-arm.getPositionDeg()) < 1){
@@ -87,11 +87,11 @@ public class PointAtTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(vision.getTy()) < 1){
+    if(Math.abs(vision.getTy()) < 0.5){
       return true;
     }
 
-    if(Math.abs(arm.getPositionDeg()-desiredAng) < 1){
+    if(Math.abs(arm.getPositionDeg()-desiredAng) < 0.5){
       return true;
     }
 

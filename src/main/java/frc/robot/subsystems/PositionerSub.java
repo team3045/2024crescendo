@@ -31,6 +31,7 @@ public class PositionerSub extends SubsystemBase {
   private LimeLightSub vision;
 
   private static final boolean absoluteEncoder = false;
+  private boolean frozen;
 
   public static double currAngle;
   private static double desiredAngle;
@@ -38,9 +39,9 @@ public class PositionerSub extends SubsystemBase {
   public static final double MIN_ANGLE = 16; //0.108264602706615
   public static final double MAX_ANGLE = 79; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
-  public static final double MIDDLE_NOTE = 33;
-  public static final double RIGHT_NOTE = 31;
-  public static final double SPEAKER_ANGLE = 56;
+  public static final double MIDDLE_NOTE = 28;
+  public static final double RIGHT_NOTE = 26;
+  public static final double SPEAKER_ANGLE = 50;
   public static final double AMP_ANGLE = 66;
   public static final double STAGE_ANGLE = 28;
 
@@ -50,6 +51,7 @@ public class PositionerSub extends SubsystemBase {
      * Seperate from our limelight for localization
     */
     this.vision = vision;
+    
 
     /*Config both positioners */
     configCanCoder();
@@ -69,11 +71,13 @@ public class PositionerSub extends SubsystemBase {
     
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
+    frozen = false;
 
     SmartDashboard.putNumber("Desired angle", 0);
     SmartDashboard.putNumber("kP", 60);
     SmartDashboard.putNumber("kI", 0);
     SmartDashboard.putNumber("kD", 0.1);
+    SmartDashboard.putBoolean("Arm Frozen", frozen);
   }
 
   public void configMotors(){
@@ -138,6 +142,10 @@ public class PositionerSub extends SubsystemBase {
       angle = MAX_ANGLE;
     if(angle < MIN_ANGLE)
       angle = MIN_ANGLE;
+
+    if(frozen){
+      return;
+    }
         
     MotionMagicVoltage request = new MotionMagicVoltage(0);
     
@@ -198,6 +206,14 @@ public class PositionerSub extends SubsystemBase {
 
   public void goToRightNote(){
     goToAngle(RIGHT_NOTE);
+  }
+
+  public void freeze(){
+    frozen = true;
+  }
+
+  public void unfreeze(){
+    frozen = false;
   }
 
 
