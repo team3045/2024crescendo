@@ -48,7 +48,7 @@ public class ShooterSub extends SubsystemBase {
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 10; // An error of 1 rps results in 0.11 V output
+    slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // no output for error derivative
 
@@ -57,9 +57,9 @@ public class ShooterSub extends SubsystemBase {
 
     // set Motion Magic Velocity settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 400;
-    motionMagicConfigs.MotionMagicAcceleration = 4000; // Target acceleration of 400 rps/s (0.25 seconds to max)
-    motionMagicConfigs.MotionMagicJerk = 40000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+    motionMagicConfigs.MotionMagicCruiseVelocity = 100;
+    motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s^2 (0.25 seconds to max)
+    motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
     topMotor.getConfigurator().apply(talonFXConfigs);
     bottomMotor.getConfigurator().apply(talonFXConfigs);
@@ -84,7 +84,12 @@ public class ShooterSub extends SubsystemBase {
 
   public void feed(){
     state = ShooterSate.FEED;
-    feedMotor.set(0.15);
+    feedMotor.set(0.16);
+  }
+  
+  public void feedAmp(){
+    state = ShooterSate.FEED;
+    feedMotor.set(0.18);
   }
 
   public void stopShooter(){
@@ -130,8 +135,8 @@ public class ShooterSub extends SubsystemBase {
   }
 
   public void shootAmp(){
-    topMotor.set(-0.12);
-    bottomMotor.set(-0.19);
+    topMotor.set(-0.13);
+    bottomMotor.set(-0.20);
   }
 
   public double getCurrentSpeedMPS(){
@@ -144,18 +149,18 @@ public class ShooterSub extends SubsystemBase {
   }
 
   /*runs it back a little bit for intaking */
-  public void runBack(){
+  public void runForward(){
     var request = new MotionMagicVoltage(0);
     Slot1Configs temp = new Slot1Configs();
     temp.kS = 0.25; // Add 0.25 V output to overcome static friction
     temp.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     temp.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    temp.kP = 2.5; // An error of 1 rps results in 0.11 V output
+    temp.kP = 0.11; // An error of 1 rps results in 0.11 V output
     temp.kI = 0; // no output for integrated error
     temp.kD = 0; // no output for error derivative
     feedMotor.getConfigurator().apply(temp);
     feedMotor.setPosition(0);
-    feedMotor.setControl(request.withPosition(-0.5).withSlot(0));
+    feedMotor.setControl(request.withPosition(1.5).withSlot(0));
   }
 
   @Override

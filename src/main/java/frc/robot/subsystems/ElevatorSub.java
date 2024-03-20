@@ -37,7 +37,7 @@ public class ElevatorSub extends SubsystemBase {
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 60; 
+    slot0Configs.kP = 0.11; 
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // no output for error derivative
 
@@ -63,19 +63,20 @@ public class ElevatorSub extends SubsystemBase {
   public void goToPos(double desiredPos){
     var request = new MotionMagicVoltage(0);
     armMotor.setControl(request.withPosition(desiredPos));
-    System.out.println(desiredPos);
     followerMotor.setControl(new Follower(21, false));
-
+    
+    //System.out.println(desiredPos);
+    SmartDashboard.putNumber("Desired Elevator Pos", desiredPos);  // Added by KAS
   }
 
   public void goUp(){
     armMotor.set(0.5);
-    followerMotor.set(0.5);
+    followerMotor.set(-0.5);
   }
 
   public void goDown(){
     armMotor.set(-0.5);
-    followerMotor.set(-0.5);
+    followerMotor.set(0.5);
   }
 
   public void stop(){

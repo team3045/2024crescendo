@@ -26,8 +26,8 @@ public class ShootAmp extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new ShootAngleRace(PositionerSub.AMP_ANGLE, arm),
         new InstantCommand(() -> shooter.shootAmp())),
-      new InstantCommand(() -> shooter.feed())
-        .andThen(new WaitCommand(0.5))
+      new InstantCommand(() -> shooter.feedAmp())
+        .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> shooter.stopFeed()))  
     );
   }

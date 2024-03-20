@@ -43,12 +43,12 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value); //Single Press
-    private final JoystickButton fineControl = new JoystickButton(driver, PS4Controller.Button.kR2.value); //Toggle
-    private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
     private final JoystickButton ampScore = new JoystickButton(driver, PS4Controller.Button.kCross.value); //Single Press
-    private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
     private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kR1.value);
+    private final JoystickButton fineControl  = new JoystickButton(driver, PS4Controller.Button.kR2.value); //Toggle
     private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+    private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+    private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
     
     /*Operator Buttons */
     private final JoystickButton climberUp = new JoystickButton(operator, PS4Controller.Button.kL2.value);
@@ -154,6 +154,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoSub.getAutoCommand("3 Middle Right");
+        return autoSub.getAutoCommand("Copy of 4 Right Middle Left");
     }
 }

@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6976021055260757,
+      "y": 6.58297147892853
+    },
+    "rotation": 58.67
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootClose"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 2 Note Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RightNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right to Middle Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "MiddleNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle to Left note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RightNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
