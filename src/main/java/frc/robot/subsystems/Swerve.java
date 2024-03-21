@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -203,14 +204,19 @@ public class Swerve extends SubsystemBase {
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
-        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
-        LimelightHelpers.PoseEstimate tag = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
-
-        LimelightHelpers.PoseEstimate measurement = new PoseEstimate(pose.pose, tag.timestampSeconds, tag.latency, tag.tagCount, tag.tagSpan, tag.avgTagDist, tag.avgTagArea);
-        System.out.println(measurement.tagCount);
+        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
 
         //LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getPoseL(limeLightSub.getName());
         if(measurement.tagCount >= 1){
+            double total = 0;
+            for(RawFiducial tag : measurement.rawFiducials){
+                total += tag.ambiguity;
+            }
+
+            if(total / measurement.rawFiducials.length > 0.8){
+                return;
+            }
+
             double kDistanceMod = 0.1;
             double stdDev = kDistanceMod*measurement.avgTagDist;
             mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev,stdDev,999999));
