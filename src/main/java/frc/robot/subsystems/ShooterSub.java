@@ -134,6 +134,11 @@ public class ShooterSub extends SubsystemBase {
     bottomMotor.set(-0.95);
   }
 
+  public void shootCloseSide(){
+    topMotor.set(-0.8);
+    bottomMotor.set(-0.85);
+  }
+
   public void shootAmp(){
     topMotor.set(-0.13);
     bottomMotor.set(-0.20);

@@ -5,11 +5,9 @@
 package frc.robot.commands.shots;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.FeedAndShoot;
 import frc.robot.commands.aiming.ShootAngleRace;
 import frc.robot.subsystems.PositionerSub;
 import frc.robot.subsystems.ShooterSub;
@@ -17,14 +15,14 @@ import frc.robot.subsystems.ShooterSub;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ShootClose extends SequentialCommandGroup {
-  /** Creates a new ShootClose. */
-  public ShootClose(PositionerSub arm, ShooterSub shooter) {
+public class ShootCloseSide extends SequentialCommandGroup {
+  /** Creates a new ShootCloseSide. */
+  public ShootCloseSide(PositionerSub arm, ShooterSub shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelDeadlineGroup(
-        new ShootAngleRace(PositionerSub.SPEAKER_ANGLE, arm),
+        new ShootAngleRace(PositionerSub.SHOOT_CLOSE_SIDE, arm),
         new InstantCommand(() -> shooter.shootPct())),
       new InstantCommand(() -> shooter.feed())
         .andThen(new WaitCommand(0.3))

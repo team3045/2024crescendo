@@ -32,8 +32,10 @@ import frc.robot.commands.FeedAndShoot;
 import frc.robot.commands.aiming.FullAim;
 import frc.robot.commands.intaking.IntakeNote;
 import frc.robot.commands.shots.ShootClose;
+import frc.robot.commands.shots.ShootCloseSide;
 import frc.robot.commands.shots.ShootMiddleNote;
 import frc.robot.commands.shots.ShootRightNote;
+import frc.robot.commands.shots.ShootStage;
 
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
@@ -63,8 +65,10 @@ public class AutoSub extends SubsystemBase {
     NamedCommands.registerCommand("MiddleNote", new ShootMiddleNote(shooterSub, positionerSub));
     NamedCommands.registerCommand("Stop Feed", new InstantCommand(() -> shooterSub.stopFeed()));
     NamedCommands.registerCommand("RightNote", new ShootRightNote(shooterSub, positionerSub));
+    NamedCommands.registerCommand("LeftNote", new ShootStage(positionerSub, shooterSub));
+    NamedCommands.registerCommand("ShootCloseSide", new ShootCloseSide(positionerSub, shooterSub));
 
-    PIDConstants translationConstants = new PIDConstants(55,0,0);
+    PIDConstants translationConstants = new PIDConstants(36,0,0);
     PIDConstants rotationConstants = new PIDConstants(40,0,0);
     HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig(true,true));
     AutoBuilder.configureHolonomic(swerve::getPose, swerve::setPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);

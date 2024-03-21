@@ -39,11 +39,12 @@ public class PositionerSub extends SubsystemBase {
   public static final double MIN_ANGLE = 16; //0.108264602706615
   public static final double MAX_ANGLE = 79; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
-  public static final double MIDDLE_NOTE = 28;
-  public static final double RIGHT_NOTE = 26;
-  public static final double SPEAKER_ANGLE = 50;
+  public static final double MIDDLE_NOTE = 30.5;
+  public static final double RIGHT_NOTE = 28;
+  public static final double SPEAKER_ANGLE = 47.5;
+  public static final double SHOOT_CLOSE_SIDE = 46;
   public static final double AMP_ANGLE = 66;
-  public static final double STAGE_ANGLE = 28;
+  public static final double STAGE_ANGLE = 28.5;
 
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {

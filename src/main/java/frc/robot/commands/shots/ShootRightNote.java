@@ -26,7 +26,7 @@ public class ShootRightNote extends SequentialCommandGroup {
         new ShootAngleRace(PositionerSub.RIGHT_NOTE, arm),
         new InstantCommand(() -> shooter.shootPct())),
       new InstantCommand(() -> shooter.feed())
-        .andThen(new WaitCommand(0.5))
+        .andThen(new WaitCommand(0.3))
         .andThen(new InstantCommand(() -> shooter.stopFeed()))
     );
   }

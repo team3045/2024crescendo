@@ -17,7 +17,7 @@ public class ShootAngleRace extends ParallelRaceGroup {
   public ShootAngleRace(double angle, PositionerSub positionerSub) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ShootAngle(angle, positionerSub), new WaitCommand(1.5));
+    addCommands(new ShootAngle(angle, positionerSub), new WaitCommand(0.5));
   }
 
   private class ShootAngle extends Command{
@@ -37,9 +37,11 @@ public class ShootAngleRace extends ParallelRaceGroup {
 
     @Override
     public boolean isFinished(){
-      if(Math.abs(positioner.getPositionDeg()-desAngle) < 0.3){
+      if(Math.abs(positioner.getPositionDeg()-desAngle) < 0.8){
+        System.out.println("Arm Finished");
         return true;
       }
+      System.out.println("Ended on time");
       return false;
     }
   }

@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootClose"
+            "name": "ShootCloseSide"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "named",
           "data": {
-            "name": "RightNote"
+            "name": "LeftNote"
           }
         }
       ]
