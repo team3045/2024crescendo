@@ -42,7 +42,7 @@ public class PositionerSub extends SubsystemBase {
   public static final double MIDDLE_NOTE = 30.5;
   public static final double RIGHT_NOTE = 28;
   public static final double SPEAKER_ANGLE = 47.5;
-  public static final double SHOOT_CLOSE_SIDE = 46;
+  public static final double SHOOT_CLOSE_SIDE = 46.5;
   public static final double AMP_ANGLE = 66;
   public static final double STAGE_ANGLE = 28.5;
 

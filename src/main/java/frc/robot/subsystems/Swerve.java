@@ -4,6 +4,7 @@ import frc.robot.SwerveModule;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -201,7 +203,13 @@ public class Swerve extends SubsystemBase {
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
-        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
+        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
+        LimelightHelpers.PoseEstimate tag = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
+
+        LimelightHelpers.PoseEstimate measurement = new PoseEstimate(pose.pose, tag.timestampSeconds, tag.latency, tag.tagCount, tag.tagSpan, tag.avgTagDist, tag.avgTagArea);
+        System.out.println(measurement.tagCount);
+
+        //LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getPoseL(limeLightSub.getName());
         if(measurement.tagCount >= 1){
             double kDistanceMod = 0.1;
             double stdDev = kDistanceMod*measurement.avgTagDist;
@@ -209,7 +217,12 @@ public class Swerve extends SubsystemBase {
             mPoseEstimator.addVisionMeasurement(
                 measurement.pose, 
                 measurement.timestampSeconds);
+
+            System.out.println("Added vision measurement");
+            SmartDashboard.putString("Vision Measurement", measurement.pose.toString());
         }
+
+        
     }
 
     @Override
