@@ -442,7 +442,7 @@ public class LimelightHelpers {
         if (name == "" || name == null) {
             return "limelight";
         }
-        return name;
+        return "limelight-" + name;
     }
 
     private static Pose3d toPose3D(double[] inData){

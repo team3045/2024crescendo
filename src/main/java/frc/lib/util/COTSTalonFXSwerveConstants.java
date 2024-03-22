@@ -54,7 +54,7 @@ public class COTSTalonFXSwerveConstants {
             
             /** West Coast Products - SwerveX Standard (Kraken X60)*/
             public static final COTSTalonFXSwerveConstants KrakenX60(double driveGearRatio){
-                double wheelDiameter = Units.inchesToMeters(4.0);
+                double wheelDiameter = Units.inchesToMeters(3.84);
         
                 /** (396 / 35) : 1 */
                 double angleGearRatio = ((396.0 / 35.0) / 1.0);
@@ -233,7 +233,7 @@ public class COTSTalonFXSwerveConstants {
 
             /** Swerve Drive Specialties - MK4 Module (Kraken X60)*/
             public static final COTSTalonFXSwerveConstants KrakenX60(double driveGearRatio){
-                double wheelDiameter = Units.inchesToMeters(4.0);
+                double wheelDiameter = Units.inchesToMeters(3.85);
         
                 /** 12.8 : 1 */
                 double angleGearRatio = (12.8 / 1.0);
@@ -281,7 +281,7 @@ public class COTSTalonFXSwerveConstants {
 
             /** Swerve Drive Specialties - MK4i Module (Kraken X60)*/
             public static final COTSTalonFXSwerveConstants KrakenX60(double driveGearRatio){
-                double wheelDiameter = Units.inchesToMeters(4.0);
+                double wheelDiameter = Units.inchesToMeters(4);
         
                 /** (150 / 7) : 1 */
                 double angleGearRatio = ((150.0 / 7.0) / 1.0);
