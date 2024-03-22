@@ -204,8 +204,11 @@ public class Swerve extends SubsystemBase {
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
+        if(getOdomPose().minus(getPose()).getX() > 0.1 || getOdomPose().minus(getPose()).getY() > 0.1){
+            swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), getPose());
+        }
+
         LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
-        //LimelightHelpers.printPoseEstimate(measurement);
 
         if(measurement.tagCount >= 1){
             double total = 0;
@@ -213,18 +216,17 @@ public class Swerve extends SubsystemBase {
                 total += tag.ambiguity;
             }
 
-            if(total / measurement.rawFiducials.length > 0.8){
+            if(total / measurement.rawFiducials.length > 0.4){
                 return;
             }
 
-            double kDistanceMod = 0.1;
+            double kDistanceMod = 0.2;
             double stdDev = kDistanceMod*measurement.avgTagDist;
             mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev,stdDev,999999));
             mPoseEstimator.addVisionMeasurement(
                 measurement.pose, 
                 measurement.timestampSeconds);
 
-            System.out.println("Added vision measurement");
             SmartDashboard.putString("Vision Measurement", measurement.pose.toString());
         }
 

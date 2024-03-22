@@ -442,7 +442,7 @@ public class LimelightHelpers {
         if (name == "" || name == null) {
             return "limelight";
         }
-        return name;
+        return "limelight-" + name;
     }
 
     private static Pose3d toPose3D(double[] inData){
@@ -513,7 +513,7 @@ public class LimelightHelpers {
         return new PoseEstimate(pose, timestamp,latency,tagCount,tagSpan,tagDist,tagArea,rawFiducials);
     }
 
-    public static void printPoseEstimate(PoseEstimate pose) {
+    private static void printPoseEstimate(PoseEstimate pose) {
         if (pose == null) {
             System.out.println("No PoseEstimate available.");
             return;
