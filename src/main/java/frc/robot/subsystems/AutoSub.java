@@ -68,9 +68,9 @@ public class AutoSub extends SubsystemBase {
     NamedCommands.registerCommand("LeftNote", new ShootStage(positionerSub, shooterSub));
     NamedCommands.registerCommand("ShootCloseSide", new ShootCloseSide(positionerSub, shooterSub));
 
-    PIDConstants translationConstants = new PIDConstants(36,0,0);
+    PIDConstants translationConstants = new PIDConstants(75,0,0);
     PIDConstants rotationConstants = new PIDConstants(40,0,0);
-    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,3.0, Constants.Swerve.driveBaseRadius, new ReplanningConfig(true,true));
+    HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,4.5, Constants.Swerve.driveBaseRadius, new ReplanningConfig(true,false));
     AutoBuilder.configureHolonomic(swerve::getPose, swerve::setPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
   }
 

@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.8010561101107322,
+      "y": 4.467894921652939
+    },
+    "rotation": -58.86241112155649
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,13 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootClose"
+            "name": "ShootCloseSide"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 Note Middle"
+            "pathName": "2 Note Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LeftNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left to Middle"
           }
         },
         {
@@ -26,13 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to 2"
+            "pathName": "Middle to Right Note"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "MiddleNote"
+            "name": "RightNote"
           }
         }
       ]

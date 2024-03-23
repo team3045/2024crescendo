@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PositionerSub extends SubsystemBase {
   private final CANcoder absEncoder = new CANcoder(20);
-  private final double absEncoderOffset = Units.degreesToRotations(-353.408203125+15);; //range 0-1, in rotations I presume
+  private final double absEncoderOffset = Units.degreesToRotations(-148.974609375+15); //range 0-1, in rotations I presume
  
   private static final TalonFX leftPositioner = new TalonFX(17); //Turns counterclockwise to move armp up
   private static final TalonFX rightPositioner = new TalonFX(16); // turns clockwise to move arm up
@@ -75,10 +75,7 @@ public class PositionerSub extends SubsystemBase {
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
     frozen = false;
 
-    SmartDashboard.putNumber("Desired angle", 0);
-    SmartDashboard.putNumber("kP", 60);
-    SmartDashboard.putNumber("kI", 0);
-    SmartDashboard.putNumber("kD", 0.1);
+   
     SmartDashboard.putBoolean("Arm Frozen", frozen);
   }
 

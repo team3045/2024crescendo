@@ -1,14 +1,17 @@
 package frc.robot.subsystems;
 
 import frc.robot.SwerveModule;
+import frc.lib.util.ModifiedSignalLogger;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.commands.SysIDCommand;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.stream.IntStream;
@@ -26,8 +29,15 @@ import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+
+import static edu.wpi.first.units.Units.*;
 
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
@@ -36,6 +46,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
     private ChassisSpeeds dChassisSpeeds;
+    private SysIdRoutine sysIdRoutine;
 
      /**
     * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
@@ -74,6 +85,15 @@ public class Swerve extends SubsystemBase {
              visionMeasurementStdDevs);
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
+
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(null,null,null,ModifiedSignalLogger.logState()),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts) -> driveVolts(volts.in(Volts), volts.in(Volts)),
+                null,
+                this
+            ));
+
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -179,6 +199,13 @@ public class Swerve extends SubsystemBase {
         dChassisSpeeds = null;
     }
 
+    public void driveVolts(double left, double right){
+        mSwerveMods[0].setVoltage(left);
+        mSwerveMods[2].setVoltage(left);
+        mSwerveMods[3].setVoltage(right);
+        mSwerveMods[1].setVoltage(right);
+    }
+
     public void driveField(ChassisSpeeds speeds){
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,getHeading());
         SwerveModuleState[] states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
@@ -199,6 +226,16 @@ public class Swerve extends SubsystemBase {
         mSwerveMods[3].setDesiredState(backRight, false);
     }
 
+    public Command runDriveQuasiTest(Direction direction)
+    {
+        return sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command runDriveDynamTest(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
+    }
+
+
     /*Use to update the odometry, adds vision measurement if tags are seen */
     public void updateOdometry(){
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
@@ -208,7 +245,8 @@ public class Swerve extends SubsystemBase {
             swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), getPose());
         }
 
-        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
+        //LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
+        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
 
         if(measurement.tagCount >= 1){
             double total = 0;

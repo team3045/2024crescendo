@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -71,6 +72,12 @@ public class SwerveModule {
         }
     }
 
+    public void setVoltage(double voltage){
+        VoltageOut desVoltageOut = new VoltageOut(voltage);
+        mDriveMotor.setControl(desVoltageOut);
+        System.out.println(mDriveMotor.getDeviceID() + " : " + mDriveMotor.getMotorVoltage());
+    }
+
     public Rotation2d getCANcoder(){
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
@@ -93,4 +100,5 @@ public class SwerveModule {
             Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }
+
 }

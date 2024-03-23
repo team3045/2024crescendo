@@ -14,7 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 Note Middle"
+            "pathName": "Middle to Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RightNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right to Middle Note"
           }
         },
         {
@@ -26,13 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to 2"
+            "pathName": "Middle to Left note"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "MiddleNote"
+            "name": "LeftNote"
           }
         }
       ]
