@@ -77,19 +77,15 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        ChassisSpeeds speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+            translation.getX(), translation.getY(), rotation, getHeading()) :
+            new ChassisSpeeds(translation.getX(),translation.getY(),rotation);
+        
+        speeds = ChassisSpeeds.discretize(speeds, 0.02);
+
         SwerveModuleState[] swerveModuleStates =
-            Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    Constants.Swerve.normalControl ? translation.getX(): translation.getX(), 
-                                    Constants.Swerve.normalControl ? translation.getY(): translation.getY(), 
-                                    rotation, 
-                                    getHeading()
-                                )
-                                : new ChassisSpeeds(
-                                    translation.getX(), 
-                                    translation.getY(), 
-                                    rotation)
-                                );
+            Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
+        
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for(SwerveModule mod : mSwerveMods){
@@ -180,7 +176,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void driveField(ChassisSpeeds speeds){
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,getHeading());
+        speeds = ChassisSpeeds.discretize(speeds, 0.02);
         SwerveModuleState[] states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
