@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.commands.aiming.FullAim;
@@ -55,6 +56,14 @@ public class RobotContainer {
     private final JoystickButton climberDown = new JoystickButton(operator, PS4Controller.Button.kR2.value);
     private final JoystickButton revShooter = new JoystickButton(operator, PS4Controller.Button.kR1.value);
     private final JoystickButton safeShoot = new JoystickButton(operator, PS4Controller.Button.kCircle.value);
+    private final JoystickButton pathFindAmp = new JoystickButton(operator, PS4Controller.Button.kSquare.value);
+    private final JoystickButton ampMode = new JoystickButton(operator, PS4Controller.Button.kTriangle.value);
+
+    /*SysiId buttons */
+    private final JoystickButton quasiForward = new JoystickButton(driver, PS4Controller.Button.kR1.value);
+    private final JoystickButton quasiBackward = new JoystickButton(driver, PS4Controller.Button.kR2.value);
+    private final JoystickButton dynaForward = new JoystickButton(driver, PS4Controller.Button.kL1.value);
+    private final JoystickButton dynaBackward = new JoystickButton(driver, PS4Controller.Button.kL2.value);
 
     /* Subsystems */
     private final LimeLightSub localizer = new LimeLightSub("intake");
@@ -128,7 +137,7 @@ public class RobotContainer {
                 Commands.runOnce(() -> shooterSub.feed()))).
                 andThen(new WaitCommand(0.4).andThen(new InstantCommand(() -> shooterSub.stopAll()))));
 
-        ampScore.onTrue(shootAmp);
+        ampScore.onTrue(shootAmp.andThen(new InstantCommand(() -> TeleopSwerve.disableAmpMode())));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
         
@@ -138,13 +147,14 @@ public class RobotContainer {
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
         safeShoot.onTrue(new ShootMiddleNote(shooterSub, positionerSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
+        pathFindAmp.whileTrue(autoSub.getOnFlyCommand(Constants.EstimationConstants.ampPose));
+        ampMode.onTrue(new InstantCommand(() -> TeleopSwerve.toggleAmpMode()));
 
         /*LED triggers */
         new Trigger(() -> true).onTrue(new InstantCommand(() -> LEDS.setDefaultState())); //Base state, stays like this if nothing else is detected
         new Trigger(() -> IntakeNote.noteDetected()).onTrue(new InstantCommand(() -> LEDS.setHasPiece()));
         new Trigger(() -> TeleopSwerve.shooterMode).onTrue(new InstantCommand(() -> LEDS.setTargetting()));
         new Trigger(() -> (TeleopSwerve.shooterMode && shooterLimelight.getTx() < 1 && shooterLimelight.getTy() < 1)).onTrue(new InstantCommand(() -> LEDS.setTargetLock()));
-
     }
 
     /**
@@ -154,6 +164,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoSub.getAutoCommand("Middle and Mid2");
+        return autoSub.getAutoCommand("2 Note Left");
     }
 }

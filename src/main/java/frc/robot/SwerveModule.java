@@ -78,6 +78,10 @@ public class SwerveModule {
         System.out.println(mDriveMotor.getDeviceID() + " : " + mDriveMotor.getMotorVoltage());
     }
 
+    public double getDriveVoltage(){
+        return mDriveMotor.getMotorVoltage().getValueAsDouble();
+    }
+
     public Rotation2d getCANcoder(){
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }

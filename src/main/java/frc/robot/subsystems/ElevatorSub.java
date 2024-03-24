@@ -63,7 +63,7 @@ public class ElevatorSub extends SubsystemBase {
   public void goToPos(double desiredPos){
     var request = new MotionMagicVoltage(0);
     armMotor.setControl(request.withPosition(desiredPos));
-    followerMotor.setControl(new Follower(21, false));
+    followerMotor.setControl(new Follower(22, false));
     
     //System.out.println(desiredPos);
     SmartDashboard.putNumber("Desired Elevator Pos", desiredPos);  // Added by KAS
@@ -71,12 +71,12 @@ public class ElevatorSub extends SubsystemBase {
 
   public void goUp(){
     armMotor.set(0.5);
-    followerMotor.set(-0.5);
+    followerMotor.set(0.5);
   }
 
   public void goDown(){
     armMotor.set(-0.5);
-    followerMotor.set(0.5);
+    followerMotor.set(-0.5);
   }
 
   public void stop(){

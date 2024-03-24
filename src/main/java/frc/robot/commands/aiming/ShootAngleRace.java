@@ -37,7 +37,7 @@ public class ShootAngleRace extends ParallelRaceGroup {
 
     @Override
     public boolean isFinished(){
-      if(Math.abs(positioner.getPositionDeg()-desAngle) < 0.8){
+      if(Math.abs(positioner.getPositionDeg()-desAngle) < 0.5){
         System.out.println("Arm Finished");
         return true;
       }

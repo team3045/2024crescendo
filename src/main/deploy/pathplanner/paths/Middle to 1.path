@@ -8,32 +8,48 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4976977856286462,
-        "y": 5.5755240736278875
+        "x": 2.946450998340399,
+        "y": 5.55492627078484
       },
       "isLocked": false,
       "linkedName": "Middle Note"
     },
     {
       "anchor": {
-        "x": 2.8913771479041297,
-        "y": 4.050945244747632
+        "x": 8.297793465731218,
+        "y": 7.41825821054528
       },
       "prevControl": {
-        "x": 1.2284553140534853,
-        "y": 4.534271925686708
+        "x": 7.7470549613685264,
+        "y": 7.555942836635952
+      },
+      "nextControl": {
+        "x": 9.307235266752956,
+        "y": 7.165897760289846
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.635382411719331,
+        "y": 6.2525283763133634
+      },
+      "prevControl": {
+        "x": 5.654248644790311,
+        "y": 6.817676083428187
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Note"
+      "linkedName": "FarShot"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
+      "name": "Intake",
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -51,14 +67,14 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -24.0,
-    "rotateFast": true
+    "rotation": 10.0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": null,
@@ -66,5 +82,5 @@
     "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -140,8 +140,8 @@ public class ShooterSub extends SubsystemBase {
   }
 
   public void shootAmp(){
-    topMotor.set(-0.13);
-    bottomMotor.set(-0.20);
+    topMotor.set(-0.12);
+    bottomMotor.set(-0.19);
   }
 
   public double getCurrentSpeedMPS(){

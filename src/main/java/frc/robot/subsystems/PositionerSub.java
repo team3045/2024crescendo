@@ -41,11 +41,12 @@ public class PositionerSub extends SubsystemBase {
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
   public static final double MIDDLE_NOTE = 28.5;
   public static final double RIGHT_NOTE = 27.8;
-  public static final double LEFT_NOTE = 26.5;
+  public static final double LEFT_NOTE = 26.4;
   public static final double SPEAKER_ANGLE = 48.5;
   public static final double SHOOT_CLOSE_SIDE = 46.5;
   public static final double AMP_ANGLE = 66;
   public static final double STAGE_ANGLE = 27;
+  public static final double FAR_ANGLE = 22.5;
 
   /** Creates a new PositionerSub. */
   public PositionerSub(LimeLightSub vision) {
@@ -87,7 +88,7 @@ public class PositionerSub extends SubsystemBase {
 
     var slot0Configs = configs.Slot0;
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kP = 60;
+    slot0Configs.kP = 30;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0.1;
     slot0Configs.kV = 0.12;
@@ -115,7 +116,7 @@ public class PositionerSub extends SubsystemBase {
     leftPositioner.getConfigurator().apply(configs);
 
     var rightConfigs = configs;
-    rightConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rightPositioner.getConfigurator().apply(rightConfigs);
 
   }
@@ -150,7 +151,7 @@ public class PositionerSub extends SubsystemBase {
     
 
     leftPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
-    //rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
+    rightPositioner.setControl(request.withPosition(Units.degreesToRotations(angle)));
 
     SmartDashboard.putNumber("position output", request.Position);
   }

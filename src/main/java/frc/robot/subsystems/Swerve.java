@@ -7,7 +7,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.LimelightHelpers.RawFiducial;
-import frc.robot.commands.SysIDCommand;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -29,7 +28,10 @@ import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -62,6 +64,12 @@ public class Swerve extends SubsystemBase {
     //how much it trusts the vision measurements
      private static Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 999999);
 
+     private final MutableMeasure<Voltage> appliedVoltage = MutableMeasure.mutable(Volts.of(0));
+     private final MutableMeasure<Distance> appliedDistance = MutableMeasure.mutable(Meters.of(0));
+     private final MutableMeasure<Velocity<Distance>> appliedVelocity = MutableMeasure.mutable(MetersPerSecond.of(0));
+
+     private final Measure<Velocity<Voltage>> rampRate = Volts.of(0.5).per(Seconds.of(1));
+
     public Swerve(LimeLightSub limeLightSub) {
         this.limeLightSub = limeLightSub;
 
@@ -87,10 +95,31 @@ public class Swerve extends SubsystemBase {
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(),EstimationConstants.robotStartPose.toPose2d());
 
         sysIdRoutine = new SysIdRoutine(
-            new SysIdRoutine.Config(null,null,null,ModifiedSignalLogger.logState()),
+            new SysIdRoutine.Config(rampRate,null,null,null),
             new SysIdRoutine.Mechanism(
                 (Measure<Voltage> volts) -> driveVolts(volts.in(Volts), volts.in(Volts)),
-                null,
+                log -> {
+                    log.motor("TopLeft")
+                        .voltage(
+                            appliedVoltage.mut_replace(mSwerveMods[0].getDriveVoltage(), Volts))
+                        .linearPosition(appliedDistance.mut_replace(mSwerveMods[0].getPosition().distanceMeters, Meters))
+                        .linearVelocity(appliedVelocity.mut_replace(mSwerveMods[0].getState().speedMetersPerSecond, MetersPerSecond));
+                    log.motor("TopRight")
+                        .voltage(
+                            appliedVoltage.mut_replace(mSwerveMods[1].getDriveVoltage(), Volts))
+                        .linearPosition(appliedDistance.mut_replace(mSwerveMods[1].getPosition().distanceMeters, Meters))
+                        .linearVelocity(appliedVelocity.mut_replace(mSwerveMods[1].getState().speedMetersPerSecond, MetersPerSecond));
+                    log.motor("BotLeft")
+                        .voltage(
+                            appliedVoltage.mut_replace(mSwerveMods[2].getDriveVoltage(), Volts))
+                        .linearPosition(appliedDistance.mut_replace(mSwerveMods[2].getPosition().distanceMeters, Meters))
+                        .linearVelocity(appliedVelocity.mut_replace(mSwerveMods[2].getState().speedMetersPerSecond, MetersPerSecond));
+                    log.motor("BotRight")
+                        .voltage(
+                            appliedVoltage.mut_replace(mSwerveMods[3].getDriveVoltage(), Volts))
+                        .linearPosition(appliedDistance.mut_replace(mSwerveMods[3].getPosition().distanceMeters, Meters))
+                        .linearVelocity(appliedVelocity.mut_replace(mSwerveMods[3].getState().speedMetersPerSecond, MetersPerSecond));
+                },
                 this
             ));
 
@@ -224,6 +253,7 @@ public class Swerve extends SubsystemBase {
 
     public Command runDriveQuasiTest(Direction direction)
     {
+        System.out.println("Dynamix Test");
         return sysIdRoutine.quasistatic(direction);
     }
 
@@ -250,12 +280,20 @@ public class Swerve extends SubsystemBase {
                 total += tag.ambiguity;
             }
 
-            if(total / measurement.rawFiducials.length > 0.4){
+            if(total / measurement.rawFiducials.length > 0.2){
                 return;
             }
 
-            double kDistanceMod = 0.2;
-            double stdDev = kDistanceMod*measurement.avgTagDist;
+            if(Math.abs(measurement.pose.getRotation().minus(getHeading()).getDegrees()) > 3){
+                return;
+            }
+
+            if(measurement.pose.getTranslation().getDistance(getPose().getTranslation()) > 1){
+                return;
+            }
+
+            double kDistanceMod = 0.3;
+            double stdDev = kDistanceMod*measurement.avgTagDist / measurement.tagCount;
             mPoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev,stdDev,999999));
             mPoseEstimator.addVisionMeasurement(
                 measurement.pose, 

@@ -1,0 +1,109 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.635382411719331,
+        "y": 6.2525283763133634
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.691139110592428,
+        "y": 6.2426969659467995
+      },
+      "isLocked": false,
+      "linkedName": "FarShot"
+    },
+    {
+      "anchor": {
+        "x": 8.362046291240198,
+        "y": 7.372363335181721
+      },
+      "prevControl": {
+        "x": 7.141242606569564,
+        "y": 8.060786465635086
+      },
+      "nextControl": {
+        "x": 9.268381808137724,
+        "y": 6.861271878284619
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.635382411719331,
+        "y": 6.2525283763133634
+      },
+      "prevControl": {
+        "x": 5.654248644790311,
+        "y": 6.817676083428187
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "FarShot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.65,
+      "rotationDegrees": -2.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.4,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Angle",
+      "waypointRelativePos": 1.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GoToFarNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 10.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 10.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

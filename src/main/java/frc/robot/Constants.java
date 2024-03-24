@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -86,7 +87,7 @@ public final class Constants {
         public static final double angleKD = chosenModule.angleKD;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.2; //TODO: This must be tuned to specific robot
+        public static final double driveKP = 0.18; //TODO: This must be tuned to specific robot
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
@@ -101,13 +102,13 @@ public final class Constants {
             .withKS(0).withKV(0).withKA(0);
 
         /* Drive Motor Characterization Values From SYSID */
-        public static final double driveKS = 0.32 / 12; //TODO: This must be tuned to specific robot
-        public static final double driveKV = 1.51 / 12;
-        public static final double driveKA = 0.27 / 12;
+        public static final double driveKS = 0.16439; //TODO: This must be tuned to specific robot
+        public static final double driveKV = 2.1915;
+        public static final double driveKA = 0.14525;
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static double maxSpeed = 5.0; //TODO: This must be tuned to specific robot
+        public static double maxSpeed = 4.0; //TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static double maxAngularVelocity = Units.degreesToRadians(540); //TODO: This must be tuned to specific robot
 
@@ -208,7 +209,8 @@ public final class Constants {
         public static final Transform3d originToRobotStart = new Transform3d(new Translation3d(Units.inchesToMeters(75)+Swerve.wheelBase/2, Swerve.trackWidth /2,0), new Rotation3d(0,0,Units.degreesToRadians(180)));
         public static final Transform3d middleStartPose = new Transform3d(new Translation3d(1.18,5.5,0), new Rotation3d(0,0,0));
         public static final Transform3d rightStartPose = new Transform3d(new Translation3d(0.74,6.67,0), new Rotation3d(0,0,Units.degreesToRadians(56.87)));
-        
+        public static final Transform3d leftStartPose = new Transform3d(new Translation3d(0.80,4.47,0), new Rotation3d(0,0,Units.degreesToRadians(-58.86)));
+
         public static final Pose3d robotStartPose = EstimationConstants.originPose.transformBy(middleStartPose);
 
         //Cameras position in relation to robot SET LATER
@@ -229,6 +231,8 @@ public final class Constants {
         public static final double kPXGain = 0.5;
         public static final double kPYGain = 0.5;
         public static final double kPAGain = 1.0;
+
+        public static final Pose2d ampPose = new Pose2d(new Translation2d(1.85,7.76), Rotation2d.fromDegrees(-90));
 
         //4.57, 2.57
         //SHOP: Map of Apriltags IDs and their 3d positions on the field SET LATER

@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.8010561101107322,
-      "y": 4.47
-    },
-    "rotation": -58.860000000000014
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -14,25 +8,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootCloseSide"
+            "name": "ShootClose"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 Note Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "LeftNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left to Middle"
+            "pathName": "2 Note Middle"
           }
         },
         {
@@ -44,13 +26,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to Right Note"
+            "pathName": "Optomized Middle to 2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "RightNote"
+            "name": "FarNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Optomized Middle to 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FarNote"
           }
         }
       ]

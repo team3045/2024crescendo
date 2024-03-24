@@ -27,6 +27,7 @@ public class TeleopSwerve extends Command {
     private BooleanSupplier robotCentricSup;
     private LimeLightSub vision;
     public static boolean shooterMode = false;
+    public static boolean ampMode = false;
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, LimeLightSub vision) {
         this.s_Swerve = s_Swerve;
@@ -47,6 +48,7 @@ public class TeleopSwerve extends Command {
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         rotationVal = shooterMode ? calcRotationShooterMode(rotationVal) : rotationVal;
+        rotationVal = ampMode ? turnToAngle(-90) : rotationVal;
 
         /* Drive */
         s_Swerve.drive(
@@ -60,6 +62,16 @@ public class TeleopSwerve extends Command {
     public static void toggleShooterMode(){
         System.out.println("toggle shooter" + !shooterMode);
         shooterMode = !shooterMode;
+        ampMode = false;
+    }
+
+    public static void toggleAmpMode(){
+        ampMode = !ampMode;
+        shooterMode = false;
+    }
+
+    public static void disableAmpMode(){
+        ampMode = false;
     }
 
     public double calcRotationShooterMode(double rotation){
@@ -82,13 +94,11 @@ public class TeleopSwerve extends Command {
     }
 
     public double turnToAngle(double goal){
-        PIDController aController = new PIDController(0.1, 0, 0);
+        PIDController aController = new PIDController(0.01, 0, 0);
         aController.setSetpoint(goal);
         double aOutput = aController.calculate(s_Swerve.getHeading().getDegrees());
 
         aController.setTolerance(0.5);
-
-        System.out.println("turning GYRO");
 
         aController.close();
         return aOutput;

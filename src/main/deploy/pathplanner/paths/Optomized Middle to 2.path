@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.268223408810858,
-        "y": 6.986846382127837
+        "x": 4.6996352372283,
+        "y": 6.968488431982414
       },
       "isLocked": false,
       "linkedName": "Middle Note"
@@ -20,34 +20,34 @@
         "y": 5.692610896875513
       },
       "prevControl": {
-        "x": 8.091351744508042,
-        "y": 5.757334422111205
+        "x": 7.710339061077678,
+        "y": 5.958801173984146
       },
       "nextControl": {
-        "x": 9.235161887521246,
-        "y": 5.576172692772531
+        "x": 8.574077701203315,
+        "y": 5.667639718944651
       },
       "isLocked": false,
       "linkedName": "Second Mid Note"
     },
     {
       "anchor": {
-        "x": 2.8913771479041297,
-        "y": 5.568053993250843
+        "x": 4.635382411719331,
+        "y": 6.2525283763133634
       },
       "prevControl": {
-        "x": 4.011212106774936,
-        "y": 7.041920232564106
+        "x": 5.498206068554203,
+        "y": 6.610508404146665
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Middle Note"
+      "linkedName": "FarShot"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": -15.0,
+      "rotationDegrees": -12.0,
       "rotateFast": false
     }
   ],
@@ -69,17 +69,34 @@
           ]
         }
       }
+    },
+    {
+      "name": "Angle",
+      "waypointRelativePos": 1.55,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GoToFarNote"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 10.0,
     "rotateFast": false
   },
   "reversed": false,
@@ -88,5 +105,5 @@
     "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
