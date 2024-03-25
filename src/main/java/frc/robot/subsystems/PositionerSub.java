@@ -32,6 +32,7 @@ public class PositionerSub extends SubsystemBase {
 
   private static final boolean absoluteEncoder = false;
   private boolean frozen;
+  private boolean atAmp;
 
   public static double currAngle;
   private static double desiredAngle;
@@ -75,6 +76,7 @@ public class PositionerSub extends SubsystemBase {
     currAngle = Units.rotationsToDegrees(leftPositioner.getPosition().getValue()); //gets position of mechanism in rotations and turns it into degrees
     desiredAngle = currAngle; //sets desired angle to current angle so we dont move
     frozen = false;
+    atAmp = false;
 
    
     SmartDashboard.putBoolean("Arm Frozen", frozen);
@@ -137,6 +139,7 @@ public class PositionerSub extends SubsystemBase {
   //angle should be between -5 and 79 degrees or sum like that ask carson
   public void goToAngle(double angle){
     desiredAngle = angle;
+    atAmp = false;
 
     if(angle > MAX_ANGLE)
       angle = MAX_ANGLE;
@@ -186,6 +189,11 @@ public class PositionerSub extends SubsystemBase {
     goToAngle(SPEAKER_ANGLE);
   }
 
+  public void goToAmp(){
+    goToAngle(PositionerSub.AMP_ANGLE);
+    atAmp = true;
+  }
+
   public void decreaseAngle(){
     goToAngle(getPositionDeg() - 2);
   }
@@ -214,6 +222,10 @@ public class PositionerSub extends SubsystemBase {
 
   public void unfreeze(){
     frozen = false;
+  }
+
+  public boolean getAtAmp(){
+    return atAmp;
   }
 
 

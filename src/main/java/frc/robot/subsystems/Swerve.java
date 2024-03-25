@@ -44,7 +44,7 @@ import static edu.wpi.first.units.Units.*;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveDrivePoseEstimator mPoseEstimator;
-    public LimeLightSub limeLightSub;
+    public LimeLightSub[] limeLightSubs;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
     private ChassisSpeeds dChassisSpeeds;
@@ -70,8 +70,8 @@ public class Swerve extends SubsystemBase {
 
      private final Measure<Velocity<Voltage>> rampRate = Volts.of(0.5).per(Seconds.of(1));
 
-    public Swerve(LimeLightSub limeLightSub) {
-        this.limeLightSub = limeLightSub;
+    public Swerve(LimeLightSub[] limeLightSubs) {
+        this.limeLightSubs = limeLightSubs;
 
         gyro = new Pigeon2(Constants.Swerve.pigeonID, "Canivore 3045");
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -267,12 +267,18 @@ public class Swerve extends SubsystemBase {
         mPoseEstimator.update(getGyroYaw(), getModulePositions());
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
-        if(getOdomPose().minus(getPose()).getX() > 0.1 || getOdomPose().minus(getPose()).getY() > 0.1){
+        if(getOdomPose().minus(getPose()).getX() > 0.2 || getOdomPose().minus(getPose()).getY() > 0.2){
             swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), getPose());
         }
 
-        //LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate(limeLightSub.getName(), "botpose");
-        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limeLightSub.getName());
+        for(LimeLightSub limelight : limeLightSubs){
+            addVisionMeasurement(limelight);
+        }
+        
+    }
+
+    public void addVisionMeasurement(LimeLightSub limelight){
+        LimelightHelpers.PoseEstimate measurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.getName());
 
         if(measurement.tagCount >= 1){
             double total = 0;
@@ -299,10 +305,8 @@ public class Swerve extends SubsystemBase {
                 measurement.pose, 
                 measurement.timestampSeconds);
 
-            SmartDashboard.putString("Vision Measurement", measurement.pose.toString());
+            SmartDashboard.putString(limelight.getName() + ": Vision Measurement", measurement.pose.toString());
         }
-
-        
     }
 
     @Override

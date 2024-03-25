@@ -65,10 +65,13 @@ public class RobotContainer {
     private final JoystickButton dynaForward = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     private final JoystickButton dynaBackward = new JoystickButton(driver, PS4Controller.Button.kL2.value);
 
-    /* Subsystems */
+    /*Limelights */
     private final LimeLightSub localizer = new LimeLightSub("intake");
     private final LimeLightSub shooterLimelight = new LimeLightSub("shooter");
-    private final Swerve s_Swerve = new Swerve(localizer);
+    private final LimeLightSub frontLimelight = new LimeLightSub("front");
+
+    /* Subsystems */
+    private final Swerve s_Swerve = new Swerve(new LimeLightSub[] {localizer,frontLimelight});
     private final ShooterSub shooterSub = new ShooterSub();
     private final PositionerSub positionerSub = new PositionerSub(shooterLimelight);
     private final Intake intake = new Intake();
@@ -98,7 +101,6 @@ public class RobotContainer {
 
         positionerSub.setDefaultCommand(new FullAim(positionerSub, shooterLimelight, shooterSub, s_Swerve, autoSub));
 
-        //poseEstimation.periodic();
         localizer.periodic();
         shooterLimelight.periodic();
         positionerSub.periodic();
@@ -147,8 +149,11 @@ public class RobotContainer {
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
         safeShoot.onTrue(new ShootMiddleNote(shooterSub, positionerSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
-        pathFindAmp.whileTrue(autoSub.getOnFlyCommand(Constants.EstimationConstants.ampPose));
-        ampMode.onTrue(new InstantCommand(() -> TeleopSwerve.toggleAmpMode()));
+        pathFindAmp.whileTrue(autoSub.getOnFlyCommand(Constants.EstimationConstants.ampPose)).
+            onFalse(new InstantCommand(() -> LimelightHelpers.setPipelineIndex(shooterLimelight.getName(), 0)));
+        ampMode.onTrue(new InstantCommand(() -> TeleopSwerve.toggleAmpMode()).
+            alongWith(new InstantCommand(() -> positionerSub.goToAmp()).onlyIf(() -> TeleopSwerve.ampMode == true)));
+        
 
         /*LED triggers */
         new Trigger(() -> true).onTrue(new InstantCommand(() -> LEDS.setDefaultState())); //Base state, stays like this if nothing else is detected

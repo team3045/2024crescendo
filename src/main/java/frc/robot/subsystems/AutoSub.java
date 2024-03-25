@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.EstimationConstants;
 import frc.robot.commands.FeedAndShoot;
 import frc.robot.commands.aiming.FullAim;
@@ -41,6 +42,7 @@ import frc.robot.commands.shots.ShootStage;
 public class AutoSub extends SubsystemBase {
   private Swerve swerve;
   private LimeLightSub aimingVision;
+  private PositionerSub arm;
   private boolean instantiated = false;
 
   /*For On Fly PathPlanning */
@@ -56,6 +58,7 @@ public class AutoSub extends SubsystemBase {
   public AutoSub(Swerve swerve, PositionerSub positionerSub, ShooterSub shooterSub, Intake intake, LimeLightSub aimiingVision) {
     this.swerve = swerve;
     this.aimingVision = aimiingVision;
+    this.arm = positionerSub;
 
     instantiated = true;
 
@@ -107,6 +110,15 @@ public class AutoSub extends SubsystemBase {
   //returns command to go to that pose
   public Command getOnFlyCommand(Pose2d goalPose){
     return AutoBuilder.pathfindToPose(goalPose,onFlyConstraints,0.0,0.0);
+  }
+
+  public Command goToAmp(){
+    if(arm.getAtAmp()){
+      LimelightHelpers.setPipelineIndex(aimingVision.getName(), 1);
+      swerve.addVisionMeasurement(aimingVision);
+    }
+    
+    return getOnFlyCommand(Constants.EstimationConstants.ampPose);
   }
   
 
