@@ -32,7 +32,10 @@ public class ShootAngleRace extends ParallelRaceGroup {
 
     @Override
     public void execute(){
-      positioner.goToAngle(desAngle);
+      if(Math.abs(positioner.getPositionDeg()-desAngle) < 0.8){
+        return;
+      }
+        positioner.goToAngle(desAngle);
     }
 
     @Override
