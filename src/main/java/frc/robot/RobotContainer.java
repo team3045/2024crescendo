@@ -139,6 +139,8 @@ public class RobotContainer {
                 Commands.runOnce(() -> shooterSub.feed()))).
                 andThen(new WaitCommand(0.4).andThen(new InstantCommand(() -> shooterSub.stopAll()))));
 
+        // feed.onTrue(new InstantCommand(()-> shooterSub.shootSpeed(60, 60)));
+
         ampScore.onTrue(shootAmp.andThen(new InstantCommand(() -> TeleopSwerve.disableAmpMode())));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
@@ -149,7 +151,7 @@ public class RobotContainer {
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
         safeShoot.onTrue(new ShootMiddleNote(shooterSub, positionerSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
-        pathFindAmp.whileTrue(autoSub.getOnFlyCommand(Constants.EstimationConstants.ampPose)).
+        pathFindAmp.whileTrue(autoSub.goToAmp()).
             onFalse(new InstantCommand(() -> LimelightHelpers.setPipelineIndex(shooterLimelight.getName(), 0)));
         ampMode.onTrue(new InstantCommand(() -> TeleopSwerve.toggleAmpMode()).
             alongWith(new InstantCommand(() -> positionerSub.goToAmp()).onlyIf(() -> TeleopSwerve.ampMode == true)));
@@ -169,6 +171,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoSub.getAutoCommand("2 Note Left");
+        return autoSub.getAutoCommand("Middle 1 2");
     }
 }

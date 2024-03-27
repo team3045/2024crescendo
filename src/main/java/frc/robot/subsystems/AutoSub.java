@@ -113,6 +113,7 @@ public class AutoSub extends SubsystemBase {
   }
 
   public Command goToAmp(){
+    arm.goToAmp();
     if(arm.getAtAmp()){
       LimelightHelpers.setPipelineIndex(aimingVision.getName(), 1);
       swerve.addVisionMeasurement(aimingVision);
