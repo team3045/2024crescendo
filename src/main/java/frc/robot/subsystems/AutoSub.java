@@ -7,10 +7,13 @@ package frc.robot.subsystems;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.swing.GroupLayout.Alignment;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -22,6 +25,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -77,7 +82,22 @@ public class AutoSub extends SubsystemBase {
     PIDConstants translationConstants = new PIDConstants(7.7,0,0);
     PIDConstants rotationConstants = new PIDConstants(3.1,0,0);
     HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(translationConstants,rotationConstants,4.5, Constants.Swerve.driveBaseRadius, new ReplanningConfig(true,true));
-    AutoBuilder.configureHolonomic(swerve::getPose, swerve::setPose, swerve::getChassisSpeeds, swerve::driveField, config,() -> false, swerve);
+    if(DriverStation.getAlliance().isPresent()) {
+      for(int i = 0; i < 25; i++)
+        System.out.println(DriverStation.getAlliance().get());
+    }
+    else{
+      for(int i = 0; i < 25; i++)
+        System.out.println("Cant get Color");
+    }
+    AutoBuilder.configureHolonomic(
+      swerve::getPose, 
+      swerve::setPose, 
+      swerve::getChassisSpeeds, 
+      swerve::driveField, 
+      config,
+      () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 
+      swerve);
   }
 
 
@@ -117,6 +137,10 @@ public class AutoSub extends SubsystemBase {
     if(arm.getAtAmp()){
       LimelightHelpers.setPipelineIndex(aimingVision.getName(), 1);
       swerve.addVisionMeasurement(aimingVision);
+    }
+
+    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+      return getOnFlyCommand(new Pose2d(new Translation2d(14.47, 7.76), Rotation2d.fromDegrees(-90)));
     }
     
     return getOnFlyCommand(Constants.EstimationConstants.ampPose);

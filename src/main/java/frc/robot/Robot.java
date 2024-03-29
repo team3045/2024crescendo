@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -20,6 +24,8 @@ public class Robot extends TimedRobot {
   public static final double startTime = System.currentTimeMillis();
   public static double currTime = startTime;
   public static double prevTime = currTime;
+
+  public static int invert = 1;
 
   private Command m_autonomousCommand;
 
@@ -60,6 +66,8 @@ public class Robot extends TimedRobot {
       System.out.println("Difference: " + (currTime - prevTime));
       System.out.println();
     }
+
+    invert = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? -1 : 1;
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -71,12 +71,12 @@ public class ElevatorSub extends SubsystemBase {
 
   public void goUp(){
     armMotor.set(0.5);
-    followerMotor.set(0.5);
+    followerMotor.set(-0.5);
   }
 
   public void goDown(){
     armMotor.set(-0.5);
-    followerMotor.set(-0.5);
+    followerMotor.set(0.5);
   }
 
   public void stop(){

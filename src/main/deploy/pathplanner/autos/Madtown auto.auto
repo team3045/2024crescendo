@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.18,
-      "y": 5.5
+      "x": 15.842910975500146,
+      "y": 4.453449262059014
     },
-    "rotation": 0
+    "rotation": 55.12467165544476
   },
   "command": {
     "type": "sequential",
@@ -14,31 +14,19 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootClose"
+            "name": "ShootCloseSide"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 Note Middle"
+            "pathName": "Madtown"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "MiddleNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Middle to Right Note"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RightNote"
+            "name": "ShootCloseSide"
           }
         }
       ]

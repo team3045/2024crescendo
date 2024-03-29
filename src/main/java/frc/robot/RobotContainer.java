@@ -1,3 +1,4 @@
+
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,6 +24,7 @@ import frc.robot.commands.aiming.FullAim;
 import frc.robot.commands.intaking.IntakeNote;
 import frc.robot.commands.shots.ShootAmp;
 import frc.robot.commands.shots.ShootClose;
+import frc.robot.commands.shots.ShootCloseSide;
 import frc.robot.commands.shots.ShootMiddleNote;
 import frc.robot.subsystems.*;
 
@@ -81,6 +83,7 @@ public class RobotContainer {
 
     /*Commands */
     private final ShootClose ShootClose = new ShootClose(positionerSub, shooterSub);
+    private final ShootCloseSide ShootCloseSide = new ShootCloseSide(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
 
@@ -88,11 +91,13 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+
+
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
+                () -> -driver.getRawAxis(translationAxis) * Robot.invert, 
+                () -> -driver.getRawAxis(strafeAxis) * Robot.invert, 
                 () -> -driver.getRawAxis(rotationAxis), 
                 () -> robotCentric.getAsBoolean(),
                 shooterLimelight
@@ -149,7 +154,7 @@ public class RobotContainer {
         /*Operator controls */
         climberUp.whileTrue(Commands.runEnd(() -> elevator.goUp(),() -> elevator.stop(),elevator));
         climberDown.whileTrue(Commands.runEnd(() -> elevator.goDown(),() -> elevator.stop(),elevator));
-        safeShoot.onTrue(new ShootMiddleNote(shooterSub, positionerSub));
+        safeShoot.onTrue(new ShootClose(positionerSub, shooterSub));
         revShooter.toggleOnTrue(Commands.runEnd(() -> shooterSub.setRev(), ()-> shooterSub.stopShooter(), shooterSub));
         pathFindAmp.whileTrue(autoSub.goToAmp()).
             onFalse(new InstantCommand(() -> LimelightHelpers.setPipelineIndex(shooterLimelight.getName(), 0)));
@@ -171,6 +176,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return autoSub.getAutoCommand("Middle 1 2");
+        //return new ShootCloseSide(positionerSub, shooterSub);
+        return autoSub.getAutoCommand("Madtown auto");
     }
 }
