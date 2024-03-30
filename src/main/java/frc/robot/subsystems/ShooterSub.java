@@ -155,6 +155,12 @@ public class ShooterSub extends SubsystemBase {
     bottomMotor.set(-0.70);
   }
 
+  public void eject(){
+    topMotor.set(-0.7);
+    bottomMotor.set(0.7);
+
+  }
+
   /*runs it back a little bit for intaking */
   public void runForward(){
     var request = new MotionMagicVoltage(0);

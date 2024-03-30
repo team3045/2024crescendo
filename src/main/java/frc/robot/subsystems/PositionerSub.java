@@ -38,12 +38,12 @@ public class PositionerSub extends SubsystemBase {
   private static double desiredAngle;
 
   public static final double MIN_ANGLE = 16; //0.108264602706615
-  public static final double MAX_ANGLE = 79; 
+  public static final double MAX_ANGLE = 70; 
   public static final double INTAKE_ANGLE = Units.rotationsToDegrees(0.110494702762366);
   public static final double MIDDLE_NOTE = 28.5;
   public static final double RIGHT_NOTE = 27.8;
   public static final double LEFT_NOTE = 26.4;
-  public static final double SPEAKER_ANGLE = 48.5;
+  public static final double SPEAKER_ANGLE = 49;
   public static final double SHOOT_CLOSE_SIDE = 46.5;
   public static final double AMP_ANGLE = 66;
   public static final double STAGE_ANGLE = 27;
@@ -226,6 +226,11 @@ public class PositionerSub extends SubsystemBase {
 
   public boolean getAtAmp(){
     return atAmp;
+  }
+
+  public void goToVertical(){
+    goToAmp();
+    System.out.println("going vertical");
   }
 
 

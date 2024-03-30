@@ -52,6 +52,7 @@ public class RobotContainer {
     private final JoystickButton shooterModeToggle = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     private final JoystickButton feed = new JoystickButton(driver, PS4Controller.Button.kL2.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL3.value); //Hold down
+    private final JoystickButton safeShotTwo = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
     
     /*Operator Buttons */
     private final JoystickButton climberUp = new JoystickButton(operator, PS4Controller.Button.kL2.value);
@@ -60,6 +61,7 @@ public class RobotContainer {
     private final JoystickButton safeShoot = new JoystickButton(operator, PS4Controller.Button.kCircle.value);
     private final JoystickButton pathFindAmp = new JoystickButton(operator, PS4Controller.Button.kSquare.value);
     private final JoystickButton ampMode = new JoystickButton(operator, PS4Controller.Button.kTriangle.value);
+    private final JoystickButton ejectButton = new JoystickButton(operator, PS4Controller.Button.kCross.value);
 
     /*SysiId buttons */
     private final JoystickButton quasiForward = new JoystickButton(driver, PS4Controller.Button.kR1.value);
@@ -86,6 +88,7 @@ public class RobotContainer {
     private final ShootCloseSide ShootCloseSide = new ShootCloseSide(positionerSub, shooterSub);
     private final IntakeNote intakeNote = new IntakeNote(intake, shooterSub, positionerSub);
     private final ShootAmp shootAmp = new ShootAmp(positionerSub, shooterSub);
+    private final Eject eject = new Eject(positionerSub, shooterSub);
 
     /*Named Commands */
 
@@ -149,6 +152,7 @@ public class RobotContainer {
         ampScore.onTrue(shootAmp.andThen(new InstantCommand(() -> TeleopSwerve.disableAmpMode())));
 
         shooterModeToggle.onTrue(new InstantCommand(() -> TeleopSwerve.toggleShooterMode()));
+        safeShotTwo.onTrue(new ShootClose(positionerSub, shooterSub).andThen(() -> new WaitCommand(0.2), positionerSub));
         
 
         /*Operator controls */
@@ -160,6 +164,7 @@ public class RobotContainer {
             onFalse(new InstantCommand(() -> LimelightHelpers.setPipelineIndex(shooterLimelight.getName(), 0)));
         ampMode.onTrue(new InstantCommand(() -> TeleopSwerve.toggleAmpMode()).
             alongWith(new InstantCommand(() -> positionerSub.goToAmp()).onlyIf(() -> TeleopSwerve.ampMode == true)));
+        ejectButton.toggleOnTrue(eject);
         
 
         /*LED triggers */
@@ -177,6 +182,8 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         //return new ShootCloseSide(positionerSub, shooterSub);
-        return autoSub.getAutoCommand("Madtown auto");
+        //return autoSub.getAutoCommand("Madtown auto");
+        return autoSub.getAutoCommand("4 Note Middle");
+        //return autoSub.getAutoCommand("Copy of 4 Right Middle Left");
     }
 }
